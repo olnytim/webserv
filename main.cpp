@@ -5,8 +5,7 @@ int main(){
 	try{
 		conf.openConfig();
 		conf.parse();
-		
-	} catch (const configFileException &ex){
+	} catch (const parseException &ex){
 		std::cerr << "Error: " << ex.what() << std::endl;
 	}
 }

@@ -4,30 +4,15 @@
 #include <iostream>
 #include <vector>
 
-// class parseException : public std::exception {
-// public:
-// 	parseException(const std::string &message) : _message(message) {}
-// 	const char* what() const throw(){
-// 		return (_message.c_str());
-// 	}
-// private:
-// 	const std::string _message;
-// };
-
-// class configFileException : public parseException{
-// public:
-// 	configFileException(const std::string &message) : parseException(message){}
-// };
-
-class parseException : std::exception {
+class parseException : public std::exception {
 public:
-    parseException(const std::string& message) : _message(message) {}
-    virtual const char* what() const throw() {
-        return _message.c_str();
-    }
+	parseException(const std::string& message) : _message(message) {}
+	virtual const char* what() const throw() {
+		return _message.c_str();
+	}
 	virtual ~parseException() throw() {}
 private:
-    const std::string _message;
+	const std::string _message;
 };
 
 class configFileException : public parseException {
@@ -35,28 +20,50 @@ public:
 	configFileException(const std::string &message) : parseException(message){}
 };
 
-class configParse{
+class configException : public parseException {
 public:
-	virtual void parseError(const parseException &ex) = 0;
-	virtual void openConfig() = 0;
-	virtual void divideServers(const std::string &line) = 0;
-	virtual size_t skipWhitespace(const std::string &line, size_t pos) = 0;
-	virtual size_t findPair(const std::string &line, size_t pos) = 0;
+	configException(const std::string &message) : parseException(message){}
+};
+
+class IconfigParse{
+public:
 	virtual	void parse() = 0;
+	virtual void parseError(const parseException &ex) const = 0;
+	virtual void openConfig() = 0;
+	virtual void divideIntoServers(const std::string &line) = 0;
+	virtual void parseServers() = 0;
+	virtual void removeComments(std::string &line) = 0;
+
+	virtual size_t skipWhitespace(const std::string &line, size_t pos) const = 0;
+	virtual size_t findPair(const std::string &line, size_t pos) const = 0;
+};
+
+class locationBlock{
+private:
+
 };
 
 class serverBlock{
-
+private:
+	std::string server_name;
+	std::vector<locationBlock> locations;
+	
+public:
+	void setServer_name();
+	void addLocation();
 };
 
-class configFile : public configParse {
+class configFile : public IconfigParse {
 public:
-	void parseError(const parseException &ex);
-	void openConfig();
-	void divideServers(const std::string &line);
-	size_t skipWhitespace(const std::string &line, size_t pos);
-	size_t findPair(const std::string &line, size_t pos);
 	void parse();
+	void parseError(const parseException &ex) const;
+	void openConfig();
+	void divideIntoServers(const std::string &line);
+	void parseServers();
+	void removeComments(std::string &line);
+	
+	size_t skipWhitespace(const std::string &line, size_t pos) const;
+	size_t findPair(const std::string &line, size_t pos) const;
 private:
 	std::ifstream config;
 	std::vector<serverBlock> servers;
