@@ -63,7 +63,7 @@ void ConfigFile::removeComments(std::string &line) {
 		line = line1 + line2;
 	}
 }
-
+/*
 void ServerBlock::setServerName(std::string &line){
 	
 }
@@ -85,8 +85,8 @@ void ServerBlock::setListen(std::string &line){
 void ServerBlock::setPort(std::string &line){
 
 }
-
-void ServerBlock::addLocationTxt(const std::string &str){
+*/
+void ServerBlock::addLocationTxt(std::string str){
 	locationsTxt.push_back(str);
 }
 
@@ -104,7 +104,7 @@ void ConfigFile::cutLocations(){
 			pos1 = skipWhitespace(serversTxt[i], pos1);
 			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '{'){
 				pos2 = findPair(serversTxt[i], ++pos1);
-				servers.addLocationTxt(serversTxt[i].substr(pos1, pos2 - pos1));
+				servers[i].addLocationTxt(serversTxt[i].substr(pos1, pos2 - pos1));
 				pos1 = skipWhitespace(serversTxt[i], pos2 + 1);
 			} else
 				reportError(configFileException("Invalid configuration"));
@@ -115,7 +115,7 @@ void ConfigFile::cutLocations(){
 
 void ConfigFile::parseServers(){
 	cutLocations();
-	std::string line;
+/*	std::string line;
 	std::string key;
 	std::map<std::string, void(*)(std::string)> keywords;
 	if (serversTxt.size() < 1)
@@ -128,7 +128,7 @@ void ConfigFile::parseServers(){
 			key = line.substr(pos , line.find(' ', pos) - pos);
 			keywords[key](line.substr(line.find(' ', pos)));
 		}
-	}
+	}*/
 }
 
 

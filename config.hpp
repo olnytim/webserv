@@ -64,7 +64,7 @@ public:
 	void setAutoindex();
 	void setListen();
 	void setPort();
-	void addLocationTxt(const std::string &str);
+	void addLocationTxt(std::string str);
 	std::vector<std::string> &getServerNames() const;
 	std::vector<LocationBlock> &getLocations() const;
 	std::map<short, std::string> getErrorPage() const;
