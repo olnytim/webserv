@@ -6,10 +6,10 @@ RM		= rm -rf
 
 OBJ_DIR	= obj
 SRC_DIR = ./
-SRC		= main.cpp config.cpp
+SRC		= main.cpp config.cpp ServerBlock.cpp 
 OBJ		= $(patsubst %.cpp, $(OBJ_DIR)/%.o, $(SRC))
 
-HEADERS = config.hpp
+HEADERS = config.hpp IConfigParse.hpp ServerBlock.hpp exceptions.hpp
 
 all: $(NAME)
 
