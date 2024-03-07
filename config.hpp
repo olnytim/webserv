@@ -18,7 +18,7 @@ public:
 	void removeComments(std::string &line);
 	void cutLocations();
 
-	size_t skipWhitespace(const std::string &line, size_t pos) const;
+	static size_t skipWhitespace(const std::string &line, size_t pos);
 	size_t findPair(const std::string &line, size_t pos) const;
 private:
 	std::ifstream config;

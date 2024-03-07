@@ -11,7 +11,7 @@ void ConfigFile::openConfig(){
 	}
 }
 
-size_t ConfigFile::skipWhitespace(const std::string &line, size_t pos) const{
+size_t ConfigFile::skipWhitespace(const std::string &line, size_t pos){
 	while (pos < line.size() && (line[pos] == ' ' || line[pos] == '	' || line[pos] == '\n'))
 		pos++;
 	return (pos);
@@ -73,6 +73,7 @@ void ConfigFile::cutLocations(){
 		pos1 = 0;
 		pos2 = 0;
 		pos3 = 0;
+
 		while ((pos1 = serversTxt[i].find("location", pos1)) != std::string::npos){
 			pos3 = pos1;
 			pos1 += 8;
@@ -108,9 +109,11 @@ void ConfigFile::parseServers(){
 			if (pos == line.size())
 				break ;
 			key = line.substr(pos , line.find(' ', pos) - pos);
-			servers[i].callFunction(key, "bussing");
+			servers[i].callFunction(key, line.substr(line.find(' ', pos) + 1));
 		}
+		servers[i].parseLocations();
 	}
+
 }
 
 void ConfigFile::parse(){
@@ -120,7 +123,7 @@ void ConfigFile::parse(){
 	try{
 		removeComments(line);
 	}	catch (const std::out_of_range &e){
-		std::cout << e.what();
+		std::cout << e.what() << std::endl;
 	}
 	divideIntoServers(line);
 	parseServers();

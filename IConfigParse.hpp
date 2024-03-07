@@ -12,6 +12,5 @@ public:
 	virtual void parseServers() = 0;
 	virtual void removeComments(std::string &line) = 0;
 	virtual void cutLocations() = 0;
-	virtual size_t skipWhitespace(const std::string &line, size_t pos) const = 0;
 	virtual size_t findPair(const std::string &line, size_t pos) const = 0;
 };

@@ -1,11 +1,32 @@
 #include "ServerBlock.hpp"
+#include "config.hpp"
+
+void LocationBlock::setAutoindex(std::string line){
+	if (line == "on")
+		autoindex = true;
+	else if (line == "off")
+		autoindex = false;
+}
+
+LocationBlock::LocationBlock(){
+	keywords["autoindex"] = &LocationBlock::setAutoindex;
+	
+}
+
+void LocationBlock::callFunction(const std::string &key, const std::string &str){
+
+}
+
 
 ServerBlock::ServerBlock(){
 	keywords["server_name"] = &ServerBlock::setServerName;
 	keywords["port"] = &ServerBlock::setPort;
 	keywords["client_max_body_size"] = &ServerBlock::setClientMaxBodySize;
-	keywords["autoindex"] = &ServerBlock::setAutoindex;
 	keywords["listen"] = &ServerBlock::setListen;
+}
+
+const std::vector<std::string> &ServerBlock::getLocationsTxt() const{
+	return (locationsTxt);
 }
 
 void ServerBlock::callFunction(const std::string &key, const std::string &str){
@@ -18,7 +39,11 @@ void ServerBlock::callFunction(const std::string &key, const std::string &str){
 }
 
 void ServerBlock::setServerName(std::string line){
-	server_names.push_back(line);
+	std::stringstream ss(line);
+	std::string tmp;
+	while (getline(ss, tmp, ' ')){
+		server_names.push_back(tmp);
+	}
 }
 
 void ServerBlock::addLocation(std::string line){
@@ -44,16 +69,6 @@ void ServerBlock::setClientMaxBodySize(std::string line){
 	}
 }
 
-void ServerBlock::setAutoindex(std::string line){
-	if (line == "on")
-		autoindex = true;
-	else if (line == "off")
-		autoindex = false;
-	else{
-		//throw error
-		;
-	}
-}
 void ServerBlock::setListen(std::string line){
 	listen = line;
 }
@@ -66,4 +81,23 @@ void ServerBlock::setPort(std::string line){
 }
 void ServerBlock::addLocationTxt(std::string str){
 	locationsTxt.push_back(str);
+}
+
+void ServerBlock::parseLocations(){
+	std::string line;
+	std::string key;
+
+	for (size_t i = 0; i < locationsTxt.size(); i++){
+		std::stringstream ss(locationsTxt[i]);
+		while (getline(ss, line, ';')){
+			LocationBlock lb;
+
+			size_t pos = ConfigFile::skipWhitespace(line, 0);
+			if (pos == line.size())
+				break ;
+			key = line.substr(pos , line.find(' ', pos) - pos);
+			lb.callFunction(key, line.substr(line.find(' ', pos) + 1));
+
+		}
+	}	
 }
