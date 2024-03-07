@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <sstream>
 #include <iostream>
 
 class LocationBlock{
@@ -13,10 +14,10 @@ class ServerBlock{
 private:
 	std::string listen;
 	std::vector<std::string> server_names;
-	std::map<unsigned short, std::string> error_page;
+	std::map<unsigned short, std::string> error_pages;
 	unsigned int client_max_body_size;
 	bool autoindex;
-	short port;
+	unsigned short port;
 	std::vector<LocationBlock> locations;
 	std::vector<std::string> locationsTxt;
 	std::map<std::string, void(ServerBlock::*)(std::string)> keywords;

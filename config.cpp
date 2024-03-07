@@ -46,10 +46,6 @@ void ConfigFile::divideIntoServers(const std::string &line) {
 		} else
 			reportError(configFileException("Invalid configuration"));
 	}
-	
-	for (size_t i = 0; i < serversTxt.size(); i++){
-		std::cout << "[" << serversTxt[i] << "]" << std::endl << std::endl;
-	}
 }
 
 void ConfigFile::removeComments(std::string &line) {
@@ -67,10 +63,18 @@ void ConfigFile::removeComments(std::string &line) {
 void ConfigFile::cutLocations(){
 	size_t pos1 = 0;
 	size_t pos2 = 0;
+	size_t pos3 = 0;
+	std::string first;
+	std::string second;
 
-	for(size_t i = 0; i < serversTxt[i].size(); i++){
+
+	for(size_t i = 0; i < serversTxt.size(); i++){
 		ServerBlock server;
+		pos1 = 0;
+		pos2 = 0;
+		pos3 = 0;
 		while ((pos1 = serversTxt[i].find("location", pos1)) != std::string::npos){
+			pos3 = pos1;
 			pos1 += 8;
 			pos1 = skipWhitespace(serversTxt[i], pos1);
 			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '/')
@@ -82,13 +86,12 @@ void ConfigFile::cutLocations(){
 				pos1 = skipWhitespace(serversTxt[i], pos2 + 1);
 			} else
 				reportError(configFileException("Invalid configuration"));
+			first = serversTxt[i].substr(0, pos3);
+			second = serversTxt[i].substr(pos1);
+			serversTxt[i] = first + second;
 		}
 		servers.push_back(server);
 	}
-}
-
-const std::map<std::string, void(ServerBlock::*)(std::string)> &ServerBlock::getKeywords() const{
-	return keywords;
 }
 
 void ConfigFile::parseServers(){
@@ -98,14 +101,14 @@ void ConfigFile::parseServers(){
 
 	if (serversTxt.size() < 1)
 		reportError(configException("No server configuration in the config file"));
-
 	for (size_t i = 0; i < serversTxt.size(); i++){
 		std::stringstream ss(serversTxt[i]);
 		while (getline(ss, line, ';')){
 			size_t pos = skipWhitespace(line, 0);
+			if (pos == line.size())
+				break ;
 			key = line.substr(pos , line.find(' ', pos) - pos);
-			servers[i].callFunction(key, line.substr(line.find(' ', pos)));
-			
+			servers[i].callFunction(key, "bussing");
 		}
 	}
 }

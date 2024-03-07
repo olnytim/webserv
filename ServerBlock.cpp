@@ -11,43 +11,59 @@ ServerBlock::ServerBlock(){
 void ServerBlock::callFunction(const std::string &key, const std::string &str){
     typedef void (ServerBlock::*MemberFuncType)(std::string);
 	MemberFuncType func = keywords[key];
+	if (!func || str.size() == 0){
+		//Throw exception omaygot
+	}
 	(this->*func)(str);
 }
 
 void ServerBlock::setServerName(std::string line){
-	(void)line;
-	std::cout << "servername called" << std::endl;
+	server_names.push_back(line);
 }
+
 void ServerBlock::addLocation(std::string line){
-	(void)line;
-	std::cout << "addlocation called" << std::endl;
+(void)line;
 }
+
 void ServerBlock::addErrorPage(std::string line){
-	(void)line;
-	std::cout << "adderrorpage called" << std::endl;
-
+	std::string error_num = line.substr(0, line.find(" "));
+	std::string error_page = line.substr(line.find(" ") + 1);
+	std::istringstream iss(error_num);
+	unsigned short key;
+	if (!(iss >> key)){
+		//throw error
+	}
+	error_pages[key] = error_page;
 }
+
 void ServerBlock::setClientMaxBodySize(std::string line){
-	(void)line;
-	std::cout << "setclientmaxbodysize called" << std::endl;
-
+	std::istringstream iss(line);
+	
+	if (!(iss >> client_max_body_size)){
+		//throw error
+	}
 }
-void ServerBlock::setAutoindex(std::string line){
-	(void)line;
-	std::cout << "setautoindex called" << std::endl;
 
+void ServerBlock::setAutoindex(std::string line){
+	if (line == "on")
+		autoindex = true;
+	else if (line == "off")
+		autoindex = false;
+	else{
+		//throw error
+		;
+	}
 }
 void ServerBlock::setListen(std::string line){
-	(void)line;
-	std::cout << "setlisten called" << std::endl;
+	listen = line;
 }
 
 void ServerBlock::setPort(std::string line){
-	(void)line;
-	std::cout << "setPort called" << std::endl;
-
+	std::istringstream iss(line);
+	if (!(iss >> port)){
+		//throw error
+	}
 }
-
 void ServerBlock::addLocationTxt(std::string str){
 	locationsTxt.push_back(str);
 }
