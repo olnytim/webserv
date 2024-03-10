@@ -1,31 +1,10 @@
 #pragma once
 
-#include <vector>
-#include <map>
 #include <sstream>
 #include <iostream>
+#include "LocationBlock"
 
 class Block { //abstract class for location and server
-
-};
-
-class LocationBlock{
-public:
-	LocationBlock();
-
-	void callFunction(const std::string &key, const std::string &str);private:
-	std::map<std::string, void(ServerBlock::*)(std::string)> keywords;
-	void setAutoindex(std::string line);
-private:
-	enum e_methods{
-		E_GET,
-		E_POST,
-	};
-	std::string root;
-	std::vector<e_methods> methods;
-	std::vector<e_methods> allowedMethods;
-	std::string index;
-	bool autoindex;
 
 };
 

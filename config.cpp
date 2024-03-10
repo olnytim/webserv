@@ -84,6 +84,7 @@ void ConfigFile::cutLocations(){
 			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '{'){
 				pos2 = findPair(serversTxt[i], ++pos1);
 				server.addLocationTxt(serversTxt[i].substr(pos1, pos2 - pos1));
+				server.addLocation();
 				pos1 = skipWhitespace(serversTxt[i], pos2 + 1);
 			} else
 				reportError(configFileException("Invalid configuration"));
