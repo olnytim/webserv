@@ -9,6 +9,8 @@ LocationBlock::LocationBlock(){
 	keywordsMap["autoindex"] = &LocationBlock::setAutoindex;
 	keywordsMap["client_body_temp_path"] = &LocationBlock::setClient_body_temp_path;
 	keywordsMap["client_max_body_size"] = &LocationBlock::setClient_max_body_size;
+	keywordsMap["cgi_pass"] = &LocationBlock::setCgi_pass;
+
 }
 
 void LocationBlock::callFunction(const std::string &key, const std::string &str){
@@ -31,22 +33,33 @@ void LocationBlock::setAutoindex(std::string line){
 }
 	
 void LocationBlock::setRedirect_map(std::string line){
+	short status_code;
+	std::string status_code_txt;
+	std::string link_to_redirect;
+	std::stringstream ss(line);
 
+	getline(ss, status_code_txt, ' ');
+	getline(ss, link_to_redirect, ' ');
+	ss(status_code_txt);
+	if (!(ss >> status_code) || link_to_redirect.size() == 0){
+		//throw error
+	}
+	redirect_map[statuc_code] = link_to_redirect;
 }
 
 void LocationBlock::setRoot(std::string line){
-
+	root = line;
 }
-	
+
 void LocationBlock::setMethods(std::string line){
 	std::stringstream ss(line);
-
-	while (getline(ss, ' '))
-		methods.push_back();
+	std::string meth;
+	while (getline(ss, meth, ' '))
+		methods.push_back(meth);
 }
 
-void LocationBlock::setAllowed_methods(std::string line){
-
+void LocationBlock::setCgi_pass(std::string line){
+	cgi_pass = line;
 }
 
 void LocationBlock::setIndex(std::string line){
@@ -58,8 +71,13 @@ void LocationBlock::setRoute_to_be_saved(std::string line){
 }
 
 void LocationBlock::setClient_body_temp_path(std::string line){
-
+	client_body_temp_path = line;
 }
-void LocationBlock::setClient_max_body_size(std::string line){
 
+void LocationBlock::setClient_max_body_size(std::string line){
+	std::istringstream iss(line);
+	
+	if (!(iss >> client_max_body_size)){
+		//throw error
+	}
 }

@@ -19,6 +19,7 @@ public:
 	void setRoute_to_be_saved(std::string line);
 	void setClient_body_temp_path(std::string line);
 	void setClient_max_body_size(std::string line);
+	void setCgi_pass(std::string line);
 private:
 	enum e_methods{
 		E_GET,
@@ -33,5 +34,6 @@ private:
 	bool autoindex; // autoindex
 	std::string route_to_be_saved; // location /<route>
 	std::string client_body_temp_path; // client_body_temp_path
-	unsigned int client_max_body_size;
+	unsigned int client_max_body_size; // client_map_body_size
+	std::string cgi_pass;
 };
