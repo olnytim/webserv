@@ -1,21 +1,27 @@
-#include <LocationBlock.hpp>
+#include "LocationBlock.hpp"
+#include "exceptions.hpp"
 
 LocationBlock::LocationBlock(){
 	keywordsMap["return"] = &LocationBlock::setRedirect_map;
 	keywordsMap["root"] = &LocationBlock::setRoot;
 	keywordsMap["methods"] = &LocationBlock::setMethods;
-	keywordsMap["limit_except"] = &LocationBlock::setAllowed_methods;
 	keywordsMap["index"] = &LocationBlock::setIndex;
 	keywordsMap["autoindex"] = &LocationBlock::setAutoindex;
 	keywordsMap["client_body_temp_path"] = &LocationBlock::setClient_body_temp_path;
 	keywordsMap["client_max_body_size"] = &LocationBlock::setClient_max_body_size;
 	keywordsMap["cgi_pass"] = &LocationBlock::setCgi_pass;
 
+//	keywordsMap["limit_except"] = &LocationBlock::setAllowed_methods;
 }
+
+void LocationBlock::reportError() const{
+
+}
+
 
 void LocationBlock::callFunction(const std::string &key, const std::string &str){
 	typedef void (LocationBlock::*MemberFuncType)(std::string);
-	MemberFuncType func = keywords[key];
+	MemberFuncType func = keywordsMap[key];
 	if (!func || str.size() == 0){
 		//Throw exception omaygot
 	}
@@ -40,11 +46,12 @@ void LocationBlock::setRedirect_map(std::string line){
 
 	getline(ss, status_code_txt, ' ');
 	getline(ss, link_to_redirect, ' ');
-	ss(status_code_txt);
+	ss.str(std::string());
+	ss << status_code_txt;
 	if (!(ss >> status_code) || link_to_redirect.size() == 0){
 		//throw error
 	}
-	redirect_map[statuc_code] = link_to_redirect;
+	redirect_map[status_code] = link_to_redirect;
 }
 
 void LocationBlock::setRoot(std::string line){
@@ -54,8 +61,10 @@ void LocationBlock::setRoot(std::string line){
 void LocationBlock::setMethods(std::string line){
 	std::stringstream ss(line);
 	std::string meth;
-	while (getline(ss, meth, ' '))
+
+	while (getline(ss, meth, ' ')){
 		methods.push_back(meth);
+	}
 }
 
 void LocationBlock::setCgi_pass(std::string line){
@@ -67,7 +76,7 @@ void LocationBlock::setIndex(std::string line){
 }
 
 void LocationBlock::setRoute_to_be_saved(std::string line){
-
+	(void)line;
 }
 
 void LocationBlock::setClient_body_temp_path(std::string line){

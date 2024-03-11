@@ -18,7 +18,12 @@ public:
 	configFileException(const std::string &message) : ParseException(message){}
 };
 
-class configException : public ParseException {
+class configParseException : public ParseException {
 public:
-	configException(const std::string &message) : ParseException(message){}
+	configParseException(const std::string &message) : ParseException(message){}
+};
+
+class locationParseException : public ParseException {
+public:
+	locationParseException(const std::string &message) : ParseException(message){}
 };

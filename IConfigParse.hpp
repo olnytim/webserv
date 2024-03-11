@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include "exceptions.hpp"
 
 class IConfigParse{

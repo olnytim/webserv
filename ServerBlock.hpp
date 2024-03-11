@@ -1,14 +1,16 @@
 #pragma once
 
-#include <sstream>
-#include <iostream>
-#include "LocationBlock"
+#include "LocationBlock.hpp"
 
-class Block { //abstract class for location and server
-
+class Block : public IReportError{ //abstract class for location and server
+	void reportError() const;
 };
 
-class ServerBlock{
+void Block::reportError() const{
+	throw(ex);
+}
+
+class ServerBlock : public Block{
 private:
 	std::string listen;
 	std::vector<std::string> server_names;
@@ -21,9 +23,10 @@ private:
 public:
 	ServerBlock();
 	
+
 	void callFunction(const std::string &key, const std::string &str);
 	void setServerName(std::string line);
-	void addLocation(std::string line);
+	void addLocation();
 	void addErrorPage(std::string line);
 	void setClientMaxBodySize(std::string line);
 	void setListen(std::string line);

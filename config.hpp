@@ -2,16 +2,14 @@
 
 #include "IConfigParse.hpp"
 #include "ServerBlock.hpp"
-#include "exceptions.hpp"
 #include <fstream>
-#include <sstream>
+#include "IReportError.hpp"
 
-/// configFile
-class ConfigFile : public IConfigParse {
+class ConfigFile : public IConfigParse, public IReportError {
 public:
+	void reportError() const;
 
 	void parse();
-	void reportError(const ParseException &ex) const;
 	void openConfig();
 	void divideIntoServers(const std::string &line);
 	void parseServers();

@@ -1,11 +1,16 @@
 #include "ServerBlock.hpp"
 #include "config.hpp"
 
+
 ServerBlock::ServerBlock(){
 	keywords["server_name"] = &ServerBlock::setServerName;
 	keywords["port"] = &ServerBlock::setPort;
 	keywords["client_max_body_size"] = &ServerBlock::setClientMaxBodySize;
 	keywords["listen"] = &ServerBlock::setListen;
+}
+
+void ServerBlock::reportError(const ParseException &ex) const{
+	throw(ex);
 }
 
 const std::vector<std::string> &ServerBlock::getLocationsTxt() const{
@@ -30,7 +35,7 @@ void ServerBlock::setServerName(std::string line){
 }
 
 void ServerBlock::addLocation(){
-	locationBlock lb;
+	LocationBlock lb;
 	locations.push_back(lb);
 }
 

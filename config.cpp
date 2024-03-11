@@ -1,7 +1,6 @@
 #include "config.hpp"
 
-void ConfigFile::reportError(const ParseException &ex) const{
-	throw (ex);
+void ConfigFile::reportError(){
 }
 
 void ConfigFile::openConfig(){
@@ -102,7 +101,7 @@ void ConfigFile::parseServers(){
 	std::string key;
 
 	if (serversTxt.size() < 1)
-		reportError(configException("No server configuration in the config file"));
+		reportError(configFileException("No server configuration in the config file"));
 	for (size_t i = 0; i < serversTxt.size(); i++){
 		std::stringstream ss(serversTxt[i]);
 		while (getline(ss, line, ';')){
