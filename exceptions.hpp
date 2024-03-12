@@ -27,3 +27,8 @@ class locationParseException : public ParseException {
 public:
 	locationParseException(const std::string &message) : ParseException(message){}
 };
+
+class serverParseException : public ParseException {
+public:
+	serverParseException(const std::string &message) : ParseException(message){}
+};

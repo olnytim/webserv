@@ -1,6 +1,7 @@
 #include "config.hpp"
 
-void ConfigFile::reportError(){
+void ConfigFile::reportError(const ParseException &ex) const{
+	throw (ex);
 }
 
 void ConfigFile::openConfig(){
@@ -60,35 +61,32 @@ void ConfigFile::removeComments(std::string &line) {
 }
 
 void ConfigFile::cutLocations(){
-	size_t pos1 = 0;
-	size_t pos2 = 0;
-	size_t pos3 = 0;
-	std::string first;
-	std::string second;
-
 
 	for(size_t i = 0; i < serversTxt.size(); i++){
 		ServerBlock server;
-		pos1 = 0;
-		pos2 = 0;
-		pos3 = 0;
+		size_t pos1 = 0;
+		size_t pos2 = 0;
+		size_t pos3 = 0;
 
 		while ((pos1 = serversTxt[i].find("location", pos1)) != std::string::npos){
+			LocationBlock loc;
 			pos3 = pos1;
 			pos1 += 8;
 			pos1 = skipWhitespace(serversTxt[i], pos1);
-			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '/')
+			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '/'){
+				loc.setRoute_to_be_saved(serversTxt[i].substr(pos1, serversTxt[i].find(' ', pos1) - pos1));
 				pos1 = serversTxt[i].find(' ', pos1);
+			}
 			pos1 = skipWhitespace(serversTxt[i], pos1);
 			if (pos1 < serversTxt[i].size() && serversTxt[i][pos1] == '{'){
 				pos2 = findPair(serversTxt[i], ++pos1);
 				server.addLocationTxt(serversTxt[i].substr(pos1, pos2 - pos1));
-				server.addLocation();
+				server.addLocation(loc);
 				pos1 = skipWhitespace(serversTxt[i], pos2 + 1);
 			} else
 				reportError(configFileException("Invalid configuration"));
-			first = serversTxt[i].substr(0, pos3);
-			second = serversTxt[i].substr(pos1);
+			std::string first = serversTxt[i].substr(0, pos3);
+			std::string second = serversTxt[i].substr(pos1);
 			serversTxt[i] = first + second;
 		}
 		servers.push_back(server);

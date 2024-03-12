@@ -5,7 +5,6 @@
 class IConfigParse{
 public:
 	virtual	void parse() = 0;
-	virtual void reportError(const ParseException &ex) const = 0;
 	virtual void openConfig() = 0;
 	virtual void divideIntoServers(const std::string &line) = 0;
 	virtual void parseServers() = 0;

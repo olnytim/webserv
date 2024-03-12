@@ -4,10 +4,11 @@
 #include "ServerBlock.hpp"
 #include <fstream>
 #include "IReportError.hpp"
+#include "LocationBlock.hpp"
 
 class ConfigFile : public IConfigParse, public IReportError {
 public:
-	void reportError() const;
+	void reportError(const ParseException &ex) const;
 
 	void parse();
 	void openConfig();
