@@ -49,11 +49,29 @@ cmake_ninja_workdir = C$:/Users/Tim/webserv/cmake-build-debug/
 
 build cmake_object_order_depends_target_webserv: phony || CMakeFiles/webserv.dir
 
-build CMakeFiles/webserv.dir/main.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug C$:/Users/Tim/webserv/main.cpp || cmake_object_order_depends_target_webserv
-  DEP_FILE = CMakeFiles\webserv.dir\main.cpp.obj.d
+build CMakeFiles/webserv.dir/src/main.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug C$:/Users/Tim/webserv/src/main.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles\webserv.dir\src\main.cpp.obj.d
   FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\webserv.dir
-  OBJECT_FILE_DIR = CMakeFiles\webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles\webserv.dir\src
+
+build CMakeFiles/webserv.dir/src/LocationBlock.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug C$:/Users/Tim/webserv/src/LocationBlock.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles\webserv.dir\src\LocationBlock.cpp.obj.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles\webserv.dir\src
+
+build CMakeFiles/webserv.dir/src/ServerBlock.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug C$:/Users/Tim/webserv/src/ServerBlock.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles\webserv.dir\src\ServerBlock.cpp.obj.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles\webserv.dir\src
+
+build CMakeFiles/webserv.dir/src/config.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug C$:/Users/Tim/webserv/src/config.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles\webserv.dir\src\config.cpp.obj.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles\webserv.dir\src
 
 
 # =============================================================================
@@ -63,7 +81,7 @@ build CMakeFiles/webserv.dir/main.cpp.obj: CXX_COMPILER__webserv_unscanned_Debug
 #############################################
 # Link the executable webserv.exe
 
-build webserv.exe: CXX_EXECUTABLE_LINKER__webserv_Debug CMakeFiles/webserv.dir/main.cpp.obj
+build webserv.exe: CXX_EXECUTABLE_LINKER__webserv_Debug CMakeFiles/webserv.dir/src/main.cpp.obj CMakeFiles/webserv.dir/src/LocationBlock.cpp.obj CMakeFiles/webserv.dir/src/ServerBlock.cpp.obj CMakeFiles/webserv.dir/src/config.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\webserv.dir

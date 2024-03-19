@@ -29,9 +29,12 @@ public:
 	void parseLocations();
 	void addLocation(const LocationBlock &loc);
 	void reportError(const ParseException &ex) const;
+    std::string getListen() const;
+    unsigned short getPort() const;
+    unsigned int getClientMaxBodySize() const;
 
 	const std::vector<std::string> &getServerNames() const;
 	const std::vector<LocationBlock> &getLocations() const;
-	const std::map<short, std::string> getErrorPage() const;
+	const std::map<unsigned short, std::string> getErrorPage() const;
 	const std::vector<std::string> &getLocationsTxt() const;
 };

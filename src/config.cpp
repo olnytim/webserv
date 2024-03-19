@@ -126,3 +126,39 @@ void ConfigFile::parse(){
 	divideIntoServers(line);
 	parseServers();
 }
+
+void ConfigFile::printParsing() {
+    for (size_t i = 0; i < servers.size(); i++) {
+        std::cout << "Server " << i << std::endl;
+        std::cout << "Server names: ";
+        for (size_t j = 0; j < servers[i].getServerNames().size(); j++) {
+            std::cout << servers[i].getServerNames()[j] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Listen: " << servers[i].getListen() << std::endl;
+        std::cout << "Port: " << servers[i].getPort() << std::endl;
+        std::cout << "Error pages: " << std::endl;
+        std::map<unsigned short, std::string> error_pages = servers[i].getErrorPage();
+        for (std::map<unsigned short, std::string>::iterator it = error_pages.begin(); it != error_pages.end(); it++) {
+            std::cout << it->first << " " << it->second << std::endl;
+        }
+        std::cout << "Client max body size: " << servers[i].getClientMaxBodySize() << std::endl;
+        std::cout << "Locations: " << std::endl;
+        std::vector<LocationBlock> locations = servers[i].getLocations();
+        for (size_t j = 0; j < locations.size(); j++) {
+            std::cout << "Location " << j << std::endl;
+            std::cout << "Route to be saved: " << locations[j].getRoute_to_be_saved() << std::endl;
+            std::cout << "Root: " << locations[j].getRoot() << std::endl;
+            std::cout << "Index: " << locations[j].getIndex() << std::endl;
+            std::cout << "Autoindex: " << locations[j].getAutoindex() << std::endl;
+            std::cout << "Client body temp path: " << locations[j].getClient_body_temp_path() << std::endl;
+            std::cout << "Client max body size: " << locations[j].getClient_max_body_size() << std::endl;
+            std::cout << "Cgi pass: " << locations[j].getCgi_pass() << std::endl;
+            std::cout << "Methods: ";
+            std::vector<std::string> methods = locations[j].getMethods();
+            for (size_t k = 0; k < methods.size(); k++) {
+                std::cout << methods[k] << " ";
+            }
+        }
+    }
+}

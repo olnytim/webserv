@@ -16,6 +16,7 @@ public:
 	void parseServers();
 	void removeComments(std::string &line);
 	void cutLocations();
+    void printParsing();
 
 	static size_t skipWhitespace(const std::string &line, size_t pos);
 	size_t findPair(const std::string &line, size_t pos) const;

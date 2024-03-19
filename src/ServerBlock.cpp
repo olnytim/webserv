@@ -88,3 +88,27 @@ void ServerBlock::parseLocations(){
 void ServerBlock::addLocation(const LocationBlock &loc){
 	locations.push_back(loc);
 }
+
+const std::vector<std::string> &ServerBlock::getServerNames() const{
+    return (server_names);
+}
+
+const std::vector<LocationBlock> &ServerBlock::getLocations() const{
+    return (locations);
+}
+
+const std::map<unsigned short, std::string> ServerBlock::getErrorPage() const{
+    return (error_pages);
+}
+
+std::string ServerBlock::getListen() const{
+    return (listen);
+}
+
+unsigned short ServerBlock::getPort() const{
+    return (port);
+}
+
+unsigned int ServerBlock::getClientMaxBodySize() const{
+    return (client_max_body_size);
+}

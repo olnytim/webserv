@@ -11,7 +11,7 @@ class LocationBlock{
 public:
 	LocationBlock();
 
-	void reportError(const ParseException &ex) const;
+	static void reportError(const ParseException &ex) ;
 
 	void callFunction(const std::string &key, const std::string &str);
 	void setRedirect_map(const std::string& line);
@@ -19,10 +19,20 @@ public:
 	void setMethods(const std::string& line);
 	void setIndex(const std::string& line);
 	void setAutoindex(const std::string& line);
-	void setRoute_to_be_saved(const std::string& line);
+	static void setRoute_to_be_saved(const std::string& line);
 	void setClient_body_temp_path(const std::string& line);
 	void setClient_max_body_size(const std::string& line);
 	void setCgi_pass(const std::string& line);
+
+    const std::string &getRoot() const;
+    const std::string &getIndex() const;
+    const std::string &getRoute_to_be_saved() const;
+    const std::string &getClient_body_temp_path() const;
+    const std::string &getCgi_pass() const;
+    const std::vector<std::string> &getMethods() const;
+    const std::map<short, std::string> &getRedirect_map() const;
+    unsigned int getClient_max_body_size() const;
+    bool getAutoindex() const;
 
 //	void setAllowed_methods(const std::string& line);
 private:

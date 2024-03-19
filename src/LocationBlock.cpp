@@ -14,7 +14,7 @@ LocationBlock::LocationBlock(){
 //	keywordsMap["limit_except"] = &LocationBlock::setAllowed_methods;
 }
 
-void LocationBlock::reportError(const ParseException &ex) const{
+void LocationBlock::reportError(const ParseException &ex) {
 	throw (ex);
 }
 
@@ -88,4 +88,40 @@ void LocationBlock::setClient_max_body_size(const std::string &line){
 	if (!(iss >> client_max_body_size)){
 		reportError(locationParseException("Invalid Client_max_body_size value in Location Block"));
 	}
+}
+
+const std::string &LocationBlock::getRoot() const{
+    return (root);
+}
+
+const std::string &LocationBlock::getIndex() const{
+    return (index);
+}
+
+const std::string &LocationBlock::getRoute_to_be_saved() const{
+    return (route_to_be_saved);
+}
+
+const std::string &LocationBlock::getClient_body_temp_path() const{
+    return (client_body_temp_path);
+}
+
+const std::string &LocationBlock::getCgi_pass() const{
+    return (cgi_pass);
+}
+
+const std::vector<std::string> &LocationBlock::getMethods() const{
+    return (methods);
+}
+
+const std::map<short, std::string> &LocationBlock::getRedirect_map() const{
+    return (redirect_map);
+}
+
+unsigned int LocationBlock::getClient_max_body_size() const{
+    return (client_max_body_size);
+}
+
+bool LocationBlock::getAutoindex() const{
+    return (autoindex);
 }
