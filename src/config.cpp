@@ -160,5 +160,6 @@ void ConfigFile::printParsing() {
                 std::cout << methods[k] << " ";
             }
         }
+        std::cout << std::endl;
     }
 }
