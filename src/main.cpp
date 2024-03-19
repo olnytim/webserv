@@ -1,4 +1,4 @@
-#include "config.hpp"
+#include "../includes/config.hpp"
 
 int main(){
 	ConfigFile conf;

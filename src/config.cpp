@@ -1,4 +1,4 @@
-#include "config.hpp"
+#include "../includes/config.hpp"
 
 void ConfigFile::reportError(const ParseException &ex) const{
 	throw (ex);
