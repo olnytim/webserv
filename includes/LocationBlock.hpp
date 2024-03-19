@@ -5,8 +5,9 @@
 #include <vector>
 #include <sstream>
 #include "IReportError.hpp"
+#include "exceptions.hpp" 
 
-class LocationBlock : public IReportError{
+class LocationBlock{
 public:
 	LocationBlock();
 

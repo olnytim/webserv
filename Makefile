@@ -8,7 +8,7 @@ PREF_OBJ = obj
 PREF_HEADER = includes
 
 SRC = $(addprefix $(PREF_SRC)/, main.cpp config.cpp ServerBlock.cpp LocationBlock.cpp)
-OBJ = $(patsubst %.cpp, $(PREF_OBJ)/%.o, $(SRC))
+OBJ = $(patsubst $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
 HEADER = $(wildcard $(PREF_HEADER)/*.hpp)
 
 all: $(NAME)

@@ -2,7 +2,7 @@
 
 #include "LocationBlock.hpp"
 
-class ServerBlock : public IReportError{
+class ServerBlock {
 private:
 	typedef void(ServerBlock::*func)(const std::string&);
 	std::map<const std::string, func> keywords;
@@ -17,7 +17,7 @@ private:
 	unsigned short port;
 public:
 	ServerBlock();
-	
+
 	void callFunction(const std::string &key, std::string str);
 
 	void setServerName(const std::string &line);

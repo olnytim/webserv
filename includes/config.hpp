@@ -6,7 +6,7 @@
 #include "IReportError.hpp"
 #include "LocationBlock.hpp"
 
-class ConfigFile : public IConfigParse, public IReportError {
+class ConfigFile : public IConfigParse{
 public:
 	void reportError(const ParseException &ex) const;
 
