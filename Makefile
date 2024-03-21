@@ -6,10 +6,13 @@ CC = c++
 PREF_SRC = src
 PREF_OBJ = obj
 PREF_HEADER = includes
+PARSING_PATH = parsing
+PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
+PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
 
-SRC = $(addprefix $(PREF_SRC)/, main.cpp config.cpp ServerBlock.cpp LocationBlock.cpp)
-OBJ = $(patsubst $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
-HEADER = $(wildcard $(PREF_HEADER)/*.hpp)
+SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC))
+OBJ = $(patsubst $(PARSING_HEADER)/%.cpp $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
+HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)
 
 all: $(NAME)
 	@echo > /dev/null
@@ -17,6 +20,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $(OBJ) -o $(NAME)
 	@echo "$(NAME) file was created!"
+	@rm -rf webserv.dSYM
 
 
 $(PREF_OBJ)/%.o: $(PREF_SRC)/%.cpp $(HEADER) Makefile

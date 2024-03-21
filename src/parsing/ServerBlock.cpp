@@ -1,5 +1,5 @@
-#include "../includes/ServerBlock.hpp"
-#include "../includes/config.hpp"
+#include "../../includes/parsing/ServerBlock.hpp"
+#include "../../includes/parsing/config.hpp"
 
 ServerBlock::ServerBlock(){
 	keywords["server_name"] = &ServerBlock::setServerName;

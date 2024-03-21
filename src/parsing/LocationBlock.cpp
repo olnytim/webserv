@@ -1,5 +1,5 @@
-#include "../includes/LocationBlock.hpp"
-#include "../includes/exceptions.hpp"
+#include "../../includes/parsing/LocationBlock.hpp"
+#include "../../includes/parsing/exceptions.hpp"
 
 LocationBlock::LocationBlock(){
 	keywordsMap["return"] = &LocationBlock::setRedirect_map;
