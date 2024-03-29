@@ -125,6 +125,7 @@ void ConfigFile::parse(){
 	}
 	divideIntoServers(line);
 	parseServers();
+		
 }
 
 void ConfigFile::printParsing() {

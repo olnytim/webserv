@@ -7,12 +7,15 @@ PREF_SRC = src
 PREF_OBJ = obj
 PREF_HEADER = includes
 PARSING_PATH = parsing
+REQUEST_PATH = request
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
+REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
+REQUEST_SRC = $(addprefix $(REQUEST_PATH)/, Request.cpp)
 
-SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC))
-OBJ = $(patsubst $(PARSING_HEADER)/%.cpp $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
-HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)
+SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC) $(REQUEST_SRC))
+OBJ = $(patsubst $(PARSING_SRC)/%.cpp $(REQUEST_SRC)/%.cpp $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
+HEADER = $(wildcard $(PARSING_HEADER)/*.hpp) $(wildcard $(REQUEST_HEADER)/*.hpp)
 
 all: $(NAME)
 	@echo > /dev/null
