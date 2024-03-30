@@ -11,7 +11,9 @@ PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
 
 SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC))
-OBJ = $(patsubst $(PARSING_HEADER)/%.cpp $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
+OBJ = $(patsubst $(PREF_SRC)/$(PARSING_PATH)/%.cpp \
+				$(PREF_SRC)/%.cpp, \
+				$(PREF_OBJ)/%.o, $(SRC))
 HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)
 
 all: $(NAME)
