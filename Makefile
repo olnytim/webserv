@@ -7,10 +7,11 @@ PREF_SRC = src
 PREF_OBJ = obj
 PREF_HEADER = includes
 PARSING_PATH = parsing
+SOCKETS_PATH = sockets
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
-
-SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC))
+SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, Webserv.cpp)
+SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC) $(SOCKETS_SRC))
 OBJ = $(patsubst $(PREF_SRC)/$(PARSING_PATH)/%.cpp \
 				$(PREF_SRC)/%.cpp, \
 				$(PREF_OBJ)/%.o, $(SRC))
