@@ -18,10 +18,11 @@ public:
 	void cutLocations();
     void printParsing();
 
-	static size_t skipWhitespace(const std::string &line, size_t pos);
-	size_t findPair(const std::string &line, size_t pos) const;
+    static size_t skipWhitespace(const std::string &line, size_t pos);
+    size_t findPair(const std::string &line, size_t pos) const;
+
+    std::vector<ServerBlock> servers;
 private:
-	std::ifstream config;
-	std::vector<ServerBlock> servers;
+    std::ifstream config;
 	std::vector<std::string> serversTxt;
 };
