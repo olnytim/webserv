@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/webserv.dir/src/main.cpp.o CMakeFiles/webserv.dir/src/parsing/LocationBlock.cpp.o CMakeFiles/webserv.dir/src/parsing/ServerBlock.cpp.o CMakeFiles/webserv.dir/src/parsing/config.cpp.o CMakeFiles/webserv.dir/src/sockets/Webserv.cpp.o -o webserv 

@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.27"
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "webserv::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-webserv-Debug-231d0eb30aae06018547.json",
+					"jsonFile" : "target-webserv-Debug-7eb11872be07cd4b41c7.json",
 					"name" : "webserv",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/Tim/webserv/cmake-build-debug",
-		"source" : "C:/Users/Tim/webserv"
+		"build" : "/home/olnytim/42MainCursus/webserv/cmake-build-debug",
+		"source" : "/home/olnytim/42MainCursus/webserv"
 	},
 	"version" : 
 	{

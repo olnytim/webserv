@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 98)
 add_executable(webserv src/main.cpp
         src/parsing/LocationBlock.cpp
         src/parsing/ServerBlock.cpp
-        src/parsing/config.cpp)
+        src/parsing/config.cpp
+        src/sockets/Webserv.cpp)

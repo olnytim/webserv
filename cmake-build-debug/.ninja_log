@@ -1,9 +1,0 @@
-# ninja log v5
-1115	1548	7325729386900380	webserv.exe	8efbe4990592fe3
-6	204	7327335677614151	build.ninja	fb9e2d3cf98c0363
-6	922	7325723652714515	CMakeFiles/webserv.dir/src/main.cpp.obj	d86474304fa040a5
-5	839	7327335759714379	CMakeFiles/webserv.dir/src/main.cpp.obj	d86474304fa040a5
-9	996	7327335761286328	CMakeFiles/webserv.dir/src/parsing/LocationBlock.cpp.obj	5e45be0f3a8a1717
-12	1342	7327335764758643	CMakeFiles/webserv.dir/src/parsing/config.cpp.obj	1616402236c3ac66
-16	1369	7327335765028695	CMakeFiles/webserv.dir/src/parsing/ServerBlock.cpp.obj	ede88232d54de8ef
-1370	1758	7327335768882368	webserv.exe	e901a2f4145a48a7
