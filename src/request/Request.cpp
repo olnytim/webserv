@@ -4,7 +4,7 @@ RequestParsing::RequestParsing(Request &request) : req(request){
 }
 
 void RequestParsing::requestTarget(std::stringstream &req){
-
+(void)req;
 }
 
 void RequestParsing::method(std::stringstream &req){

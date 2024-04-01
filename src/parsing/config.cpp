@@ -1,11 +1,17 @@
 #include "../../includes/parsing/config.hpp"
 
+
 void ConfigFile::reportError(const ParseException &ex) const{
 	throw (ex);
 }
 
-void ConfigFile::openConfig(){
-	this->config.open("test.conf");
+const std::vector<ServerBlock> &ConfigFile::getServers() const{
+	return servers;
+}
+
+
+void ConfigFile::openConfig(const std::string &file){
+	this->config.open(file);
 	if (!config.is_open()){
 		reportError(configFileException("Could not open the config file"));
 	}
