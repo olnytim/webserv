@@ -4,6 +4,7 @@
 int main(int argc, char **argv){
 	ConfigFile conf;
 	Request req;
+	RequestParse reqp(req);
 	(void)argc;
 	try{
 		conf.openConfig();
@@ -12,5 +13,6 @@ int main(int argc, char **argv){
 	} catch (const ParseException &ex){
 		std::cerr << "Error: " << ex.what() << std::endl;
 	}
+
 	req.parse(argv[1]);
 }

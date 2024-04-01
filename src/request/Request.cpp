@@ -1,21 +1,37 @@
 #include "../../includes/request/Request.hpp"
 
-void Request::checkMethod(){
-	
+RequestParsing::RequestParsing(Request &request) : req(request){
 }
 
-void Request::parseRequestLine(const std::string &reqLine){
-	if (!reqLine){
+void RequestParsing::requestTarget(std::stringstream &req){
+
+}
+
+void RequestParsing::method(std::stringstream &req){
+	std::string reqTarget;
+	getline(req, reqTarget, ' ');
+
+}
+
+void RequestParsing::parseRequestLine(const std::string &reqLine, Request &ref){
+	std::string method;
+
+	if (!reqLine.size()){
 		std::cout << "Error" << std::endl; //throw error
 		return ;
 	}
+	method();
 	std::stringstream req(reqLine);
-	getline(req, method);
-	checkMethod();
+	getline(req, method, ' ');
+	if (!method.size()){
+		std::cout << "Error" << std::endl; //throw error
+		return ;
+	}
+
 }
 
-void Request::parse(const std::string &request){
-	parseRequestLine(request.substr(0, request.find("\n")));
+void RequestParsing::parse(const std::string &request){
+	parseRequestLine(request.substr(0, request.find("\n")), *this);
 }
 
 const std::string &Request::getRequestLine() const{
