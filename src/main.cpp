@@ -1,18 +1,26 @@
 #include "../includes/parsing/config.hpp"
-#include "../includes/request/Request.hpp"
+#include "../includes/request/RequestParsing.hpp"
 
 int main(int argc, char **argv){
 	ConfigFile conf;
-	// Request req;
-	// RequestParse reqp(req);
-	(void)argc;
+	Request req;
+	RequestParsing reqp(req);
+
 	try{
-		conf.openConfig(argv[1]);
+		switch (argc){
+			case 1:
+				conf.openConfig("test.conf");
+				break;
+			case 2:
+				conf.openConfig(argv[1]);
+				break;
+			default:
+				return (1);
+		}
 		conf.parse();
-        // conf.printParsing();
+		// conf.printParsing();
+		reqp.parse(argv[1]);
 	} catch (const ParseException &ex){
 		std::cerr << "Error: " << ex.what() << std::endl;
 	}
-
-	// req.parse(argv[1]);
 }

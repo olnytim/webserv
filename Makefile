@@ -11,7 +11,7 @@ REQUEST_PATH = request
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
 REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
-REQUEST_SRC = $(addprefix $(REQUEST_PATH)/, Request.cpp)
+REQUEST_SRC = $(addprefix $(REQUEST_PATH)/, Request.cpp RequestParsing.cpp)
 
 SRC = $(addprefix $(PREF_SRC)/, main.cpp $(PARSING_SRC) $(REQUEST_SRC))
 OBJ = $(patsubst $(PARSING_SRC)/%.cpp $(REQUEST_SRC)/%.cpp $(PREF_SRC)/%.cpp, $(PREF_OBJ)/%.o, $(SRC))
