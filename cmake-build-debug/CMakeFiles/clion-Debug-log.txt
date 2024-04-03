@@ -1,13 +1,6 @@
-/var/lib/snapd/snap/clion/265/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/olnytim/42MainCursus/webserv -B /home/olnytim/42MainCursus/webserv/cmake-build-debug
-CMake Deprecation Warning:
-  Support for "Extra Generators" like
-
-    CodeBlocks
-
-  is deprecated and will be removed from a future version of CMake.  IDEs may
-  use the cmake-file-api(7) to view CMake-generated project build trees.
+/private/var/folders/zz/zyxvpxvq6csfxvn_n000chtr00346p/T/AppTranslocation/47DCA4FD-1F72-41CE-BC6F-42514BF86C1B/d/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /Users/vgribkov/Desktop/webserv -B /Users/vgribkov/Desktop/webserv/cmake-build-debug
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  CMake 3.27 or higher is required.  You are running version 3.26.4
 
 
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/olnytim/42MainCursus/webserv/cmake-build-debug
+-- Configuring incomplete, errors occurred!

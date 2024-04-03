@@ -1,3 +1,0 @@
-/home/olnytim/42MainCursus/webserv/cmake-build-debug/CMakeFiles/webserv.dir
-/home/olnytim/42MainCursus/webserv/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/olnytim/42MainCursus/webserv/cmake-build-debug/CMakeFiles/rebuild_cache.dir
