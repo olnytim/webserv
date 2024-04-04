@@ -7,4 +7,4 @@ add_executable(webserv src/main.cpp
         src/parsing/LocationBlock.cpp
         src/parsing/ServerBlock.cpp
         src/parsing/config.cpp
-        src/sockets/Webserv.cpp)
+        src/sockets/WebServer.cpp)
