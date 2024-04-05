@@ -17,9 +17,11 @@ PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationB
 #
 SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
-		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp, \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp \
 		$(PREF_SRC)/$(PARSING_PATH)/%.cpp, \
-		$(PREF_OBJ)/%.o, $(SRC))
+		$(PREF_OBJ)/%. \
+		$(PREF_SRC)/$(PARSING_PATH)/%.o \
+		$(PREF_SRC)/$(PARSING_PATH)/%.o, $(SRC))
 #
 HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)
 HEADER += $(wildcard $(SOCKETS_HEADER)/*.hpp)
