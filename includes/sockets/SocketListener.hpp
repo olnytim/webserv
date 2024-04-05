@@ -16,8 +16,8 @@ public:
 
 protected:
 	virtual void onClientConnected(int client) = 0;
-	virtual void onMessageReceived(int client, const char* msg) = 0;
-	virtual void onClientDisconnected(int client) = 0;
+    virtual void onClientDisconnected(int client) = 0;
+    virtual void onMessageReceived(int client, const char* msg) = 0;
 
 	static void sendToClient(int client, const char* msg, int length);
 

@@ -68,7 +68,6 @@
 #include "../../includes/sockets/WebServer.hpp"
 #include <fstream>
 #include <vector>
-#include <iostream>
 #include <sstream>
 
 void WebServer::onClientConnected(int client) {

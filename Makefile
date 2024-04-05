@@ -19,7 +19,7 @@ SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
 		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp \
 		$(PREF_SRC)/$(PARSING_PATH)/%.cpp, \
-		$(PREF_OBJ)/%. \
+		$(PREF_OBJ)/%.o\
 		$(PREF_SRC)/$(PARSING_PATH)/%.o \
 		$(PREF_SRC)/$(PARSING_PATH)/%.o, $(SRC))
 #
