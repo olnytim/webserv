@@ -10,6 +10,6 @@ public:
 
 protected:
 	void onClientConnected(int client);
-	void onMessageReceived(int client, const char* msg, int length);
+	void onMessageReceived(int client, const char* msg);
 	void onClientDisconnected(int client);
 };

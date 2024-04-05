@@ -16,11 +16,10 @@ public:
 
 protected:
 	virtual void onClientConnected(int client) = 0;
-	virtual void onMessageReceived(int client, const char* msg, int length) = 0;
+	virtual void onMessageReceived(int client, const char* msg) = 0;
 	virtual void onClientDisconnected(int client) = 0;
 
 	static void sendToClient(int client, const char* msg, int length);
-	void broadcastToClients(int sendingClient, const char* msg, int length);
 
 private:
 	unsigned short  port;

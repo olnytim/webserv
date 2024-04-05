@@ -30,7 +30,7 @@ bool SocketListener::run() {
 		}
 		max_fd += 1;
 
-		int socketCount = select(0, &copy, NULL, NULL, NULL);
+		int socketCount = select(max_fd, &copy, NULL, NULL, NULL);
 		if (socketCount == -1)
 			continue;
 
@@ -56,7 +56,7 @@ bool SocketListener::run() {
 						FD_CLR(sock, &master);
 					}
 					else
-						onMessageReceived(sock, buf, bytesIn);
+						onMessageReceived(sock, buf);
 				}
 			}
 		}
@@ -66,15 +66,4 @@ bool SocketListener::run() {
 // send and broadcast messages
 void SocketListener::sendToClient(int client, const char* msg, int length) {
 	send(client, msg, length, 0);
-}
-
-void SocketListener::broadcastToClients(int sendingClient, const char* msg, int length) {
-//    for (int i = 0; i < master.fd_count; i++) {
-//        int outSock = master.fd_array[i];
-//        if (outSock != sockets && outSock != sendingClient)
-//            sendToClient(outSock, msg, length);
-//    }
-	(void)sendingClient;
-	(void)msg;
-	(void)length;
 }

@@ -68,7 +68,6 @@
 #include "../../includes/sockets/WebServer.hpp"
 #include <fstream>
 #include <vector>
-#include <string>
 #include <iostream>
 #include <sstream>
 
@@ -80,8 +79,7 @@ void WebServer::onClientDisconnected(int client) {
     (void)client;
 }
 
-void WebServer::onMessageReceived(int client, const char* msg, int length) {
-    (void)length;
+void WebServer::onMessageReceived(int client, const char* msg) {
     std::istringstream iss(msg);
     std::vector<std::string> tokens;
     std::string token;
@@ -121,7 +119,6 @@ void WebServer::onMessageReceived(int client, const char* msg, int length) {
     }
     f.close();
     std::ostringstream response;
-    std::cout << content.size() << std::endl;
     response << "HTTP/1.1 " << error_code << " OK\r\n"
              << "Cache-Control: no-cache, no-store, must-revalidate\r\n"
              << "Content-Type: text/" << contentType << "\r\n"
