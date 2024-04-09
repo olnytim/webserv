@@ -7,7 +7,6 @@ void RequestParsing::httpVersion(std::stringstream &req){
 	std::string version;
 
 	getline(req, version);
-	
 }
 
 void RequestParsing::requestTarget(std::stringstream &req){
