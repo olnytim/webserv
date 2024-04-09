@@ -2,9 +2,10 @@
 
 #include "IConfigParse.hpp"
 #include "ServerBlock.hpp"
-#include <fstream>
+//#include <fstream>
 #include "IReportError.hpp"
 #include "LocationBlock.hpp"
+#include "../Headers.hpp"
 
 class ConfigFile : public IConfigParse{
 public:

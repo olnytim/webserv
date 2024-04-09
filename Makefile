@@ -15,16 +15,24 @@ PARSING_PATH = parsing
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
 #
-SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC))
+REQUEST_PATH = request
+REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
+REQUEST_SRC = $(addprefix $(REQUEST_PATH)/, Request.cpp RequestParsing.cpp)
+#
+SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC) $(REQUEST_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
 		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp \
-		$(PREF_SRC)/$(PARSING_PATH)/%.cpp, \
-		$(PREF_OBJ)/%.o\
+		$(PREF_SRC)/$(PARSING_PATH)/%.cpp \
+		$(PREF_SRC)/$(REQUEST_PATH)/%.cpp, \
+		$(PREF_OBJ)/%.o \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.o \
 		$(PREF_SRC)/$(PARSING_PATH)/%.o \
-		$(PREF_SRC)/$(PARSING_PATH)/%.o, $(SRC))
+		$(PREF_SRC)/$(REQUEST_PATH)/%.o, $(SRC))
 #
 HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)
 HEADER += $(wildcard $(SOCKETS_HEADER)/*.hpp)
+HEADER += $(wildcard $(REQUEST_HEADER)/*.hpp)
+HEADER += $(wildcard $(PREF_HEADER)/*.hpp)
 #
 all: $(NAME)
 	@echo > /dev/null
