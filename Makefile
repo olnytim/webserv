@@ -12,7 +12,9 @@ SOCKETS_HEADER = $(PREF_HEADER)/$(SOCKETS_PATH)
 SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, WebServer.cpp SocketListener.cpp)
 #
 PARSING_PATH = parsing
+REQUEST_PATH = request
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
+REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
 #
 REQUEST_PATH = request

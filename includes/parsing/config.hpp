@@ -7,12 +7,14 @@
 #include "LocationBlock.hpp"
 #include "../Headers.hpp"
 
-class ConfigFile : public IConfigParse{
+class ConfigFile{
 public:
 	void reportError(const ParseException &ex) const;
 
+	const std::vector<ServerBlock> &getServers() const;
+
 	void parse();
-	void openConfig();
+	void openConfig(const std::string &file);
 	void divideIntoServers(const std::string &line);
 	void parseServers();
 	void removeComments(std::string &line);
