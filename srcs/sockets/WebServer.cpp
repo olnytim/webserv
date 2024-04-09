@@ -18,7 +18,7 @@ void WebServer::onMessageReceived(int client, const char* msg) {
     }
 
     std::string content = "<h1>404 not found</h1>";
-    std::string fileHtml = "index.html";
+    std::string fileHtml = "cats.html";
     std::string contentType;
     int error_code = 404;
 
