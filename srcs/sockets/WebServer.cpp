@@ -1,5 +1,4 @@
 #include "../../includes/sockets/WebServer.hpp"
-#include <fstream>
 
 void WebServer::onClientConnected(int client) {
     (void)client;
@@ -34,9 +33,9 @@ void WebServer::onMessageReceived(int client, const char* msg) {
         content = buffer.str();
     }
     if (fileHtml.find(".html") != std::string::npos) {
-        contentType = "text/html";
+        contentType = "html";
     } else if (fileHtml.find(".css") != std::string::npos) {
-        contentType = "text/css";
+        contentType = "css";
     } else if (fileHtml.find(".jpeg") != std::string::npos) {
         contentType = "jpeg";
         std::fstream f(fileHtml.c_str(), std::ios::in | std::ios::binary);
@@ -51,7 +50,8 @@ void WebServer::onMessageReceived(int client, const char* msg) {
     std::ostringstream response;
     response << "HTTP/1.1 " << error_code << " OK\r\n"
              << "Cache-Control: no-cache, no-store, must-revalidate\r\n"
-             << "Content-Type: " << contentType << "\r\n"
+             << "Content-Type: " << dataStorage.getMimeType(contentType) << "\r\n"
+//             << "Content-Type: " << contentType << "\r\n"
              << "Content-Length: " << content.size() << "\r\n"
              << "Connection: close\r\n"
              << "\r\n"

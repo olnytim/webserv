@@ -6,11 +6,18 @@ void sigpipeHandler(int signum) {
 }
 
 int main(int ac, char **av){
-    if (ac == 1 || ac == 2) {
+    if (ac < 3) {
         ConfigFile conf;
         try {
             signal(SIGPIPE, sigpipeHandler);
-            conf.openConfig();
+            switch (ac){
+			case 1:
+				conf.openConfig("test.conf");
+				break;
+			case 2:
+				conf.openConfig(av[1]);
+				break;
+		}
             conf.parse();
             conf.printParsing();
         } catch (const ParseException &ex) {

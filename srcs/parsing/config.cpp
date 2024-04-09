@@ -11,7 +11,7 @@ const std::vector<ServerBlock> &ConfigFile::getServers() const{
 
 
 void ConfigFile::openConfig(const std::string &file){
-	this->config.open(file);
+	this->config.open(file.c_str());
 	if (!config.is_open()){
 		reportError(configFileException("Could not open the config file"));
 	}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DataStorage.hpp"
 #include "SocketListener.hpp"
 #include "../parsing/ServerBlock.hpp"
 
@@ -14,6 +15,7 @@ public:
     }
 
 protected:
+    DataStorage dataStorage;
     ServerBlock server;
 
 	void onClientConnected(int client);

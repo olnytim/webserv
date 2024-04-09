@@ -7,15 +7,13 @@ PREF_SRC = srcs
 PREF_OBJ = obj
 PREF_HEADER = includes
 #
+PARSING_PATH = parsing
+PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
+PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
+#
 SOCKETS_PATH = sockets
 SOCKETS_HEADER = $(PREF_HEADER)/$(SOCKETS_PATH)
-SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, WebServer.cpp SocketListener.cpp)
-#
-PARSING_PATH = parsing
-REQUEST_PATH = request
-PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
-REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
-PARSING_SRC = $(addprefix $(PARSING_PATH)/, config.cpp ServerBlock.cpp LocationBlock.cpp)
+SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, WebServer.cpp SocketListener.cpp DataStorage.cpp)
 #
 REQUEST_PATH = request
 REQUEST_HEADER = $(PREF_HEADER)/$(REQUEST_PATH)
@@ -23,12 +21,12 @@ REQUEST_SRC = $(addprefix $(REQUEST_PATH)/, Request.cpp RequestParsing.cpp)
 #
 SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC) $(REQUEST_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
-		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp \
 		$(PREF_SRC)/$(PARSING_PATH)/%.cpp \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp \
 		$(PREF_SRC)/$(REQUEST_PATH)/%.cpp, \
 		$(PREF_OBJ)/%.o \
-		$(PREF_SRC)/$(SOCKETS_PATH)/%.o \
 		$(PREF_SRC)/$(PARSING_PATH)/%.o \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.o \
 		$(PREF_SRC)/$(REQUEST_PATH)/%.o, $(SRC))
 #
 HEADER = $(wildcard $(PARSING_HEADER)/*.hpp)

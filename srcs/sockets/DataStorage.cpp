@@ -1,22 +1,6 @@
 #include "../../includes/sockets/DataStorage.hpp"
 
 DataStorage::DataStorage() {
-    MimeTypes = initMimeTypes();
-    root = getCurrentWorkingDirectory();
-    initDefaultErrorPages();
-}
-
-std::string DataStorage::getCurrentWorkingDirectory() {
-    char buff[FILENAME_MAX];
-    getcwd(buff, FILENAME_MAX);
-    std::string current_working_dir(buff);
-    initDefaultErrorPages();
-    return current_working_dir;
-}
-
-std::map<std::string, std::string> DataStorage::initMimeTypes()
-{
-    std::map<std::string, std::string> mimeTypes;
     mimeTypes["html"] = "text/html";
     mimeTypes["htm"] = "text/html";
     mimeTypes["shtml"] = "text/html";
@@ -90,10 +74,7 @@ std::map<std::string, std::string> DataStorage::initMimeTypes()
     mimeTypes["wav"] = "audio/x-wav";
     mimeTypes["mov"] = "video/quicktime";
     mimeTypes["qt"] = "video/quicktime";
-    return mimeTypes;
-}
-
-void DataStorage::initDefaultErrorPages() {
+    root = getCurrentWorkingDirectory();
     defaultErrorPages[400] = root + "/www/errors/standardErrors/HTTP400.html";
     defaultErrorPages[401] = root + "/www/errors/standardErrors/HTTP401.html";
     defaultErrorPages[403] = root + "/www/errors/standardErrors/HTTP403.html";
@@ -103,4 +84,22 @@ void DataStorage::initDefaultErrorPages() {
     defaultErrorPages[500] = root + "/www/errors/standardErrors/HTTP500.html";
     defaultErrorPages[501] = root + "/www/errors/standardErrors/HTTP501.html";
     defaultErrorPages[505] = root + "/www/errors/standardErrors/HTTP505.html";
+}
+
+std::string DataStorage::getCurrentWorkingDirectory() {
+    char buff[FILENAME_MAX];
+    getcwd(buff, FILENAME_MAX);
+    std::string current_working_dir(buff);
+    return current_working_dir;
+}
+
+std::string DataStorage::getMimeType(const std::string &extension) {
+    if (mimeTypes.find(extension) != mimeTypes.end()) {
+        return mimeTypes[extension];
+    }
+    return "text/html";
+}
+
+std::map<int, std::string> DataStorage::getErrorPages() {
+    return defaultErrorPages;
 }
