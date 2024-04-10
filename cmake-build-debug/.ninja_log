@@ -1,9 +1,16 @@
 # ninja log v5
-3	2143	1712422073895450177	CMakeFiles/webserv.dir/srcs/main.cpp.o	445f249137547124
+6	2912	1712757232822625982	CMakeFiles/webserv.dir/srcs/main.cpp.o	445f249137547124
 484	701	1712441984323576204	webserv	f0c939c42703c192
-3	405	1712689508484386961	build.ninja	dda8bc1b455bcc4a
-23	1667	1712417674266418000	CMakeFiles/webserv.dir/srcs/parsing/LocationBlock.cpp.o	a48a10c9694aade0
-2	484	1712441984106575728	CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o	832343c63a7a3c37
-12	1953	1712417674552420564	CMakeFiles/webserv.dir/srcs/parsing/config.cpp.o	24fcd49fcc0c6b48
+3	405	1712757620610215047	build.ninja	dda8bc1b455bcc4a
+20	1989	1712757231909576713	CMakeFiles/webserv.dir/srcs/parsing/LocationBlock.cpp.o	a48a10c9694aade0
+3215	4476	1712757234405711407	CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o	ed311426cc9a1e62
+2912	4019	1712757233948686745	CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o	832343c63a7a3c37
+19	3214	1712757233142643250	CMakeFiles/webserv.dir/srcs/parsing/config.cpp.o	24fcd49fcc0c6b48
 2	443	1712422087090484822	CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o	1ba7ab733bb3dbae
-1670	3053	1712417675651430416	CMakeFiles/webserv.dir/srcs/parsing/ServerBlock.cpp.o	ddd4feb4efe6f883
+1991	4015	1712757233943686476	CMakeFiles/webserv.dir/srcs/parsing/ServerBlock.cpp.o	ddd4feb4efe6f883
+2	146	1712757620610215047	build.ninja	dda8bc1b455bcc4a
+4	505	1712757621145204734	CMakeFiles/webserv.dir/srcs/request/Request.cpp.o	590c5dc99a5c1dff
+2	535	1712757621176204137	CMakeFiles/webserv.dir/srcs/request/RequestParsing.cpp.o	3d37a9041fcc0f39
+4	1040	1712757621680194422	CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o	832343c63a7a3c37
+517	1045	1712757621685194325	CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o	1ba7ab733bb3dbae
+1045	1460	1712757622097186384	webserv	926cf7a6c775edf

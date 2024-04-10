@@ -1,11 +1,11 @@
 #include "../../includes/sockets/SocketListener.hpp"
 
 bool SocketListener::init() {
-	sockets = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockets == -1)
+	if ((sockets = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 		return false;
 
 	addr_in.sin_family = AF_INET;
+    addr_in.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr_in.sin_port = htons(port);
 	inet_pton(AF_INET, ip, &addr_in.sin_addr);
 	if (bind(sockets, (struct sockaddr*)&addr_in, sizeof(addr_in)) == -1)
@@ -63,7 +63,6 @@ bool SocketListener::run() {
 	}
 }
 
-// send and broadcast messages
 void SocketListener::sendToClient(int client, const char* msg, int length) {
 	send(client, msg, length, 0);
 }

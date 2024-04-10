@@ -73,8 +73,26 @@ build CMakeFiles/webserv.dir/srcs/parsing/config.cpp.o: CXX_COMPILER__webserv_un
   OBJECT_DIR = CMakeFiles/webserv.dir
   OBJECT_FILE_DIR = CMakeFiles/webserv.dir/srcs/parsing
 
+build CMakeFiles/webserv.dir/srcs/request/RequestParsing.cpp.o: CXX_COMPILER__webserv_unscanned_Debug /home/olnytim/CLionProjects/webserve/srcs/request/RequestParsing.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles/webserv.dir/srcs/request/RequestParsing.cpp.o.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles/webserv.dir/srcs/request
+
+build CMakeFiles/webserv.dir/srcs/request/Request.cpp.o: CXX_COMPILER__webserv_unscanned_Debug /home/olnytim/CLionProjects/webserve/srcs/request/Request.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles/webserv.dir/srcs/request/Request.cpp.o.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles/webserv.dir/srcs/request
+
 build CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o: CXX_COMPILER__webserv_unscanned_Debug /home/olnytim/CLionProjects/webserve/srcs/sockets/WebServer.cpp || cmake_object_order_depends_target_webserv
   DEP_FILE = CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o.d
+  FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/webserv.dir
+  OBJECT_FILE_DIR = CMakeFiles/webserv.dir/srcs/sockets
+
+build CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o: CXX_COMPILER__webserv_unscanned_Debug /home/olnytim/CLionProjects/webserve/srcs/sockets/SocketListener.cpp || cmake_object_order_depends_target_webserv
+  DEP_FILE = CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o.d
   FLAGS = -g -std=gnu++98 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/webserv.dir
   OBJECT_FILE_DIR = CMakeFiles/webserv.dir/srcs/sockets
@@ -93,7 +111,7 @@ build CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o: CXX_COMPILER__webse
 #############################################
 # Link the executable webserv
 
-build webserv: CXX_EXECUTABLE_LINKER__webserv_Debug CMakeFiles/webserv.dir/srcs/main.cpp.o CMakeFiles/webserv.dir/srcs/parsing/LocationBlock.cpp.o CMakeFiles/webserv.dir/srcs/parsing/ServerBlock.cpp.o CMakeFiles/webserv.dir/srcs/parsing/config.cpp.o CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o
+build webserv: CXX_EXECUTABLE_LINKER__webserv_Debug CMakeFiles/webserv.dir/srcs/main.cpp.o CMakeFiles/webserv.dir/srcs/parsing/LocationBlock.cpp.o CMakeFiles/webserv.dir/srcs/parsing/ServerBlock.cpp.o CMakeFiles/webserv.dir/srcs/parsing/config.cpp.o CMakeFiles/webserv.dir/srcs/request/RequestParsing.cpp.o CMakeFiles/webserv.dir/srcs/request/Request.cpp.o CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/webserv.dir
   POST_BUILD = :

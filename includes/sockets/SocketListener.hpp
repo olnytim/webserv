@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <sys/socket.h>
 #include "../Headers.hpp"
 
 class SocketListener
@@ -9,7 +8,8 @@ public:
 	bool init();
 	bool run();
 
-	SocketListener(unsigned short port, const char* ip) : port(port), ip(ip), sockets(-1), addr_in(), master() {}
+	SocketListener(unsigned short port, const char* ip, const std::vector<std::string> &server_name) :
+            port(port), ip(ip), sockets(-1), addr_in(), master(),  server_name(server_name){}
 
 protected:
 	virtual void onClientConnected(int client) = 0;
@@ -24,4 +24,5 @@ private:
 	int             sockets;
 	sockaddr_in     addr_in;
 	fd_set          master;
+    std::vector<std::string> server_name;
 };

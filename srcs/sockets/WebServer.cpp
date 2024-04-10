@@ -16,6 +16,10 @@ void WebServer::onMessageReceived(int client, const char* msg) {
         tokens.push_back(token);
     }
 
+//    for (size_t i = 0; i < tokens.size(); i++) {
+//        std::cout << "Token " << i << ": " << tokens[i] << std::endl;
+//    }
+
     std::string content = "<h1>404 not found</h1>";
     std::string fileHtml = "cats.html";
     std::string contentType;
@@ -38,20 +42,12 @@ void WebServer::onMessageReceived(int client, const char* msg) {
         contentType = "css";
     } else if (fileHtml.find(".jpeg") != std::string::npos) {
         contentType = "jpeg";
-        std::fstream f(fileHtml.c_str(), std::ios::in | std::ios::binary);
-        if (f.good()) {
-            f.seekg(0, std::ios::end);
-            content.resize(f.tellg());
-            f.seekg(0, std::ios::beg);
-            f.read(&content[0], content.size());
-        }
     }
     f.close();
     std::ostringstream response;
     response << "HTTP/1.1 " << error_code << " OK\r\n"
              << "Cache-Control: no-cache, no-store, must-revalidate\r\n"
              << "Content-Type: " << dataStorage.getMimeType(contentType) << "\r\n"
-//             << "Content-Type: " << contentType << "\r\n"
              << "Content-Length: " << content.size() << "\r\n"
              << "Connection: close\r\n"
              << "\r\n"

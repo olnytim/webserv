@@ -7,10 +7,10 @@
 class WebServer : public SocketListener
 {
 public:
-	WebServer(unsigned short port, const char* ip) :
-			SocketListener(port, ip) {}
-    WebServer(ServerBlock server)  :
-            SocketListener(server.getPort(), server.getListen().c_str()) {
+//	WebServer(unsigned short port, const char* ip) :
+//			SocketListener(port, ip) {}
+    WebServer(const ServerBlock& server)  :
+            SocketListener(server.getPort(), server.getListen().c_str(), server.getServerNames()) {
         this->server = server;
     }
 
