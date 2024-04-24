@@ -1,3 +1,0 @@
-/home/olnytim/CLionProjects/webserve/cmake-build-debug/CMakeFiles/webserv.dir
-/home/olnytim/CLionProjects/webserve/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/olnytim/CLionProjects/webserve/cmake-build-debug/CMakeFiles/rebuild_cache.dir
