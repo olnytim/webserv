@@ -409,3 +409,9 @@
     min-height: 239px;
   }
 }
+
+.cookie_test {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
