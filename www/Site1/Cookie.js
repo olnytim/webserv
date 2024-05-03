@@ -1,13 +1,27 @@
 const newNameInput = document.getElementById('newNameInput');
 const changeCookieButton = document.getElementById('changeCookieButton');
 
-changeCookieButton.addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default behavior of the link
-
-    // Get the value from the input field
+function setCookie() {
     const newName = newNameInput.value;
-
-    // Set the cookie with the new value
     document.cookie = `cookie=${newName}`;
-    console.log(`cookie=${newName}`);
+}
+
+function setHeader(value) {
+    const addedCookie = document.getElementById('added_cookie');
+    addedCookie.innerText = value;
+}
+
+function getCookie() {
+    const value = document.cookie;
+    const cookie_start = value.substring(value.indexOf('cookie'));
+    console.log(cookie_start)
+    console.log(cookie_start.split('=')[1].substring(0, cookie_start.split('=')[1].indexOf(';')))
+    return cookie_start.split('=')[1].substring(0, cookie_start.split('=')[1].indexOf(';'))
+}
+changeCookieButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    setCookie();
+    setHeader(getCookie());
 });
+
+setHeader(getCookie());
