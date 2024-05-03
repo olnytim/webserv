@@ -12,16 +12,17 @@ function setHeader(value) {
 }
 
 function getCookie() {
-    const value = document.cookie;
-    const cookie_start = value.substring(value.indexOf('cookie'));
-    console.log(cookie_start)
-    console.log(cookie_start.split('=')[1].substring(0, cookie_start.split('=')[1].indexOf(';')))
-    return cookie_start.split('=')[1].substring(0, cookie_start.split('=')[1].indexOf(';'))
+    return document.cookie.split('; ').reduce((acc, cookie) => {
+        const [name, value] = cookie.split('=');
+        acc[name] = value;
+        return acc;
+    }, {});
 }
+
 changeCookieButton.addEventListener('click', function(event) {
     event.preventDefault();
     setCookie();
-    setHeader(getCookie());
+    setHeader(getCookie().cookie);
 });
 
-setHeader(getCookie());
+setHeader(getCookie().cookie);
