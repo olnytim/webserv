@@ -1,8 +1,8 @@
-const newNameInput = document.getElementById('newNameInput');
+const newCookieInput = document.getElementById('newCookieInput');
 const changeCookieButton = document.getElementById('changeCookieButton');
 
 function setCookie() {
-    const newName = newNameInput.value;
+    const newName = newCookieInput.value;
     document.cookie = `cookie=${newName}`;
 }
 
