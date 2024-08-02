@@ -5,7 +5,7 @@
 //#include <fstream>
 #include "IReportError.hpp"
 #include "LocationBlock.hpp"
-#include "../Headers.hpp"
+#include "../Utils.hpp"
 
 class ConfigFile{
 public:
@@ -25,7 +25,14 @@ public:
     size_t findPair(const std::string &line, size_t pos) const;
 
     std::vector<ServerBlock> servers;
+
+    ConfigFile();
+    static int getTypePath(std::string const path);
+    static int ifFileExistAndReadable(std::string const path, std::string const index);
+
 private:
     std::ifstream config;
 	std::vector<std::string> serversTxt;
+
+    std::string path;
 };

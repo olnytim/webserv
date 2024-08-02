@@ -11,4 +11,6 @@ add_executable(webserv srcs/main.cpp
         srcs/request/Request.cpp
         srcs/sockets/WebServer.cpp
         srcs/sockets/SocketListener.cpp
-        srcs/sockets/DataStorage.cpp)
+        srcs/sockets/DataStorage.cpp
+        srcs/Utils.cpp
+)

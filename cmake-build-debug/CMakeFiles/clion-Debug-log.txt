@@ -1,6 +1,13 @@
-"D:\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S "C:\Users\Hasan\OneDrive\Рабочий стол\webserv" -B "C:\Users\Hasan\OneDrive\Рабочий стол\webserv\cmake-build-debug"
-CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
-  CMake 3.27 or higher is required.  You are running version 3.26.4
+/Users/trgalyautdinov/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /Users/trgalyautdinov/webserv -B /Users/trgalyautdinov/webserv/cmake-build-debug
+CMake Deprecation Warning:
+  Support for "Extra Generators" like
+
+    CodeBlocks
+
+  is deprecated and will be removed from a future version of CMake.  IDEs may
+  use the cmake-file-api(7) to view CMake-generated project build trees.
 
 
--- Configuring incomplete, errors occurred!
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/trgalyautdinov/webserv/cmake-build-debug

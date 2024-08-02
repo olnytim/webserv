@@ -94,9 +94,8 @@ std::string DataStorage::getCurrentWorkingDirectory() {
 }
 
 std::string DataStorage::getMimeType(const std::string &extension) {
-    if (mimeTypes.find(extension) != mimeTypes.end()) {
+    if (mimeTypes.find(extension) != mimeTypes.end())
         return mimeTypes[extension];
-    }
     return "text/html";
 }
 

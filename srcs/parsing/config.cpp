@@ -160,7 +160,7 @@ void ConfigFile::printParsing() {
             std::cout << "Autoindex: " << locations[j].getAutoindex() << std::endl;
             std::cout << "Client body temp path: " << locations[j].getClient_body_temp_path() << std::endl;
             std::cout << "Client max body size: " << locations[j].getClient_max_body_size() << std::endl;
-            std::cout << "Cgi pass: " << locations[j].getCgi_pass() << std::endl;
+//            std::cout << "Cgi pass: " << locations[j].getCgi_path() << std::endl;
             std::cout << "Methods: ";
             std::vector<std::string> methods = locations[j].getMethods();
             for (size_t k = 0; k < methods.size(); k++) {
@@ -169,4 +169,28 @@ void ConfigFile::printParsing() {
         }
         std::cout << std::endl;
     }
+}
+
+int ConfigFile::getTypePath(const std::string path) {
+    struct stat buffer;
+
+    if (stat(path.c_str(), &buffer) != 0)
+        return -1;
+
+    switch (buffer.st_mode & S_IFMT) {
+        case S_IFREG:
+            return 1;
+        case S_IFDIR:
+            return 2;
+        default:
+            return 3;
+    }
+}
+
+int ConfigFile::ifFileExistAndReadable(const std::string path, const std::string index) {
+    if (getTypePath(index) == 1 && access(index.c_str(), R_OK) == 0)
+        return 0;
+    if (getTypePath(path + index) == 1 && access((path + index).c_str(), R_OK) == 0)
+        return 0;
+    return -1;
 }
