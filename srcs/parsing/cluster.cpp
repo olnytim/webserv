@@ -186,6 +186,7 @@ std::vector<std::string> Config::splitParams(const std::string &content, const s
 }
 
 // этот метод - полный костыль
+// нужно будет переделать, чтобы он правильно парсил параметры сервера
 void Config::createServer(std::string &config, ServerBlock &server) {
     std::vector<std::string> params;
     std::vector<std::string> error_codes;
