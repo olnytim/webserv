@@ -1,35 +1,30 @@
-#include "../includes/parsing/config.hpp"
-#include "../includes/sockets/WebServer.hpp"
+//#include "../includes/parsing/config.hpp"
+//#include "../includes/sockets/WebServer.hpp"
+
+#include "../includes/parsing/cluster.hpp"
 
 void sigpipeHandler(int signum) {
     (void)signum;
 }
 
 int main(int ac, char **av){
+    (void)av;
     if (ac < 3) {
-        ConfigFile conf;
+        Config conf;
         try {
             signal(SIGPIPE, sigpipeHandler);
-            switch (ac){
-			case 1:
-				conf.openConfig("test.conf");
-				break;
-			case 2:
-				conf.openConfig(av[1]);
-				break;
-		}
-            conf.parse();
-            conf.printParsing();
-        } catch (const ParseException &ex) {
+            switch (ac) {
+                case 1:
+                    conf.createCluster("test.conf");
+                    break;
+                case 2:
+                    conf.createCluster(av[1]);
+                    break;
+            }
+        }
+        catch (const ParseException &ex) {
             std::cerr << "Error: " << ex.what() << std::endl;
             return 1;
-        }
-        for (size_t i = 0; i < conf.servers.size(); ++i) {
-            std::cout << conf.servers[i].getPort() << std::endl;
-            WebServer webserver(conf.servers[i]);
-            if (!webserver.init())
-                return 1;
-            webserver.run();
         }
     }
     else {

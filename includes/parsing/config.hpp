@@ -3,7 +3,6 @@
 #include "IConfigParse.hpp"
 #include "ServerBlock.hpp"
 //#include <fstream>
-#include "IReportError.hpp"
 #include "LocationBlock.hpp"
 #include "../Headers.hpp"
 

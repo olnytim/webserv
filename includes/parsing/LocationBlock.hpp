@@ -4,8 +4,7 @@
 //#include <map>
 //#include <vector>
 //#include <sstream>
-#include "IReportError.hpp"
-#include "exceptions.hpp" 
+#include "exceptions.hpp"
 #include "../Headers.hpp"
 
 class LocationBlock{
