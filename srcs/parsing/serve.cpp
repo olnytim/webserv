@@ -184,3 +184,20 @@ const std::vector<LocationBlock> &ServerBlock::getLocations() const {
 const struct sockaddr_in &ServerBlock::getServerAddress() const {
     return server_address;
 }
+
+void ServerBlock::print() const {
+    printf("ServerBlock:\n");
+    printf("port: %d\n", port);
+    printf("listen_fd: %d\n", listen_fd);
+    printf("host: %d\n", host);
+    printf("server_name: %s\n", server_name.c_str());
+    printf("root: %s\n", root.c_str());
+    printf("index: %s\n", index.c_str());
+    printf("client_max_body_size: %lu\n", client_max_body_size);
+    printf("autoindex: %d\n", autoindex);
+    printf("error_pages: \n");
+    printf("locations: \n");
+    printf("server_address: \n");
+
+    locations[0].print();
+}

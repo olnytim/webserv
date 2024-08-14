@@ -21,6 +21,10 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/trgalyautdinov/webserv/srcs/sockets/DataStorage.cpp" "CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/DataStorage.cpp.o.d"
   "/Users/trgalyautdinov/webserv/srcs/sockets/SocketListener.cpp" "CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/SocketListener.cpp.o.d"
   "/Users/trgalyautdinov/webserv/srcs/sockets/WebServer.cpp" "CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.o.d"
+  "/Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp" "CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o.d"
+  "/Users/trgalyautdinov/webserv/srcs/sockets/req.cpp" "CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o.d"
+  "/Users/trgalyautdinov/webserv/srcs/sockets/res.cpp" "CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o.d"
+  "/Users/trgalyautdinov/webserv/srcs/sockets/web.cpp" "CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o" "gcc" "CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

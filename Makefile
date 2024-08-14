@@ -13,8 +13,9 @@ PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
 PARSING_SRC = $(addprefix $(PARSING_PATH)/, cluster.cpp serve.cpp loca.cpp)
 #
 SOCKETS_PATH = sockets
-SOCKETS_HEADER = #$(PREF_HEADER)/$(SOCKETS_PATH)
+SOCKETS_HEADER = $(PREF_HEADER)/$(SOCKETS_PATH)
 SOCKETS_SRC = #$(addprefix $(SOCKETS_PATH)/, WebServer.cpp SocketListener.cpp DataStorage.cpp)
+SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, web.cpp cli.cpp req.cpp res.cpp)
 #
 REQUEST_PATH = request
 REQUEST_HEADER = #$(PREF_HEADER)/$(REQUEST_PATH)
@@ -24,9 +25,11 @@ HEADER_FILE = $(PREF_HEADER)/Headers.hpp
 #
 SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC) $(REQUEST_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
-		$(PREF_SRC)/$(PARSING_PATH)/%.cpp, \
+		$(PREF_SRC)/$(PARSING_PATH)/%.cpp \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp, \
 		$(PREF_OBJ)/%.o \
-		$(PREF_SRC)/$(PARSING_PATH)/%.o, \
+		$(PREF_SRC)/$(PARSING_PATH)/%.o \
+		$(PREF_SRC)/$(SOCKETS_PATH)/%.o, \
 		$(SRC))
 #
 #OBJ = $(patsubst $(PREF_SRC)/%.cpp \

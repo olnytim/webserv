@@ -18,4 +18,12 @@ add_executable(webserv srcs/main.cpp
         srcs/parsing/cluster.cpp
         srcs/parsing/serve.cpp
         srcs/parsing/loca.cpp
-        srcs/Utils.cpp)
+        srcs/Utils.cpp
+        srcs/sockets/web.cpp
+        includes/sockets/web.hpp
+        srcs/sockets/cli.cpp
+        includes/sockets/cli.hpp
+        includes/sockets/req.hpp
+        srcs/sockets/req.cpp
+        srcs/sockets/res.cpp
+        includes/sockets/res.hpp)

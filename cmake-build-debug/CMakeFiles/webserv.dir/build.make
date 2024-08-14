@@ -251,6 +251,62 @@ CMakeFiles/webserv.dir/srcs/Utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/webserv.dir/srcs/Utils.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/trgalyautdinov/webserv/srcs/Utils.cpp -o CMakeFiles/webserv.dir/srcs/Utils.cpp.s
 
+CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o: CMakeFiles/webserv.dir/flags.make
+CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o: /Users/trgalyautdinov/webserv/srcs/sockets/web.cpp
+CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o: CMakeFiles/webserv.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o -MF CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o.d -o CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o -c /Users/trgalyautdinov/webserv/srcs/sockets/web.cpp
+
+CMakeFiles/webserv.dir/srcs/sockets/web.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/webserv.dir/srcs/sockets/web.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/trgalyautdinov/webserv/srcs/sockets/web.cpp > CMakeFiles/webserv.dir/srcs/sockets/web.cpp.i
+
+CMakeFiles/webserv.dir/srcs/sockets/web.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/webserv.dir/srcs/sockets/web.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/trgalyautdinov/webserv/srcs/sockets/web.cpp -o CMakeFiles/webserv.dir/srcs/sockets/web.cpp.s
+
+CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o: CMakeFiles/webserv.dir/flags.make
+CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o: /Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp
+CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o: CMakeFiles/webserv.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o -MF CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o.d -o CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o -c /Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp
+
+CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp > CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.i
+
+CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp -o CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.s
+
+CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o: CMakeFiles/webserv.dir/flags.make
+CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o: /Users/trgalyautdinov/webserv/srcs/sockets/req.cpp
+CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o: CMakeFiles/webserv.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o -MF CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o.d -o CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o -c /Users/trgalyautdinov/webserv/srcs/sockets/req.cpp
+
+CMakeFiles/webserv.dir/srcs/sockets/req.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/webserv.dir/srcs/sockets/req.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/trgalyautdinov/webserv/srcs/sockets/req.cpp > CMakeFiles/webserv.dir/srcs/sockets/req.cpp.i
+
+CMakeFiles/webserv.dir/srcs/sockets/req.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/webserv.dir/srcs/sockets/req.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/trgalyautdinov/webserv/srcs/sockets/req.cpp -o CMakeFiles/webserv.dir/srcs/sockets/req.cpp.s
+
+CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o: CMakeFiles/webserv.dir/flags.make
+CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o: /Users/trgalyautdinov/webserv/srcs/sockets/res.cpp
+CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o: CMakeFiles/webserv.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o -MF CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o.d -o CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o -c /Users/trgalyautdinov/webserv/srcs/sockets/res.cpp
+
+CMakeFiles/webserv.dir/srcs/sockets/res.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/webserv.dir/srcs/sockets/res.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/trgalyautdinov/webserv/srcs/sockets/res.cpp > CMakeFiles/webserv.dir/srcs/sockets/res.cpp.i
+
+CMakeFiles/webserv.dir/srcs/sockets/res.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/webserv.dir/srcs/sockets/res.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/trgalyautdinov/webserv/srcs/sockets/res.cpp -o CMakeFiles/webserv.dir/srcs/sockets/res.cpp.s
+
 # Object files for target webserv
 webserv_OBJECTS = \
 "CMakeFiles/webserv.dir/srcs/main.cpp.o" \
@@ -265,7 +321,11 @@ webserv_OBJECTS = \
 "CMakeFiles/webserv.dir/srcs/parsing/cluster.cpp.o" \
 "CMakeFiles/webserv.dir/srcs/parsing/serve.cpp.o" \
 "CMakeFiles/webserv.dir/srcs/parsing/loca.cpp.o" \
-"CMakeFiles/webserv.dir/srcs/Utils.cpp.o"
+"CMakeFiles/webserv.dir/srcs/Utils.cpp.o" \
+"CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o" \
+"CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o" \
+"CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o" \
+"CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o"
 
 # External object files for target webserv
 webserv_EXTERNAL_OBJECTS =
@@ -283,9 +343,13 @@ webserv: CMakeFiles/webserv.dir/srcs/parsing/cluster.cpp.o
 webserv: CMakeFiles/webserv.dir/srcs/parsing/serve.cpp.o
 webserv: CMakeFiles/webserv.dir/srcs/parsing/loca.cpp.o
 webserv: CMakeFiles/webserv.dir/srcs/Utils.cpp.o
+webserv: CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o
+webserv: CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o
+webserv: CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o
+webserv: CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o
 webserv: CMakeFiles/webserv.dir/build.make
 webserv: CMakeFiles/webserv.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable webserv"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/trgalyautdinov/webserv/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Linking CXX executable webserv"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/webserv.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

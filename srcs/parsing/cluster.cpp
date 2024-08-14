@@ -44,8 +44,12 @@ bool Config::isFileExistAndReadable(const std::string &path, const std::string &
     return false;
 }
 
-std::string Config::getFile() {
+const std::string &Config::getFile() const {
     return conf_file;
+}
+
+const std::vector<ServerBlock> &Config::getServers() const {
+    return servers;
 }
 
 // creating cluster of servers
@@ -89,7 +93,7 @@ void Config::splitServers(const std::string &content) {
 //        server_config.push_back(content.substr(start_pos, end_pos - start_pos + 1));
 //        start_pos = end_pos + 1;
 //    }
-//    amount_of_servers = server_config.size();
+//    amount_ofservers = server_config.size();
     size_t start = 0;
     size_t end = 0;
     size_t scope = 0;
@@ -167,11 +171,12 @@ std::vector<std::string> Config::splitParams(const std::string &content, const s
 //        start_pos = end_pos + 1;
 //    }
 //    return params;
+
     std::vector<std::string>	str;
     std::string::size_type		start, end;
 
     start = end = 0;
-    while (1)
+    while (start != std::string::npos)
     {
         end = content.find_first_of(delim, start);
         if (end == std::string::npos)
@@ -179,26 +184,24 @@ std::vector<std::string> Config::splitParams(const std::string &content, const s
         std::string tmp = content.substr(start, end - start);
         str.push_back(tmp);
         start = content.find_first_not_of(delim, end);
-        if (start == std::string::npos)
-            break;
     }
     return (str);
 }
 
 // этот метод - полный костыль
 // нужно будет переделать, чтобы он правильно парсил параметры сервера
-void Config::createServer(std::string &config, ServerBlock &server) {
+void Config::createServer(std::string &config, ServerBlock &server) const {
     std::vector<std::string> params;
     std::vector<std::string> error_codes;
     bool loca_flag = false;
     bool size_flag = false;
     bool index_flag = false;
 
-    printf("'%s'\n", config.c_str());
+//    printf("'%s'\n", config.c_str());
     params = splitParams(config, std::string(" \n\t"));
-    for (size_t i = 0; i < params.size(); ++i) {
-        printf("Param %lu: '%s'\n", i, params[i].c_str());
-    }
+//    for (size_t i = 0; i < params.size(); ++i) {
+//        printf("Param %lu: '%s'\n", i, params[i].c_str());
+//    }
     if (params.size() < 3)
         reportError(ParseException("Server block is empty"));
     for (size_t i = 0; i < params.size(); ++i) {
@@ -286,4 +289,56 @@ void Config::createCluster(const std::string &config_file) {
         servers.push_back(server);
     }
     printf("Cluster was created\n");
+}
+
+void Config::print() const {
+//    printf("Config file: %s\n", conf_file.c_str());
+//    printf("Amount of servers: %lu\n", amount_ofservers);
+//    for (size_t i = 0; i < servers.size(); ++i) {
+//        printf("Server %lu:\n", i);
+//        servers[i].print();
+//    }
+    std::cout << "------------- Config -------------" << std::endl;
+    for (size_t i = 0; i < servers.size(); i++)
+    {
+        std::cout << "Server #" << i + 1 << std::endl;
+        std::cout << "Server name: " << servers[i].getServerName() << std::endl;
+        std::cout << "Host: " << servers[i].getHost() << std::endl;
+        std::cout << "Root: " << servers[i].getRoot() << std::endl;
+        std::cout << "Index: " << servers[i].getIndex() << std::endl;
+        std::cout << "Port: " << servers[i].getPort() << std::endl;
+        std::cout << "Max BSize: " << servers[i].getClientMaxBodySize() << std::endl;
+        std::cout << "Error pages: " << servers[i].getErrorPages().size() << std::endl;
+//        std::map<short, std::string>::const_iterator it = servers[i].getErrorPages().begin();
+//        while (it != servers[i].getErrorPages().end())
+//        {
+//            std::cout << (*it).first << " - " << it->second << std::endl;
+//            ++it;
+//        }
+        std::cout << "Locations: " << servers[i].getLocations().size() << std::endl;
+        std::vector<LocationBlock>::const_iterator itl = servers[i].getLocations().begin();
+        while (itl != servers[i].getLocations().end())
+        {
+            std::cout << "name location: " << itl->getPath() << std::endl;
+//            std::cout << "methods: " << itl->getPrintMethods() << std::endl;
+//            std::cout << "index: " << itl->getIndexLocation() << std::endl;
+            if (itl->getCgiPath().empty())
+            {
+//                std::cout << "root: " << itl->getRootLocation() << std::endl;
+                if (!itl->getReturn().empty())
+                    std::cout << "return: " << itl->getReturn() << std::endl;
+                if (!itl->getAlias().empty())
+                    std::cout << "alias: " << itl->getAlias() << std::endl;
+            }
+            else
+            {
+//                std::cout << "cgi root: " << itl->getRootLocation() << std::endl;
+                std::cout << "sgi_path: " << itl->getCgiPath().size() << std::endl;
+//                std::cout << "sgi_ext: " << itl->getCgiExtension().size() << std::endl;
+            }
+            ++itl;
+        }
+        itl = servers[i].getLocations().begin();
+        std::cout << "-----------------------------" << std::endl;
+    }
 }

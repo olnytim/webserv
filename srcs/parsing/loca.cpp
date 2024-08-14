@@ -161,3 +161,25 @@ const bool &LocationBlock::getAutoindex() const {
 const unsigned long &LocationBlock::getClientMaxBodySize() const {
     return client_max_body_size;
 }
+
+void LocationBlock::print() const {
+    std::cout << "path: " << path << std::endl;
+    std::cout << "root: " << root << std::endl;
+    std::cout << "index: " << index << std::endl;
+    std::cout << "return: " << return_sign << std::endl;
+    std::cout << "alias: " << alias << std::endl;
+    std::cout << "cgi_path: ";
+    for (size_t i = 0; i < cgi_path.size(); i++)
+        std::cout << cgi_path[i] << " ";
+    std::cout << std::endl;
+    std::cout << "cgi_ext: ";
+    for (size_t i = 0; i < cgi_ext.size(); i++)
+        std::cout << cgi_ext[i] << " ";
+    std::cout << std::endl;
+    std::cout << "methods: ";
+    for (size_t i = 0; i < methods.size(); i++)
+        std::cout << methods[i] << " ";
+    std::cout << std::endl;
+    std::cout << "autoindex: " << autoindex << std::endl;
+    std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
+}

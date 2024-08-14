@@ -441,6 +441,102 @@ srcs/sockets/WebServer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/WebServer.cpp.s
 .PHONY : srcs/sockets/WebServer.cpp.s
 
+srcs/sockets/cli.o: srcs/sockets/cli.cpp.o
+.PHONY : srcs/sockets/cli.o
+
+# target to build an object file
+srcs/sockets/cli.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.o
+.PHONY : srcs/sockets/cli.cpp.o
+
+srcs/sockets/cli.i: srcs/sockets/cli.cpp.i
+.PHONY : srcs/sockets/cli.i
+
+# target to preprocess a source file
+srcs/sockets/cli.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.i
+.PHONY : srcs/sockets/cli.cpp.i
+
+srcs/sockets/cli.s: srcs/sockets/cli.cpp.s
+.PHONY : srcs/sockets/cli.s
+
+# target to generate assembly for a file
+srcs/sockets/cli.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/cli.cpp.s
+.PHONY : srcs/sockets/cli.cpp.s
+
+srcs/sockets/req.o: srcs/sockets/req.cpp.o
+.PHONY : srcs/sockets/req.o
+
+# target to build an object file
+srcs/sockets/req.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/req.cpp.o
+.PHONY : srcs/sockets/req.cpp.o
+
+srcs/sockets/req.i: srcs/sockets/req.cpp.i
+.PHONY : srcs/sockets/req.i
+
+# target to preprocess a source file
+srcs/sockets/req.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/req.cpp.i
+.PHONY : srcs/sockets/req.cpp.i
+
+srcs/sockets/req.s: srcs/sockets/req.cpp.s
+.PHONY : srcs/sockets/req.s
+
+# target to generate assembly for a file
+srcs/sockets/req.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/req.cpp.s
+.PHONY : srcs/sockets/req.cpp.s
+
+srcs/sockets/res.o: srcs/sockets/res.cpp.o
+.PHONY : srcs/sockets/res.o
+
+# target to build an object file
+srcs/sockets/res.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/res.cpp.o
+.PHONY : srcs/sockets/res.cpp.o
+
+srcs/sockets/res.i: srcs/sockets/res.cpp.i
+.PHONY : srcs/sockets/res.i
+
+# target to preprocess a source file
+srcs/sockets/res.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/res.cpp.i
+.PHONY : srcs/sockets/res.cpp.i
+
+srcs/sockets/res.s: srcs/sockets/res.cpp.s
+.PHONY : srcs/sockets/res.s
+
+# target to generate assembly for a file
+srcs/sockets/res.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/res.cpp.s
+.PHONY : srcs/sockets/res.cpp.s
+
+srcs/sockets/web.o: srcs/sockets/web.cpp.o
+.PHONY : srcs/sockets/web.o
+
+# target to build an object file
+srcs/sockets/web.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/web.cpp.o
+.PHONY : srcs/sockets/web.cpp.o
+
+srcs/sockets/web.i: srcs/sockets/web.cpp.i
+.PHONY : srcs/sockets/web.i
+
+# target to preprocess a source file
+srcs/sockets/web.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/web.cpp.i
+.PHONY : srcs/sockets/web.cpp.i
+
+srcs/sockets/web.s: srcs/sockets/web.cpp.s
+.PHONY : srcs/sockets/web.s
+
+# target to generate assembly for a file
+srcs/sockets/web.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/webserv.dir/build.make CMakeFiles/webserv.dir/srcs/sockets/web.cpp.s
+.PHONY : srcs/sockets/web.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -489,6 +585,18 @@ help:
 	@echo "... srcs/sockets/WebServer.o"
 	@echo "... srcs/sockets/WebServer.i"
 	@echo "... srcs/sockets/WebServer.s"
+	@echo "... srcs/sockets/cli.o"
+	@echo "... srcs/sockets/cli.i"
+	@echo "... srcs/sockets/cli.s"
+	@echo "... srcs/sockets/req.o"
+	@echo "... srcs/sockets/req.i"
+	@echo "... srcs/sockets/req.s"
+	@echo "... srcs/sockets/res.o"
+	@echo "... srcs/sockets/res.i"
+	@echo "... srcs/sockets/res.s"
+	@echo "... srcs/sockets/web.o"
+	@echo "... srcs/sockets/web.i"
+	@echo "... srcs/sockets/web.s"
 .PHONY : help
 
 

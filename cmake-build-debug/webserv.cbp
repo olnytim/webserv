@@ -85,6 +85,18 @@
 		<Unit filename="/Users/trgalyautdinov/webserv/includes/parsing/serve.hpp">
 			<Option target="webserv"/>
 		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/includes/sockets/cli.hpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/includes/sockets/req.hpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/includes/sockets/res.hpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/includes/sockets/web.hpp">
+			<Option target="webserv"/>
+		</Unit>
 		<Unit filename="/Users/trgalyautdinov/webserv/srcs/Utils.cpp">
 			<Option target="webserv"/>
 		</Unit>
@@ -122,6 +134,18 @@
 			<Option target="webserv"/>
 		</Unit>
 		<Unit filename="/Users/trgalyautdinov/webserv/srcs/sockets/WebServer.cpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/srcs/sockets/cli.cpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/srcs/sockets/req.cpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/srcs/sockets/res.cpp">
+			<Option target="webserv"/>
+		</Unit>
+		<Unit filename="/Users/trgalyautdinov/webserv/srcs/sockets/web.cpp">
 			<Option target="webserv"/>
 		</Unit>
 		<Unit filename="/Users/trgalyautdinov/webserv/CMakeLists.txt">
