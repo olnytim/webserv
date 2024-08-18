@@ -73,6 +73,8 @@ void Config::parseConfig(std::string &content) {
     }
     size_t end_pos = content.find_last_not_of(" \t\n\r\f\v");
     content = content.substr(start_pos, end_pos - start_pos + 1);
+
+    std::cout << "\n\n\n" << content << "\n\n\n\n" << std::endl;
 }
 
 // здесь нужен хороший парсинг всего конфига, чтобы разделить его на сервера.
