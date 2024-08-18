@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <map>
-#include <vector>
-#include <sstream>
-#include "IReportError.hpp"
-#include "exceptions.hpp" 
+//#include <iostream>
+//#include <map>
+//#include <vector>
+//#include <sstream>
+#include "exceptions.hpp"
+#include "../Headers.hpp"
 
 class LocationBlock{
 public:
