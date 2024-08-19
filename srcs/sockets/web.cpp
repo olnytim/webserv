@@ -24,8 +24,9 @@ void WebServer::setupServers(std::vector<ServerBlock> prep_servers) {
                 break;
             }
         }
-        if (!is_set)
+        if (!is_set) {
             it->setupServer();
+        }
     }
 }
 
@@ -96,8 +97,12 @@ void WebServer::acceptNewConnection(ServerBlock &server) {
 
 void WebServer::readRequest(const int &fd, Client &client) {
     char buf[MESSAGE_BUFFER];
+    std::string msg;
     int bytes_read;
-    if ((bytes_read = recv(fd, buf, sizeof(buf), 0)) == -1) {
+    bytes_read = recv(fd, buf, sizeof(buf), 0);
+
+    msg = read(open("www/index.html", O_RDONLY), buf, bytes_read);
+    if (bytes_read == -1) {
         printf("Recv error\n");
         closeConnection(fd);
         return;
@@ -109,8 +114,9 @@ void WebServer::readRequest(const int &fd, Client &client) {
     }
     else {
         (void)client;
+        printf("Request: %s\n", buf);
 //        client.request.feed(buf, bytes_read); // здесь пока остановился. до этого вроде всё работает
-        memset(buf, 0, sizeof(buf));
+//        client.response.sendResponse(fd, msg.c_str());
     }
 }
 
@@ -139,9 +145,9 @@ void WebServer::runServers() {
                 readRequest(i, clients_map[i]);
                 printf("Read request\n");
             }
-            else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
-                printf("Send response\n");
-            }
+//            else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
+//                printf("Send response\n");
+//            }
         }
     }
 }
