@@ -75,6 +75,10 @@ void Config::parseConfig(std::string &content) {
     content = content.substr(start_pos, end_pos - start_pos + 1);
 }
 
+
+// Finds the corresponding bracket for the opening bracket at start_bracket_pos
+// Returns the position of the closing bracket or std::string::npos if the closing bracket is not found
+// Arguments: str - string to search in, start_bracket_pos - position of the opening bracket
 size_t findEndingBracket(const std::string &str, size_t start_bracket_pos) {
     size_t openBracketPos = str.find('{', start_bracket_pos + 1);
     size_t closeBracketPos = str.find('}', start_bracket_pos + 1);
