@@ -73,8 +73,24 @@ void Config::parseConfig(std::string &content) {
     }
     size_t end_pos = content.find_last_not_of(" \t\n\r\f\v");
     content = content.substr(start_pos, end_pos - start_pos + 1);
+}
 
-    std::cout << "\n\n\n" << content << "\n\n\n\n" << std::endl;
+size_t findEndingBracket(const std::string &str, size_t start_bracket_pos) {
+    size_t openBracketPos = str.find('{', start_bracket_pos + 1);
+    size_t closeBracketPos = str.find('}', start_bracket_pos + 1);
+    if (closeBracketPos == std::string::npos)
+        return std::string::npos;
+    if (openBracketPos == std::string::npos || openBracketPos > closeBracketPos)
+        return closeBracketPos;
+    while (true) {
+        closeBracketPos = findEndingBracket(str, openBracketPos);
+        if (closeBracketPos == std::string::npos)
+            return std::string::npos;
+        openBracketPos = str.find('{', closeBracketPos + 1);
+        closeBracketPos = str.find('}', closeBracketPos + 1);
+        if (openBracketPos == std::string::npos || openBracketPos > closeBracketPos)
+            return closeBracketPos;
+    }
 }
 
 // здесь нужен хороший парсинг всего конфига, чтобы разделить его на сервера.
@@ -86,77 +102,17 @@ void Config::parseConfig(std::string &content) {
 // при отсутствии закрывающей скобки нужно выкидывать исключение
 // этот метод - полный костыль
 void Config::splitServers(const std::string &content) {
-//    size_t start_pos = 0;
-//    size_t end_pos = 0;
-//    while ((start_pos = content.find("server {", start_pos)) != std::string::npos) {
-//        end_pos = content.find("}", start_pos);
-//        if (end_pos == std::string::npos)
-//            reportError(ParseException("Can't find closing bracket"));
-//        server_config.push_back(content.substr(start_pos, end_pos - start_pos + 1));
-//        start_pos = end_pos + 1;
-//    }
-//    amount_ofservers = server_config.size();
-    size_t start = 0;
-    size_t end = 0;
-    size_t scope = 0;
-    bool foundServer = false;
-
-    if (content.find("server") == std::string::npos)
-        reportError(ParseException("No server block found"));
-
-    while (start < content.length())
-    {
-        // Поиск начала блока сервера
-        while (start < content.length() && !foundServer)
-        {
-            if (content[start] == 's')
-            {
-                if (content.compare(start, 6, "server") == 0)
-                {
-                    start += 6;
-                    while (start < content.length() && isspace(content[start]))
-                        start++;
-                    if (content[start] == '{')
-                    {
-                        foundServer = true;
-                        start++; // Пропустить '{'
-                    }
-                    else
-                        reportError(ParseException("Problem with server block start"));
-                }
-            }
-            else
-            {
-                if (!isspace(content[start]))
-                    reportError(ParseException("Problem with server block start"));
-                start++;
-            }
-        }
-
-        if (!foundServer)
-            reportError(ParseException("No server block found"));
-
-        // Поиск конца блока сервера
-        scope = 1;
-        end = start;
-        while (end < content.length() && scope > 0)
-        {
-            if (content[end] == '{')
-                scope++;
-            else if (content[end] == '}')
-                scope--;
-            end++;
-        }
-
-        if (scope != 0)
-            reportError(ParseException("Problem with server block end"));
-
-        // Добавление найденного блока в конфигурацию
-        this->server_config.push_back(content.substr(start - 1, end - start + 1));
-
-        // Сброс флага и установка следующего поиска
-        foundServer = false;
-        start = end;
+    size_t current_pos = 0;
+    size_t end_pos = 0;
+    while (end_pos != content.length() - 1) {
+        current_pos = content.find("server {", current_pos);
+        if (current_pos == std::string::npos)
+            break;
+        end_pos = findEndingBracket(content, current_pos + 7);
+        if (end_pos == std::string::npos)
+            reportError(ParseException("Server or location block is not closed"));
+        server_config.push_back(content.substr(current_pos, end_pos - current_pos + 1));
+        current_pos = end_pos + 1;
     }
     amount_of_servers = server_config.size();
 }
@@ -201,9 +157,9 @@ void Config::createServer(std::string &config, ServerBlock &server) const {
 
 //    printf("'%s'\n", config.c_str());
     params = splitParams(config, std::string(" \n\t"));
-//    for (size_t i = 0; i < params.size(); ++i) {
-//        printf("Param %lu: '%s'\n", i, params[i].c_str());
-//    }
+    for (size_t i = 0; i < params.size(); ++i) {
+        printf("Param %lu: '%s'\n", i, params[i].c_str());
+    }
     if (params.size() < 3)
         reportError(ParseException("Server block is empty"));
     for (size_t i = 0; i < params.size(); ++i) {
@@ -283,6 +239,9 @@ void Config::createCluster(const std::string &config_file) {
     // парсинг конфига
     parseConfig(content);
     splitServers(content);
+    for (size_t i = 0; i < server_config.size(); ++i) {
+        printf("Server %lu: '%s'\n", i, server_config[i].c_str());
+    }
 
     // создание серверов и готово кластера
     for (size_t i = 0; i < amount_of_servers; ++i) {
@@ -299,6 +258,7 @@ void Config::print() const {
 //    for (size_t i = 0; i < servers.size(); ++i) {
 //        printf("Server %lu:\n", i);
 //        servers[i].print();
+
 //    }
     std::cout << "------------- Config -------------" << std::endl;
     for (size_t i = 0; i < servers.size(); i++)
