@@ -60,3 +60,9 @@ bool Request::keepAlive() {
     }
     return true;
 }
+
+void Request::reqParse(char *msg, size_t buff_size) {
+//    size_t i = 0;
+    (void)buff_size;
+    (void)msg;
+}
