@@ -8,10 +8,7 @@ class Config {
 private:
     std::vector<ServerBlock>    servers;
     std::vector<std::string>    server_config;
-    size_t                      amount_of_servers;
-
     std::string                 conf_file;
-
 public:
     Config();
     ~Config();
@@ -27,8 +24,9 @@ public:
 
     static void parseConfig(std::string &content);
     void splitServers(const std::string &content);
+    std::vector<LocationBlock> ParseConfigLocations(std::string &config) const;
     static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
-    void createServer(std::string &config, ServerBlock &server) const;
+    ServerBlock createServer(std::string &config) const;
     void createCluster(const std::string &config_file);
 
     void print() const;

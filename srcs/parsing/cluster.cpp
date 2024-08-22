@@ -97,14 +97,6 @@ size_t findEndingBracket(const std::string &str, size_t start_bracket_pos) {
     }
 }
 
-// здесь нужен хороший парсинг всего конфига, чтобы разделить его на сервера.
-// разделение на сервера начинается с 'server {' и заканчивается '}'
-// сейчас код не корректно работает, так как не учитывает вложенные блоки
-// и заканчивает парсить сервера на первой встреченной закрывающей скобке
-// нужно сделать так, чтобы парсер учитывал вложенные блоки и заканчивал парсить
-// сервер на закрывающей скобке, которая соответствует открывающей
-// при отсутствии закрывающей скобки нужно выкидывать исключение
-// этот метод - полный костыль
 void Config::splitServers(const std::string &content) {
     size_t current_pos = 0;
     size_t end_pos = 0;
@@ -115,25 +107,12 @@ void Config::splitServers(const std::string &content) {
         end_pos = findEndingBracket(content, current_pos + 7);
         if (end_pos == std::string::npos)
             reportError(ParseException("Server or location block is not closed"));
-        server_config.push_back(content.substr(current_pos, end_pos - current_pos + 1));
+        server_config.push_back(content.substr(current_pos + 8, end_pos - current_pos - 7)); // 8 - length of "server {"
         current_pos = end_pos + 1;
     }
-    amount_of_servers = server_config.size();
 }
 
 std::vector<std::string> Config::splitParams(const std::string &content, const std::string &delim) {
-//    std::vector<std::string> params;
-//    size_t start_pos = 0;
-//    size_t end_pos = 0;
-//    while ((start_pos = content.find(delim, start_pos)) != std::string::npos) {
-//        end_pos = content.find(delim, start_pos + 1);
-//        if (end_pos == std::string::npos)
-//            end_pos = content.size();
-//        params.push_back(content.substr(start_pos, end_pos - start_pos));
-//        start_pos = end_pos + 1;
-//    }
-//    return params;
-
     std::vector<std::string>	str;
     std::string::size_type		start, end;
 
@@ -150,89 +129,121 @@ std::vector<std::string> Config::splitParams(const std::string &content, const s
     return (str);
 }
 
+std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) const {
+    size_t current_pos = 0;
+    size_t end_pos = 0;
+    std::vector<std::string> locations;
+
+    while (end_pos != config.length() - 1) {
+        current_pos = config.find("location", current_pos);
+        std::cout << "Current pos: " << current_pos << ", " << config[current_pos] << std::endl;
+        if (current_pos == std::string::npos)
+            break;
+        size_t opening_bracket_pos = config.find('{', current_pos);
+        if (opening_bracket_pos == std::string::npos)
+            reportError(ParseException("Location block is not opened"));
+        end_pos = findEndingBracket(config, opening_bracket_pos);
+        if (end_pos == std::string::npos)
+            reportError(ParseException("Server or location block is not closed"));
+        locations.push_back(config.substr(opening_bracket_pos + 1, end_pos - opening_bracket_pos - 1));
+        config = config.substr(0, current_pos) + config.substr(end_pos + 1);
+        std::cout << "End pos: " << end_pos << ", " << config[end_pos] << std::endl;
+        current_pos = end_pos + 1;
+    }
+
+    for (size_t i = 0; i < locations.size(); ++i) {
+        printf("Location %lu: '%s'\n", i, locations[i].c_str());
+    }
+    return std::vector<LocationBlock>();
+}
+
 // этот метод - полный костыль
 // нужно будет переделать, чтобы он правильно парсил параметры сервера
-void Config::createServer(std::string &config, ServerBlock &server) const {
+ServerBlock Config::createServer(std::string &config) const {
     std::vector<std::string> params;
     std::vector<std::string> error_codes;
-    bool loca_flag = false;
-    bool size_flag = false;
-    bool index_flag = false;
+    // bool loca_flag = false;
+    // bool size_flag = false;
+    // bool index_flag = false;
 
-//    printf("'%s'\n", config.c_str());
+    printf("Server Before:'%s'\n", config.c_str());
+    std::vector<LocationBlock> locations = ParseConfigLocations(config);
+    printf("Server After:'%s'\n", config.c_str());
     params = splitParams(config, std::string(" \n\t"));
-    for (size_t i = 0; i < params.size(); ++i) {
-        printf("Param %lu: '%s'\n", i, params[i].c_str());
-    }
-    if (params.size() < 3)
-        reportError(ParseException("Server block is empty"));
-    for (size_t i = 0; i < params.size(); ++i) {
-        if (params[i] == "listen" && (i + 1) < params.size() && !loca_flag) {
-            if (server.getPort()) {
-                reportError(ParseException("Port is already set"));
-            }
-            server.setPort(params[++i]);
-        }
-        else if (params[i] == "host" && (i + 1) < params.size() && !loca_flag) {
-            if (server.getHost())
-                reportError(ParseException("Host is already set"));
-            server.setHost(params[++i]);
-        }
-        else if (params[i] == "root" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getRoot().empty())
-                reportError(ParseException("Root is already set"));
-            server.setRoot(params[++i]);
-        }
-        else if (params[i] == "server_name" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getServerName().empty())
-                reportError(ParseException("Server name is already set"));
-            server.setServerName(params[++i]);
-        }
-        else if (params[i] == "index" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getIndex().empty())
-                reportError(ParseException("Index is already set"));
-            server.setIndex(params[++i]);
-        }
-        else if (params[i] == "client_max_body_size" && (i + 1) < params.size() && !loca_flag) {
-            if (size_flag)
-                reportError(ParseException("Client max body size is already set"));
-            server.setClientMaxBodySize(params[i + 1]);
-            size_flag = true;
-        }
-        else if (params[i] == "autoindex" && (i + 1) < params.size() && !loca_flag) {
-            if (index_flag)
-                reportError(ParseException("Autoindex is already set"));
-            server.setAutoindex(params[++i]);
-            index_flag = true;
-        }
-        else if (params[i] == "error_page" && (i + 1) < params.size() && !loca_flag) {
-            ; // тут прописать логику для создания вектора error_pages
-        }
-        else if (params[i] == "location" && (i + 1) < params.size()) {
-            ; // тут прописать логику для создания поля location
-            loca_flag = true;
-        }
-//        else if (params[i] != "}" && params[i] != "{") {
-//            if (loca_flag)
-//                reportError(ParseException("Location block is not closed or param after location"));
-//            reportError(ParseException("'" + params[i] + "' invalid parameter"));
-//        }
-    }
-    if (server.getRoot().empty())
-        server.setRoot("/;");
-    if (server.getHost() == 0)
-        server.setHost("localhost;");
-    if (server.getIndex().empty())
-        server.setIndex("index.html;");
+    // for (size_t i = 0; i < params.size(); ++i) {
+    //     printf("Param %lu: '%s'\n", i, params[i].c_str());
+    // }
+//     if (params.size() < 3)
+//         reportError(ParseException("Server block is empty"));
+//     for (size_t i = 0; i < params.size(); ++i) {
+//         if (params[i] == "listen" && (i + 1) < params.size() && !loca_flag) {
+//             if (server.getPort()) {
+//                 reportError(ParseException("Duplicate Port"));
+//             }
+//             server.setPort(params[++i]);
+//         }
+//         else if (params[i] == "host" && (i + 1) < params.size() && !loca_flag) {
+//             if (server.getHost())
+//                 reportError(ParseException("Duplicate Host"));
+//             server.setHost(params[++i]);
+//         }
+//         else if (params[i] == "root" && (i + 1) < params.size() && !loca_flag) {
+//             if (!server.getRoot().empty())
+//                 reportError(ParseException("Duplicate Root"));
+//             server.setRoot(params[++i]);
+//         }
+//         else if (params[i] == "server_name" && (i + 1) < params.size() && !loca_flag) {
+//             if (!server.getServerName().empty())
+//                 reportError(ParseException("Duplicate Server name"));
+//             server.setServerName(params[++i]);
+//         }
+//         else if (params[i] == "index" && (i + 1) < params.size() && !loca_flag) {
+//             if (!server.getIndex().empty())
+//                 reportError(ParseException("Duplicate Index"));
+//             server.setIndex(params[++i]);
+//         }
+//         else if (params[i] == "client_max_body_size" && (i + 1) < params.size() && !loca_flag) {
+//             if (size_flag)
+//                 reportError(ParseException("Duplicate Client max body size"));
+//             server.setClientMaxBodySize(params[i + 1]);
+//             size_flag = true;
+//         }
+//         else if (params[i] == "autoindex" && (i + 1) < params.size() && !loca_flag) {
+//             if (index_flag)
+//                 reportError(ParseException("Duplicate Autoindex"));
+//             server.setAutoindex(params[++i]);
+//             index_flag = true;
+//         }
+//         else if (params[i] == "error_page" && (i + 1) < params.size() && !loca_flag) {
+//             ; // тут прописать логику для создания вектора error_pages
+//         }
+//         else if (params[i] == "location" && (i + 1) < params.size()) {
+//             // создать location
+//             loca_flag = true;
+//         }
+// //        else if (params[i] != "}" && params[i] != "{") {
+// //            if (loca_flag)
+// //                reportError(ParseException("Location block is not closed or param after location"));
+// //            reportError(ParseException("'" + params[i] + "' invalid parameter"));
+// //        }
+//     }
+//     if (server.getRoot().empty())
+//         server.setRoot("/;");
+//     if (server.getHost() == 0)
+//         server.setHost("localhost;");
+//     if (server.getIndex().empty())
+//         server.setIndex("index.html;");
     // check if index file exists and readable
     // check if location is not duplicated
     // check if errorpages are reachable and readable
+    return ServerBlock();
 }
 
 void Config::createCluster(const std::string &config_file) {
     // проверка корректности файла
     conf_file = config_file;
     std::string content = getContent(config_file);
+
     if (content.empty())
         reportError(ParseException(config_file + " is empty"));
     if (access(config_file.c_str(), R_OK) != 0)
@@ -243,27 +254,16 @@ void Config::createCluster(const std::string &config_file) {
     // парсинг конфига
     parseConfig(content);
     splitServers(content);
-    for (size_t i = 0; i < server_config.size(); ++i) {
-        printf("Server %lu: '%s'\n", i, server_config[i].c_str());
-    }
 
     // создание серверов и готово кластера
-    for (size_t i = 0; i < amount_of_servers; ++i) {
-        ServerBlock server;
-        createServer(server_config[i], server);
+    for (size_t i = 0; i < server_config.size(); ++i) {
+        ServerBlock server = createServer(server_config[i]);
         servers.push_back(server);
     }
     printf("Cluster was created\n");
 }
 
 void Config::print() const {
-//    printf("Config file: %s\n", conf_file.c_str());
-//    printf("Amount of servers: %lu\n", amount_ofservers);
-//    for (size_t i = 0; i < servers.size(); ++i) {
-//        printf("Server %lu:\n", i);
-//        servers[i].print();
-
-//    }
     std::cout << "------------- Config -------------" << std::endl;
     for (size_t i = 0; i < servers.size(); i++)
     {
