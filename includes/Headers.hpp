@@ -38,7 +38,10 @@
 #define CONNECTION_TIMEOUT 60
 #define MAX_CONTENT_LENGTH 30000000
 #define MESSAGE_BUFFER 40000
+#define MAX_URI_LENGTH 2000
 
 // Utils
 
 //int ft_stoi(const std::string &str);
+std::string statusCodeString(short statusCode);
+unsigned int fromHexToDec(const std::string &nb);

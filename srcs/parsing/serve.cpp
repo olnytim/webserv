@@ -201,3 +201,13 @@ void ServerBlock::print() const {
 
     locations[0].print();
 }
+
+std::vector<LocationBlock>::iterator ServerBlock::getLocationKey(std::string key)
+{
+    std::vector<LocationBlock>::iterator it;
+    for (it = this->locations.begin(); it != this->locations.end(); it++) {
+        if (it->getPath() == key)
+            return it;
+    }
+    throw std::runtime_error("Location not found");
+}

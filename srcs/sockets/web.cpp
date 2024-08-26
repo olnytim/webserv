@@ -95,13 +95,28 @@ void WebServer::acceptNewConnection(ServerBlock &server) {
     clients_map.insert(std::pair<int, Client>(new_fd, client));
 }
 
+void WebServer::assignServer(Client &client) {
+    for (std::vector<ServerBlock>::iterator it = servers.begin(); it != servers.end(); ++it) {
+//        printf("Server: %u:%d\n", it->getHost(), it->getPort());
+//        printf("Client: %u:%d\n", client.server.getHost(), client.server.getPort());
+//        printf("Server name: %s\n", it->getServerName().c_str());
+//        printf("Client name: %s\n", client.server.getServerName().c_str());
+        if (client.server.getHost() == it->getHost() &&
+            client.server.getPort() == it->getPort() &&
+            client.server.getServerName() == it->getServerName()) {
+            client.server = *it;
+            printf("Server found\n");
+            return;
+        }
+    }
+    printf("Server not found\n");
+}
+
 void WebServer::readRequest(const int &fd, Client &client) {
     char buf[MESSAGE_BUFFER];
-    std::string msg;
     int bytes_read;
     bytes_read = recv(fd, buf, sizeof(buf), 0);
 
-    msg = read(open("www/index.html", O_RDONLY), buf, bytes_read);
     if (bytes_read == -1) {
         printf("Recv error\n");
         closeConnection(fd);
@@ -113,10 +128,39 @@ void WebServer::readRequest(const int &fd, Client &client) {
         return;
     }
     else {
-        (void)client;
-        printf("Request: %s\n", buf);
-//        client.request.feed(buf, bytes_read); // здесь пока остановился. до этого вроде всё работает
-//        client.response.sendResponse(fd, msg.c_str());
+        client.request.reqParse(buf, bytes_read); // здесь пока остановился. до этого вроде всё работает
+        memset(buf, 0, sizeof(buf));
+    }
+    assignServer(client);
+    client.response.request = client.request;
+    client.response.createResponse();
+    FD_SET(fd, &write_fd);
+    if (fd == biggest_fd)
+        --biggest_fd;
+    FD_SET(fd, &write_fd);
+    if (fd > biggest_fd)
+        biggest_fd = fd;
+}
+
+void WebServer::sendResponse(const int &fd, Client &client) {
+    int bytes_sent;
+    bytes_sent = send(fd, client.response.response.c_str(), client.response.response.length(), 0);
+    printf("\n\nResponse: %s\n\n", client.response.response.c_str());
+    if (bytes_sent == -1) {
+        printf("Send error\n");
+        closeConnection(fd);
+        return;
+    }
+    else if (bytes_sent == 0) {
+        printf("Connection closed\n");
+        closeConnection(fd);
+        return;
+    }
+    else {
+        FD_CLR(fd, &write_fd);
+        if (fd == biggest_fd)
+            --biggest_fd;
+        closeConnection(fd);
     }
 }
 
@@ -138,15 +182,24 @@ void WebServer::runServers() {
         }
         for (int i = 0; i <= biggest_fd; ++i) {
             if (FD_ISSET(i, &recv_copy) && servers_map.count(i)) {
+//                printf("Servers map count: %lu\n", servers_map.size());
+//                printf("Servers map fd: %d\n", servers_map.find(i)->first);
+//                printf("Servers map server fd: %d\n", servers_map.find(i)->second.getFd());
+//                printf("Servers map server host: %u\n", servers_map.find(i)->second.getHost());
                 acceptNewConnection(servers_map.find(i)->second);
-                printf("New connection\n");
+//                printf("New connection\n");
             }
             else if (FD_ISSET(i, &recv_copy) && clients_map.count(i) > 0) {
+//                printf("Clients map count: %lu\n", clients_map.size());
+//                printf("Clients map fd: %d\n", clients_map.find(i)->first);
+//                printf("Clients map client fd: %d\n", clients_map.find(i)->second.client_fd);
+//                printf("Clients map client server host: %u\n", clients_map.find(i)->second.server.getHost());
                 readRequest(i, clients_map[i]);
-                printf("Read request\n");
+//                printf("Read request\n");
             }
 //            else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
 //                printf("Send response\n");
+//                sendResponse(i, clients_map[i]);
 //            }
         }
     }
