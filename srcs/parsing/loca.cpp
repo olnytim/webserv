@@ -21,9 +21,7 @@ LocationBlock::LocationBlock() {
     autoindex = false;
     client_max_body_size = MAX_CONTENT_LENGTH;
     methods = std::vector<std::string>(5, "0");
-}
-
-LocationBlock::~LocationBlock() {
+    keymap = LocationBlockKeymap();
 }
 
 LocationBlock::LocationBlock(const LocationBlock &other) {
@@ -37,6 +35,7 @@ LocationBlock::LocationBlock(const LocationBlock &other) {
     methods = other.methods;
     autoindex = other.autoindex;
     client_max_body_size = other.client_max_body_size;
+    keymap = other.getKeymap();
 }
 
 LocationBlock &LocationBlock::operator=(const LocationBlock &other) {
@@ -55,9 +54,9 @@ LocationBlock &LocationBlock::operator=(const LocationBlock &other) {
     return (*this);
 }
 
-void LocationBlock::reportError(const ParseException &ex) const {
-    throw ex;
+LocationBlock::~LocationBlock() {
 }
+//
 
 // setters
 void LocationBlock::setPath(const std::string &value) {
@@ -84,8 +83,36 @@ void LocationBlock::setCgiPath(const std::vector<std::string> &value) {
     cgi_path = value;
 }
 
+void LocationBlock::setCgiPath(const std::string &value) {
+    (void) value;
+    throw std::logic_error("Not implemented");
+}
+
 void LocationBlock::setCgiExt(const std::vector<std::string> &value) {
     cgi_ext = value;
+}
+
+void LocationBlock::setCgiExt(const std::string &value) {
+    (void) value;
+    throw std::logic_error("Not implemented");
+}
+
+void LocationBlock::setAutoindex(const std::string &value) {
+    if (value == "on" || value == "off")
+        autoindex = value == "on";
+    errorHandler::reportError(ParseException("'" + value + "' invalid autoindex"));
+}
+
+void LocationBlock::setClientMaxBodySize(const std::string &value) {
+    unsigned long   size = 0;
+    if (value == "0") {
+        client_max_body_size = 0;
+        return;
+    }
+    std::istringstream(value) >> size;
+    if (size == 0)
+        errorHandler::reportError(ParseException("'" + value + "' invalid client_max_body_size"));
+    client_max_body_size = size;
 }
 
 void LocationBlock::setMethods(const std::vector<std::string> &value) {
@@ -102,24 +129,16 @@ void LocationBlock::setMethods(const std::vector<std::string> &value) {
         else if (value[i] == "HEAD")
             methods[4] = "1";
         else
-            reportError(ParseException("'" + methods[i] + "' invalid method"));
+            errorHandler::reportError(ParseException("'" + methods[i] + "' invalid method"));
     }
 }
 
-void LocationBlock::setAutoindex(const std::string &value) {
-    if (value == "on" || value == "off")
-        autoindex = value == "on";
-    reportError(ParseException("'" + value + "' invalid autoindex"));
+void LocationBlock::setMethods(const std::string &value) {
+    (void) value;
+    throw std::logic_error("Not implemented");
 }
 
-// не уверен, что это правильно
-void LocationBlock::setClientMaxBodySize(const std::string &value) {
-    unsigned long   size = 0;
-    size = ft_stoi(value);
-    if (!size)
-        reportError(ParseException("'" + value + "' invalid client_max_body_size"));
-    client_max_body_size = size;
-}
+//
 
 // getters
 const std::string &LocationBlock::getPath() const {
@@ -152,6 +171,10 @@ const std::vector<std::string> &LocationBlock::getCgiExt() const {
 
 const std::vector<std::string> &LocationBlock::getMethods() const {
     return methods;
+}
+
+const LocationBlockKeymap & LocationBlock::getKeymap() const {
+    return keymap;
 }
 
 const bool &LocationBlock::getAutoindex() const {

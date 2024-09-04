@@ -16,6 +16,14 @@ ServerBlock::ServerBlock() {
 ServerBlock::~ServerBlock() {
 }
 
+void ServerBlock::setLocations(const std::vector<LocationBlock> &vector) {
+    locations = vector;
+}
+
+ServerBlockKeymap ServerBlock::getKeymap() const {
+    return keymap;
+}
+
 ServerBlock::ServerBlock(const ServerBlock &other) {
     port = other.port;
     listen_fd = other.listen_fd;
@@ -52,13 +60,13 @@ void ServerBlock::reportError(const ParseException &ex) const {
     throw ex;
 }
 
-void ServerBlock::checkToken(std::string &parametr)
-{
-    size_t pos = parametr.rfind(';');
-    if (pos != parametr.size() - 1)
-        reportError(ParseException("';' expected"));
-    parametr.erase(pos);
-}
+// void ServerBlock::checkToken(const std::string &parametr)
+// {
+//     size_t pos = parametr.rfind(';');
+//     if (pos != parametr.size() - 1)
+//         reportError(ParseException("';' expected"));
+//     parametr.erase(pos);
+// }
 
 bool ServerBlock::isValidHost(const std::string &host) const {
     struct sockaddr_in sockaddr;
@@ -79,46 +87,46 @@ void ServerBlock::setupServer() {
 }
 
 // setters
-void ServerBlock::setPort(std::string value) {
-    checkToken(value);
+void ServerBlock::setPort(const std::string &value) {
     port = ft_stoi(value);
     if (port < 0 || port > 65535)
         reportError(ParseException("Invalid port"));
+}
+
+void ServerBlock::setFd(const std::string &value) {
+    std::istringstream iss(value);
+    throw std::runtime_error("Not implemented");
 }
 
 void ServerBlock::setFd(int value) {
     listen_fd = value;
 }
 
-void ServerBlock::setHost(std::string value) {
-    checkToken(value);
+void ServerBlock::setHost(const std::string &value) {
+    std::string hostStr = value;
     if (value == "localhost")
-        value = "127.0.0.1";
+        hostStr = "127.0.0.1";
     if (!isValidHost(value))
-        reportError(ParseException("'" + value + "' invalid host"));
+        reportError(ParseException("'" + hostStr + "' invalid host"));
     host = inet_addr(value.c_str());
     if (host == INADDR_NONE)
-        reportError(ParseException( "'" + value + "' invalid host"));
+        reportError(ParseException( "'" + hostStr + "' invalid host"));
 }
 
-void ServerBlock::setServerName(std::string value) {
-    checkToken(value);
+void ServerBlock::setServerName(const std::string &value) {
     server_name = value;
 }
 
 // возможно, нужно будет улучшить
-void ServerBlock::setRoot(std::string value) {
-    checkToken(value);
+void ServerBlock::setRoot(const std::string &value) {
     root = value;
 }
 
-void ServerBlock::setIndex(std::string value) {
-    checkToken(value);
+void ServerBlock::setIndex(const std::string &value) {
     index = value;
 }
 
-void ServerBlock::setClientMaxBodySize(std::string value) {
-    checkToken(value);
+void ServerBlock::setClientMaxBodySize(const std::string &value) {
     unsigned long   size = 0;
     size = ft_stoi(value);
     if (!size)
@@ -126,18 +134,16 @@ void ServerBlock::setClientMaxBodySize(std::string value) {
     client_max_body_size = size;
 }
 
-void ServerBlock::setAutoindex(std::string value) {
-    checkToken(value);
+void ServerBlock::setAutoindex(const std::string &value) {
     if (value == "on" || value == "off")
         autoindex = value == "on";
     reportError(ParseException("'" + value + "' invalid autoindex"));
 }
 
-// void ServerBlock::setErrorPages(std::vector<std::string> &value) {
-// }
-
-// void ServerBlock::addLocation(std::string name, std::vector<std::string> &value) {
-// }
+void ServerBlock::setErrorPages(const std::string &value) {
+    (void) value;
+    throw std::runtime_error("Not implemented");
+}
 
 // getters
 
