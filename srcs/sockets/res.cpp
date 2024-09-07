@@ -191,6 +191,18 @@ bool Response::handleTarget() {
     return false;
 }
 
+bool Response::readFile() {
+    std::ifstream temp(file.c_str());
+    if (temp.fail()) {
+        code = 404;
+        return false;
+    }
+    std::ostringstream str;
+    str << temp.rdbuf();
+    response_body = str.str();
+    return true;
+}
+
 bool Response::buildBody() {
     if (request.body.length() > server.getClientMaxBodySize()) {
         code = 413;
@@ -198,6 +210,36 @@ bool Response::buildBody() {
     }
     if (handleTarget())
         return true;
+    if (code)
+        return false;
+    if (request.method == GET || request.method == HEAD) {
+        if (!readFile())
+            return true;
+    }
+    else if (request.method == POST || request.method == PUT) {
+        if (fileExists(file) && request.method == PUT) {
+            code = 204;
+            return false;
+        }
+        std::ofstream temp(file.c_str(), std::ios::binary);
+        if (temp.fail()) {
+            code = 404;
+            return true;
+        }
+        else
+            temp.write(request.body.c_str(), request.body.length());
+    }
+    else if (request.method == DELETE) {
+        if (!fileExists(file)) {
+            code = 404;
+            return true;
+        }
+        if (remove(file.c_str()) != 0) {
+            code = 500;
+            return true;
+        }
+    }
+    code = 200;
     return false;
 }
 
