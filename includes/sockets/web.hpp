@@ -23,9 +23,11 @@ public:
     void addToSet(int fd, fd_set &set);
     void removeFromSet(int fd, fd_set &set);
     void acceptNewConnection(ServerBlock &server);
-    void readRequest(const int &fd, Client &client);
-
     void initSets();
-    void closeConnection(const int fd);
+    void closeConnection(int fd);
+
+    void assignServer(Client &client);
+    void readRequest(const int &fd, Client &client);
+    void sendResponse(const int &fd, Client &client);
     void runServers();
 };

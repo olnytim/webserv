@@ -22,8 +22,9 @@ REQUEST_HEADER = #$(PREF_HEADER)/$(REQUEST_PATH)
 REQUEST_SRC = #$(addprefix $(REQUEST_PATH)/, Request.cpp RequestParsing.cpp)
 #
 HEADER_FILE = $(PREF_HEADER)/Headers.hpp
+HEADER_FILE += $(PREF_HEADER)/Mime.hpp
 #
-SRC = $(addprefix $(PREF_SRC)/, main.cpp $(SOCKETS_SRC) $(PARSING_SRC) $(REQUEST_SRC))
+SRC = $(addprefix $(PREF_SRC)/, main.cpp Mime.cpp Utils.cpp $(SOCKETS_SRC) $(PARSING_SRC) $(REQUEST_SRC))
 OBJ = $(patsubst $(PREF_SRC)/%.cpp \
 		$(PREF_SRC)/$(PARSING_PATH)/%.cpp \
 		$(PREF_SRC)/$(SOCKETS_PATH)/%.cpp, \

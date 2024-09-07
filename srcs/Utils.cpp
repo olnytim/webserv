@@ -1,15 +1,5 @@
 #include "../includes/Headers.hpp"
 
-int ft_stoi(const std::string &str) {
-    int res = 0;
-    for (size_t i = 0; i < str.size(); ++i) {
-        if (str[i] < '0' || str[i] > '9')
-            throw std::exception();
-        res = res * 10 + str[i] - '0';
-    }
-    return res;
-}
-
 unsigned int fromHexToDec(const std::string &nb) {
     unsigned int x;
     std::stringstream ss;

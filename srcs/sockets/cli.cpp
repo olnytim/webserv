@@ -15,7 +15,7 @@ Client::Client(const Client &other) {
     if (this != &other) {
         client_fd = other.client_fd;
         client_addr = other.client_addr;
-//        request = other.request; доработать в cli.hpp и cli.cpp
+        request = other.request; // доработать в cli.hpp и cli.cpp
         response = other.response;
         server = other.server;
     }
@@ -25,7 +25,7 @@ Client &Client::operator=(const Client &other) {
     if (this != &other) {
         client_fd = other.client_fd;
         client_addr = other.client_addr;
-//        request = other.request; доработать в cli.hpp и cli.cpp
+        request = other.request; // доработать в cli.hpp и cli.cpp
         response = other.response;
         server = other.server;
     }

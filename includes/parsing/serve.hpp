@@ -57,6 +57,6 @@ public:
     const std::map<int, std::string>    &getErrorPages() const;
     const std::vector<LocationBlock>    &getLocations() const;
     const struct sockaddr_in            &getServerAddress() const;
-
+    std::vector<LocationBlock>::iterator   getLocationKey(std::string key);
     void print() const;
 };
