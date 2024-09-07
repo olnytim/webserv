@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ServerBlockKeymap.hpp"
 #include "../Headers.hpp"
 #include "loca.hpp"
 #include "exceptions.hpp"
@@ -17,11 +18,16 @@ private:
     std::map<int, std::string>  error_pages;
     std::vector<LocationBlock>  locations;
     struct sockaddr_in          server_address;
-
+    ServerBlockKeymap           keymap;
 public:
     // constructor, destructor, copy constructor, assignment operator
     ServerBlock();
     ~ServerBlock();
+
+    void setLocations(const std::vector<LocationBlock> & vector);
+
+    ServerBlockKeymap getKeymap() const;
+
     ServerBlock(const ServerBlock &other);
     ServerBlock &operator=(const ServerBlock &other);
 
@@ -29,20 +35,21 @@ public:
     void reportError(const ParseException &ex) const;
 
     // methods
-    void checkToken(std::string &value);
+    void checkToken(const std::string &value);
     bool isValidHost(const std::string &host) const;
     void setupServer();
 
     // setters
-    void setPort(std::string value);
+    void setPort(const std::string &value);
+    void setFd(const std::string &value);
     void setFd(int value);
-    void setHost(std::string value);
-    void setServerName(std::string value);
-    void setRoot(std::string value);
-    void setIndex(std::string value);
-    void setClientMaxBodySize(std::string value);
-    void setAutoindex(std::string value);
-    void setErrorPages(std::vector<std::string> &value);
+    void setHost(const std::string &value);
+    void setServerName(const std::string &value);
+    void setRoot(const std::string &value);
+    void setIndex(const std::string &value);
+    void setClientMaxBodySize(const std::string &value);
+    void setAutoindex(const std::string &value);
+    void setErrorPages(const std::string &value);
     void addLocation(std::string name, std::vector<std::string> &value);
 
     // getters

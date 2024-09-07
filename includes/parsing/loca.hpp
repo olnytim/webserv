@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../Headers.hpp"
-#include "exceptions.hpp"
+#include "LocationBlockKeymap.hpp"
+#include "errorHandler.hpp"
 
 class LocationBlock {
 private:
@@ -16,14 +17,13 @@ private:
     bool autoindex;
     unsigned long client_max_body_size;
 
+    LocationBlockKeymap keymap;
 public:
     // constructor, destructor, copy constructor, assignment operator
     LocationBlock();
     ~LocationBlock();
     LocationBlock(const LocationBlock &other);
     LocationBlock &operator=(const LocationBlock &other);
-
-    void reportError(const ParseException &ex) const;
 
     // setters
     void setPath(const std::string &value);
@@ -32,8 +32,11 @@ public:
     void setReturn(const std::string &value);
     void setAlias(const std::string &value);
     void setCgiPath(const std::vector<std::string> &value);
+    void setCgiPath(const std::string &value);
     void setCgiExt(const std::vector<std::string> &value);
+    void setCgiExt(const std::string &value);
     void setMethods(const std::vector<std::string> &value);
+    void setMethods(const std::string &value);
     void setAutoindex(const std::string &value);
     void setClientMaxBodySize(const std::string &value);
 
@@ -46,6 +49,7 @@ public:
     const std::vector<std::string> &getCgiPath() const;
     const std::vector<std::string> &getCgiExt() const;
     const std::vector<std::string> &getMethods() const;
+    const LocationBlockKeymap &getKeymap() const;
     const bool &getAutoindex() const;
     const unsigned long &getClientMaxBodySize() const;
 
