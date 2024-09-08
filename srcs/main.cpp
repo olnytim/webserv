@@ -1,7 +1,7 @@
 //#include "../includes/parsing/config.hpp"
 //#include "../includes/sockets/WebServer.hpp"
 
-#include "../includes/parsing/cluster.hpp"
+#include "../includes/parsing/Config.hpp"
 #include "../includes/sockets/web.hpp"
 
 void sigpipeHandler(int signum) {

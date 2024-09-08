@@ -2,8 +2,7 @@
 
 #include "ServerBlockKeymap.hpp"
 #include "../Headers.hpp"
-#include "loca.hpp"
-#include "exceptions.hpp"
+#include "LocationBlock.hpp"
 
 class ServerBlock {
 private:
@@ -24,18 +23,10 @@ public:
     ServerBlock();
     ~ServerBlock();
 
-    void setLocations(const std::vector<LocationBlock> & vector);
-
-    ServerBlockKeymap getKeymap() const;
-
     ServerBlock(const ServerBlock &other);
     ServerBlock &operator=(const ServerBlock &other);
 
-    // exceptions
-    void reportError(const ParseException &ex) const;
-
     // methods
-    void checkToken(const std::string &value);
     bool isValidHost(const std::string &host) const;
     void setupServer();
 
@@ -50,9 +41,10 @@ public:
     void setClientMaxBodySize(const std::string &value);
     void setAutoindex(const std::string &value);
     void setErrorPages(const std::string &value);
-    void addLocation(std::string name, std::vector<std::string> &value);
+    void setLocations(const std::vector<LocationBlock> & locaVector);
 
     // getters
+    ServerBlockKeymap   getKeymap() const;
     const int           &getPort() const;
     const int           &getFd() const;
     const in_addr_t     &getHost() const;
@@ -65,5 +57,4 @@ public:
     const std::vector<LocationBlock>    &getLocations() const;
     const struct sockaddr_in            &getServerAddress() const;
     std::vector<LocationBlock>::iterator   getLocationKey(std::string key);
-    void print() const;
 };

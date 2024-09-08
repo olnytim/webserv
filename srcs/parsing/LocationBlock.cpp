@@ -1,14 +1,6 @@
-#include "../../includes/parsing/loca.hpp"
+#include "../../includes/parsing/LocationBlock.hpp"
 
-int ft_stoi(const std::string &str) {
-    int res = 0;
-    for (size_t i = 0; i < str.size(); ++i) {
-        if (str[i] < '0' || str[i] > '9')
-            throw std::exception();
-        res = res * 10 + str[i] - '0';
-    }
-    return res;
-}
+#include "../../includes/parsing/parsingUtils.hpp"
 
 // constructor, destructor, copy constructor, assignment operator
 LocationBlock::LocationBlock() {
@@ -84,8 +76,8 @@ void LocationBlock::setCgiPath(const std::vector<std::string> &value) {
 }
 
 void LocationBlock::setCgiPath(const std::string &value) {
-    (void) value;
-    throw std::logic_error("Not implemented");
+    std::vector<std::string> paths = parsingUtils::splitParams(value, " ");
+    setCgiPath(paths);
 }
 
 void LocationBlock::setCgiExt(const std::vector<std::string> &value) {
@@ -93,8 +85,8 @@ void LocationBlock::setCgiExt(const std::vector<std::string> &value) {
 }
 
 void LocationBlock::setCgiExt(const std::string &value) {
-    (void) value;
-    throw std::logic_error("Not implemented");
+    std::vector<std::string> exits = parsingUtils::splitParams(value, " ");
+    setCgiExt(exits);
 }
 
 void LocationBlock::setAutoindex(const std::string &value) {
@@ -134,8 +126,8 @@ void LocationBlock::setMethods(const std::vector<std::string> &value) {
 }
 
 void LocationBlock::setMethods(const std::string &value) {
-    (void) value;
-    throw std::logic_error("Not implemented");
+    std::vector<std::string> methods = parsingUtils::splitParams(value, " ");
+    setMethods(methods);
 }
 
 //
@@ -183,26 +175,4 @@ const bool &LocationBlock::getAutoindex() const {
 
 const unsigned long &LocationBlock::getClientMaxBodySize() const {
     return client_max_body_size;
-}
-
-void LocationBlock::print() const {
-    std::cout << "path: " << path << std::endl;
-    std::cout << "root: " << root << std::endl;
-    std::cout << "index: " << index << std::endl;
-    std::cout << "return: " << return_sign << std::endl;
-    std::cout << "alias: " << alias << std::endl;
-    std::cout << "cgi_path: ";
-    for (size_t i = 0; i < cgi_path.size(); i++)
-        std::cout << cgi_path[i] << " ";
-    std::cout << std::endl;
-    std::cout << "cgi_ext: ";
-    for (size_t i = 0; i < cgi_ext.size(); i++)
-        std::cout << cgi_ext[i] << " ";
-    std::cout << std::endl;
-    std::cout << "methods: ";
-    for (size_t i = 0; i < methods.size(); i++)
-        std::cout << methods[i] << " ";
-    std::cout << std::endl;
-    std::cout << "autoindex: " << autoindex << std::endl;
-    std::cout << "client_max_body_size: " << client_max_body_size << std::endl;
 }

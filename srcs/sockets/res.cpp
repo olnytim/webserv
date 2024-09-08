@@ -9,7 +9,8 @@ Response::Response() {
     response_body = "";
     location = "";
     code = 0;
-    res = nullptr;
+    // res = nullptr;
+    res = NULL;
     auto_index = false;
 }
 
@@ -21,7 +22,8 @@ Response::Response(Request &other) {
     response_body = "";
     location = "";
     code = 0;
-    res = nullptr;
+    // res = nullptr;
+    res = NULL;
     auto_index = false;
 }
 
@@ -53,6 +55,7 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
 }
 
 bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
+    (void) code;
     std::vector<std::string> methods = location.getMethods();
 
     // Определяем строковое представление метода
@@ -67,10 +70,10 @@ bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, shor
     }
 
     // Проверяем, содержится ли метод в списке разрешённых
-    if (std::find(methods.begin(), methods.end(), method_str) == methods.end()) {
-        code = 405;  // Метод не разрешён
-        return true;
-    }
+    ////////////////////////////// if (std::find(methods.begin(), methods.end(), method_str) == methods.end()) {
+    //////////////////////////////     code = 405;  // Метод не разрешён
+    //////////////////////////////     return true;
+    ////////////////////////////// }
 
     return false;  // Метод разрешён
 }
@@ -252,7 +255,7 @@ void Response::createResponse() {
         buildErrorBody();
     printf("Body: %s\n", body.data());
     /* Set State */
-    response.append("HTTP/1.1 " + std::to_string(code) + " ");
+    ///////////////// response.append("HTTP/1.1 " + std::to_string(code) + " ");
     response.append(statusCodeString(code) + "\r\n");
 
     /* Set Type */
@@ -263,7 +266,7 @@ void Response::createResponse() {
         response.append("text/html\r\n");
 
     /* Set Length */
-    response.append("Content-Length: " + std::to_string(response.length()) + "\r\n");
+    //////////////// response.append("Content-Length: " + std::to_string(response.length()) + "\r\n");
 
     /* Set Connection */
     if (request.headers["Connection"] == "keep-alive")

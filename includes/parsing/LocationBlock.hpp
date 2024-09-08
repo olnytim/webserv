@@ -53,7 +53,4 @@ public:
     const bool &getAutoindex() const;
     const unsigned long &getClientMaxBodySize() const;
 
-    void print() const;
 };
-
-int ft_stoi(const std::string &str);
