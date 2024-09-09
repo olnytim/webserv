@@ -2,7 +2,8 @@
 
 #include "../Headers.hpp"
 #include "exceptions.hpp"
-#include "serve.hpp"
+#include "ServerBlock.hpp"
+#include "parsingUtils.hpp"
 
 class Config {
 private:
@@ -12,8 +13,6 @@ private:
 public:
     Config();
     ~Config();
-
-    void reportError(const ParseException &ex) const;
 
     static int getTypePath(const std::string &path);
     static std::string getContent(const std::string &path);
@@ -28,9 +27,10 @@ public:
     std::vector<std::string> SplitAndCutLocations(std::string &config) const;
     LocationBlock CreateLocation(  std::string &LocationTxt) const;
 
-    static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
     ServerBlock createServer(std::string &config) const;
+
+    bool validateServer(const ServerBlock &server);
+
     void createCluster(const std::string &config_file);
 
-    void print() const;
 };

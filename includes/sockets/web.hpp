@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Headers.hpp"
-#include "../parsing/serve.hpp"
+#include "../parsing/ServerBlock.hpp"
 #include "cli.hpp"
 
 class WebServer {

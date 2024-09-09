@@ -1,23 +1,21 @@
-#include "../../includes/parsing/serve.hpp"
+#include "../../includes/parsing/ServerBlock.hpp"
+
+#include "../../includes/parsing/parsingUtils.hpp"
 
 ServerBlock::ServerBlock() {
-    printf("ServerBlock was created\n");
+    host = 0;
     port = 0;
     listen_fd = 0;
-    host = 0;
     server_name = "";
     root = "";
     index = "";
     client_max_body_size = MAX_CONTENT_LENGTH;
     autoindex = false;
+    printf("ServerBlock was created\n");
     // error_pages;
 }
 
 ServerBlock::~ServerBlock() {
-}
-
-void ServerBlock::setLocations(const std::vector<LocationBlock> &vector) {
-    locations = vector;
 }
 
 ServerBlockKeymap ServerBlock::getKeymap() const {
@@ -55,19 +53,6 @@ ServerBlock &ServerBlock::operator=(const ServerBlock &other) {
     return (*this);
 }
 
-// methods
-void ServerBlock::reportError(const ParseException &ex) const {
-    throw ex;
-}
-
-// void ServerBlock::checkToken(const std::string &parametr)
-// {
-//     size_t pos = parametr.rfind(';');
-//     if (pos != parametr.size() - 1)
-//         reportError(ParseException("';' expected"));
-//     parametr.erase(pos);
-// }
-
 bool ServerBlock::isValidHost(const std::string &host) const {
     struct sockaddr_in sockaddr;
     return inet_pton(AF_INET, host.c_str(), &(sockaddr.sin_addr)) != 0;
@@ -75,7 +60,7 @@ bool ServerBlock::isValidHost(const std::string &host) const {
 
 void ServerBlock::setupServer() {
     if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        reportError(ParseException("Socket creation failed"));
+        errorHandler::reportError(ParseException("Socket creation failed"));
     int value = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value));
     memset(&server_address, 0, sizeof(server_address));
@@ -83,19 +68,30 @@ void ServerBlock::setupServer() {
     server_address.sin_port = htons(port);
     server_address.sin_addr.s_addr = host;
     if (bind(listen_fd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-        reportError(ParseException("Bind failed"));
+        errorHandler::reportError(ParseException("Bind failed"));
 }
 
 // setters
 void ServerBlock::setPort(const std::string &value) {
-    port = ft_stoi(value);
+    port = parsingUtils::ft_stoi(value);
     if (port < 0 || port > 65535)
-        reportError(ParseException("Invalid port"));
+        errorHandler::reportError(ParseException("Invalid port"));
+}
+
+void ServerBlock::setLocations(const std::vector<LocationBlock> &locaVector) {
+    locations = locaVector;
 }
 
 void ServerBlock::setFd(const std::string &value) {
-    std::istringstream iss(value);
-    throw std::runtime_error("Not implemented");
+    try {
+        int listen = parsingUtils::ft_stoi(value);
+        if (listen < 0 || listen > 65535)
+            errorHandler::reportError(ParseException("'" + value + "' invalid listen"));
+        listen_fd = listen;
+    } catch (std::exception &) {
+        errorHandler::reportError(ParseException("'" + value + "' invalid listen"));
+    }
+
 }
 
 void ServerBlock::setFd(int value) {
@@ -107,10 +103,10 @@ void ServerBlock::setHost(const std::string &value) {
     if (value == "localhost")
         hostStr = "127.0.0.1";
     if (!isValidHost(value))
-        reportError(ParseException("'" + hostStr + "' invalid host"));
-    host = inet_addr(value.c_str());
-    if (host == INADDR_NONE)
-        reportError(ParseException( "'" + hostStr + "' invalid host"));
+        errorHandler::reportError(ParseException("'" + hostStr + "' invalid host"));
+    this->host = inet_addr(value.c_str());
+    if (this->host == INADDR_NONE)
+        errorHandler::reportError(ParseException( "'" + hostStr + "' invalid host"));
 }
 
 void ServerBlock::setServerName(const std::string &value) {
@@ -128,21 +124,38 @@ void ServerBlock::setIndex(const std::string &value) {
 
 void ServerBlock::setClientMaxBodySize(const std::string &value) {
     unsigned long   size = 0;
-    size = ft_stoi(value);
-    if (!size)
-        reportError(ParseException("'" + value + "' invalid client_max_body_size"));
+    try {
+        size = parsingUtils::ft_stoi(value);
+    } catch (std::exception &) {
+        errorHandler::reportError(ParseException("'" + value + "' invalid client_max_body_size"));
+    }
     client_max_body_size = size;
 }
 
 void ServerBlock::setAutoindex(const std::string &value) {
     if (value == "on" || value == "off")
         autoindex = value == "on";
-    reportError(ParseException("'" + value + "' invalid autoindex"));
+    errorHandler::reportError(ParseException("'" + value + "' invalid autoindex"));
 }
 
 void ServerBlock::setErrorPages(const std::string &value) {
-    (void) value;
-    throw std::runtime_error("Not implemented");
+    std::vector<std::string> params = parsingUtils::splitParams(value, " ");
+    if (params.size() < 2)
+        errorHandler::reportError(ParseException("Invalid error_page"));
+    std::vector<std::string>::iterator it = params.begin();
+    std::vector<std::string>::iterator error_page = params.end() - 1;
+    while (it != params.end() - 1) {
+        try {
+            int code = parsingUtils::ft_stoi(*it);
+            if (code < 100 || code > 599)
+                errorHandler::reportError(ParseException("Invalid error code"));
+            error_pages[code] = *error_page;
+        }
+        catch (std::exception &) {
+            errorHandler::reportError(ParseException("Invalid error code"));
+        }
+        ++it;
+    }
 }
 
 // getters
@@ -189,23 +202,6 @@ const std::vector<LocationBlock> &ServerBlock::getLocations() const {
 
 const struct sockaddr_in &ServerBlock::getServerAddress() const {
     return server_address;
-}
-
-void ServerBlock::print() const {
-    printf("ServerBlock:\n");
-    printf("port: %d\n", port);
-    printf("listen_fd: %d\n", listen_fd);
-    printf("host: %d\n", host);
-    printf("server_name: %s\n", server_name.c_str());
-    printf("root: %s\n", root.c_str());
-    printf("index: %s\n", index.c_str());
-    printf("client_max_body_size: %lu\n", client_max_body_size);
-    printf("autoindex: %d\n", autoindex);
-    printf("error_pages: \n");
-    printf("locations: \n");
-    printf("server_address: \n");
-
-    locations[0].print();
 }
 
 std::vector<LocationBlock>::iterator ServerBlock::getLocationKey(std::string key)

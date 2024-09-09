@@ -10,6 +10,7 @@ Response::Response() {
     location = "";
     code = 0;
     res = nullptr;
+    res = NULL;
     auto_index = false;
 }
 
@@ -22,6 +23,7 @@ Response::Response(Request &other) {
     location = "";
     code = 0;
     res = nullptr;
+    res = NULL;
     auto_index = false;
 }
 
@@ -30,10 +32,10 @@ Response::~Response() {
 
 bool Response::reqError() {
     // check if error code is set
-//    if (request.error_code) {
-//        code = request.error_code;
-//        return true;
-//    }
+   if (request.error_code) {
+       code = request.error_code;
+       return true;
+   }
     return false;
 }
 
@@ -53,6 +55,7 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
 }
 
 bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
+    (void) code;
     std::vector<std::string> methods = location.getMethods();
 
     // Определяем строковое представление метода
