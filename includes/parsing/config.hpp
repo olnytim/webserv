@@ -2,8 +2,7 @@
 
 #include "IConfigParse.hpp"
 #include "ServerBlock.hpp"
-//#include <fstream>
-#include "LocationBlock.hpp"
+ #include "loca.hpp"
 #include "../Headers.hpp"
 
 class ConfigFile{

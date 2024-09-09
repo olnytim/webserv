@@ -150,6 +150,52 @@ std::vector<std::string> Config::splitParams(const std::string &content, const s
     return (str);
 }
 
+std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const{
+    size_t current_pos = 0;
+    size_t end_pos = 0;
+    std::vector<std::string> locations;
+
+    while (current_pos != std::string::npos) {
+        current_pos = config.find("location");
+        if (current_pos == std::string::npos)
+            break;
+        size_t opening_bracket_pos = config.find('{', current_pos);
+        if (opening_bracket_pos == std::string::npos)
+            errorHandler::reportError(ParseException("Location block is not opened"));
+        end_pos = parsingUtils::findEndingBracket(config, opening_bracket_pos + 1);
+        if (end_pos == std::string::npos)
+            errorHandler::reportError(ParseException("Server or location block is not closed"));
+        locations.push_back(config.substr(current_pos + 8, end_pos - current_pos - 8));
+        config = config.substr(0, current_pos) + config.substr(end_pos + 1);
+        current_pos = end_pos + 1;
+    }
+    return locations;
+}
+
+LocationBlock Config::CreateLocation(std::string &locationTxt) const {
+    LocationBlock location;
+    std::string path = locationTxt.substr(0, locationTxt.find('{'));
+    location.setPath(path);
+    locationTxt = locationTxt.substr(locationTxt.find('{') + 1);
+    std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
+    for (size_t i = 0; i < params.size(); i++) {
+        params[i] = parsingUtils::trimWhitespace(params[i]);
+        std::string key = params[i].substr(0, params[i].find(' '));
+        std::string value = params[i].substr(params[i].find(' ') + 1);
+        location.getKeymap().callFunction(key, value, location);
+    }
+    return location;
+}
+
+std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) const {
+    std::vector<std::string> locationsTxt = SplitAndCutLocations(config);
+    std::vector<LocationBlock> locationBlocks;
+    for (size_t i = 0; i < locationsTxt.size(); i++) {
+        locationBlocks.push_back(CreateLocation(locationsTxt[i]));
+    }
+    return locationBlocks;
+}
+
 // этот метод - полный костыль
 // нужно будет переделать, чтобы он правильно парсил параметры сервера
 void Config::createServer(std::string &config, ServerBlock &server) const {
@@ -158,12 +204,8 @@ void Config::createServer(std::string &config, ServerBlock &server) const {
     bool loca_flag = false;
     bool size_flag = false;
     bool index_flag = false;
-
-//    printf("'%s'\n", config.c_str());
-    params = splitParams(config, std::string(" \n\t"));
-    for (size_t i = 0; i < params.size(); ++i) {
-        printf("Param %lu: '%s'\n", i, params[i].c_str());
-    }
+    server.setLocations(ParseConfigLocations(config));
+    params = splitParams(config, std::string(" \n\t;"));
     if (params.size() < 3)
         reportError(ParseException("Server block is empty"));
     for (size_t i = 0; i < params.size(); ++i) {

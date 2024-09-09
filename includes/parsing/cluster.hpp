@@ -2,7 +2,8 @@
 
 #include "../Headers.hpp"
 #include "exceptions.hpp"
-#include "serve.hpp"
+#include "ServerBlock2.hpp"
+#include "parsingUtils.hpp"
 
 class Config {
 private:
@@ -24,6 +25,10 @@ public:
 
     const std::string &getFile() const;
     const std::vector<ServerBlock> &getServers() const;
+
+    std::vector<std::string> SplitAndCutLocations(std::string &config) const;
+    LocationBlock CreateLocation(std::string &locationTxt) const;
+    std::vector<LocationBlock> ParseConfigLocations(std::string &config) const;
 
     static void parseConfig(std::string &content);
     void splitServers(const std::string &content);
