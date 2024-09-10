@@ -1,19 +1,17 @@
-//
-// Created by ashot on 9/8/2024.
-//
-
 #ifndef BLOCKPRINTER_HPP
 #define BLOCKPRINTER_HPP
+
 #include "Config.hpp"
 
-class block_printer {
+class blockPrinter {
+public:
     static void print(const LocationBlock &location) {
         std::cout << "name location: " << location.getPath() << std::endl;
-        //std::cout << "methods: " << itl->getPrintMethods() << std::endl;
-        //std::cout << "index: " << itl->getIndexLocation() << std::endl;
+        std::cout << "methods: " << location.getMethods().size() << std::endl;
+        std::cout << "index: " << location.getIndex() << std::endl;
         if (location.getCgiPath().empty())
         {
-            //std::cout << "root: " << itl->getRootLocation() << std::endl;
+            std::cout << "root: " << location.getRoot() << std::endl;
             if (!location.getReturn().empty())
                 std::cout << "return: " << location.getReturn() << std::endl;
             if (!location.getAlias().empty())
@@ -22,8 +20,8 @@ class block_printer {
         else
         {
             //std::cout << "cgi root: " << itl->getRootLocation() << std::endl;
-            std::cout << "cgi_path: " << itl->getCgiPath().size() << std::endl;
-            //std::cout << "cgi_ext: " << itl->getCgiExtension().size() << std::endl;
+            std::cout << "cgi_path: " << location.getCgiPath().size() << std::endl;
+            std::cout << "cgi_ext: " << location.getCgiExt().size() << std::endl;
         }
     }
 
@@ -48,16 +46,15 @@ class block_printer {
                 print(*itl);
                 ++itl;
             }
-            itl = servers[i].getLocations().begin();
+            itl = server.getLocations().begin();
 
     }
 
     static void print(const Config &config) {
         std::cout << "------------- Config -------------" << std::endl;
-        for (size_t i = 0; i < servers.size(); i++)
+        for (std::vector<ServerBlock>::const_iterator its = config.getServers().begin(); its < config.getServers().end(); its++)
         {
-            std::cout << "Server #" << i + 1 << std::endl;
-            print (servers[i]);
+            print (*its);
             std::cout << "-----------------------------" << std::endl;
         }
     }

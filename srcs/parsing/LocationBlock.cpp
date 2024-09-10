@@ -1,5 +1,4 @@
 #include "../../includes/parsing/LocationBlock.hpp"
-
 #include "../../includes/parsing/parsingUtils.hpp"
 
 // constructor, destructor, copy constructor, assignment operator
@@ -42,6 +41,7 @@ LocationBlock &LocationBlock::operator=(const LocationBlock &other) {
         methods = other.methods;
         autoindex = other.autoindex;
         client_max_body_size = other.client_max_body_size;
+        keymap = other.getKeymap();
     }
     return (*this);
 }
@@ -129,8 +129,6 @@ void LocationBlock::setMethods(const std::string &value) {
     std::vector<std::string> methods = parsingUtils::splitParams(value, " ");
     setMethods(methods);
 }
-
-//
 
 // getters
 const std::string &LocationBlock::getPath() const {

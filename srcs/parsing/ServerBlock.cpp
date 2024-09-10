@@ -1,7 +1,5 @@
 #include "../../includes/parsing/ServerBlock.hpp"
 
-#include "../../includes/parsing/parsingUtils.hpp"
-
 ServerBlock::ServerBlock() {
     host = 0;
     port = 0;
@@ -12,6 +10,7 @@ ServerBlock::ServerBlock() {
     client_max_body_size = MAX_CONTENT_LENGTH;
     autoindex = false;
     printf("ServerBlock was created\n");
+ 	keymap = ServerBlockKeymap();
     // error_pages;
 }
 
@@ -34,6 +33,7 @@ ServerBlock::ServerBlock(const ServerBlock &other) {
     error_pages = other.error_pages;
     locations = other.locations;
     server_address = other.server_address;
+    keymap = other.keymap;
 }
 
 ServerBlock &ServerBlock::operator=(const ServerBlock &other) {
@@ -49,6 +49,7 @@ ServerBlock &ServerBlock::operator=(const ServerBlock &other) {
         error_pages = other.error_pages;
         locations = other.locations;
         server_address = other.server_address;
+		keymap = other.keymap;
     }
     return (*this);
 }

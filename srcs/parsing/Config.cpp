@@ -1,4 +1,5 @@
 #include "../../includes/parsing/Config.hpp"
+#include "../../includes/parsing/blockPrinter.hpp"
 
 Config::Config() {
     printf("ConfigFile was created\n");
@@ -6,6 +7,7 @@ Config::Config() {
 
 Config::~Config() {
 }
+
 
 // opening config file
 int Config::getTypePath(const std::string &path) {
@@ -31,6 +33,7 @@ std::string Config::getContent(const std::string &path) {
     buffer << file.rdbuf();
     return buffer.str();
 }
+
 
 const std::string &Config::getFile() const {
     return conf_file;
@@ -83,6 +86,23 @@ void Config::splitServers(const std::string &content) {
     }
 }
 
+std::vector<std::string> Config::splitParams(const std::string &content, const std::string &delim) {
+    std::vector<std::string>	str;
+    std::string::size_type		start, end;
+
+    start = end = 0;
+    while (start != std::string::npos)
+    {
+        end = content.find_first_of(delim, start);
+        if (end == std::string::npos)
+            break;
+        std::string tmp = content.substr(start, end - start);
+        str.push_back(tmp);
+        start = content.find_first_not_of(delim, end);
+    }
+    return (str);
+}
+
 std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const{
     size_t current_pos = 0;
     size_t end_pos = 0;
@@ -90,7 +110,6 @@ std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const
 
     while (current_pos != std::string::npos) {
         current_pos = config.find("location");
-
         if (current_pos == std::string::npos)
             break;
         size_t opening_bracket_pos = config.find('{', current_pos);
@@ -99,19 +118,11 @@ std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const
         end_pos = parsingUtils::findEndingBracket(config, opening_bracket_pos + 1);
         if (end_pos == std::string::npos)
             errorHandler::reportError(ParseException("Server or location block is not closed"));
-        locations.push_back(config.substr(current_pos + 8, end_pos - opening_bracket_pos - 1));
+        locations.push_back(config.substr(current_pos + 8, end_pos - current_pos - 8));
         config = config.substr(0, current_pos) + config.substr(end_pos + 1);
         current_pos = end_pos + 1;
     }
     return locations;
-}
-
-std::string trimWhitespace(std::string &str) {
-    size_t start = str.find_first_not_of(" \t\n\r\f\v");
-    if (start == std::string::npos)
-        return "";
-    size_t end = str.find_last_not_of(" \t\n\r\f\v");
-    return str.substr(start, end - start + 1);
 }
 
 LocationBlock Config::CreateLocation(std::string &locationTxt) const {
@@ -121,7 +132,7 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     locationTxt = locationTxt.substr(locationTxt.find('{') + 1);
     std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
     for (size_t i = 0; i < params.size(); i++) {
-        params[i] = trimWhitespace(params[i]);
+        params[i] = parsingUtils::trimWhitespace(params[i]);
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
         location.getKeymap().callFunction(key, value, location);
@@ -135,49 +146,32 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
     for (size_t i = 0; i < locationsTxt.size(); i++) {
         locationBlocks.push_back(CreateLocation(locationsTxt[i]));
     }
-    return std::vector<LocationBlock>();
+    return locationBlocks;
 }
 
-ServerBlock Config::createServer(std::string &config) const {
+ServerBlock Config::createServer(std::string &serverTxt) const {
     ServerBlock server;
-    server.setLocations(ParseConfigLocations(config));
-    std::vector<std::string> params = parsingUtils::splitParams(config, std::string(";"));
-
+    server.setLocations(ParseConfigLocations(serverTxt));
+    std::vector<std::string> params = parsingUtils::splitParams(serverTxt, std::string(";"));
     for (size_t i = 0; i < params.size(); i++) {
-        params[i] = trimWhitespace(params[i]);
+        params[i] = parsingUtils::trimWhitespace(params[i]);
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
         server.getKeymap().callFunction(key, value, server);
     }
-    // check if errorpages are reachable and readable
-    return ServerBlock();
-}
-
-bool Config::validateServer(const ServerBlock &server) {
-    std::string path = "www/" + server.getIndex();
-
-    std::ifstream file(path.c_str());
-    if (!file.good())
-        return false;
-    std::vector<LocationBlock> locations = server.getLocations();
-    for (size_t i = 0; i < locations.size(); i++) {
-        for (size_t j = 0; j < locations.size(); j++) {
-            if (i != j && locations[i].getPath() == locations[j].getPath())
-                return false;
-        }
-    }
-
-    for (size_t i = 0; i < locations.size(); i++) {
-        // check for errorpages
-    }
-    return true;
+    if (server.getRoot().empty())
+        server.setRoot("/");
+    if (server.getHost() == 0)
+        server.setHost("localhost");
+    if (server.getIndex().empty())
+        server.setIndex("index.html");
+    return server;
 }
 
 void Config::createCluster(const std::string &config_file) {
     // проверка корректности файла
     conf_file = config_file;
     std::string content = getContent(config_file);
-
     if (content.empty())
         errorHandler::reportError(ParseException(config_file + " is empty"));
     if (access(config_file.c_str(), R_OK) != 0)
@@ -192,8 +186,6 @@ void Config::createCluster(const std::string &config_file) {
     // создание серверов и готово кластера
     for (size_t i = 0; i < server_config.size(); ++i) {
         ServerBlock server = createServer(server_config[i]);
-        if (!validateServer(server))
-            errorHandler::reportError(ParseException("Server is not valid"));
         servers.push_back(server);
     }
     printf("Cluster was created\n");

@@ -9,7 +9,7 @@ PREF_HEADER = includes
 #
 PARSING_PATH = parsing
 PARSING_HEADER = $(PREF_HEADER)/$(PARSING_PATH)
-PARSING_SRC = $(addprefix $(PARSING_PATH)/, Config.cpp ServerBlock.cpp LocationBLock.cpp LocationBlockKeymap.cpp ServerBlockKeymap.cpp)
+PARSING_SRC = $(addprefix $(PARSING_PATH)/, Config.cpp ServerBlock.cpp ServerBlockKeymap.cpp LocationBlock.cpp LocationBlockKeymap.cpp)
 #
 SOCKETS_PATH = sockets
 SOCKETS_HEADER = $(PREF_HEADER)/$(SOCKETS_PATH)

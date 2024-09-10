@@ -2,6 +2,7 @@
 #define SERVERBLOCKKEYMAP_HPP
 
 #include "../Headers.hpp"
+#include "errorHandler.hpp"
 
 class ServerBlock;
 

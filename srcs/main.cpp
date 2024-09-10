@@ -3,6 +3,7 @@
 
 #include "../includes/parsing/Config.hpp"
 #include "../includes/sockets/web.hpp"
+#include "../includes/parsing/blockPrinter.hpp"
 
 void sigpipeHandler(int signum) {
     (void)signum;
@@ -23,7 +24,6 @@ int main(int ac, char **av){
                     conf.createCluster(av[1]);
                     break;
             }
-//            conf.print();
             servers.setupServers(conf.getServers());
             servers.runServers();
         }
