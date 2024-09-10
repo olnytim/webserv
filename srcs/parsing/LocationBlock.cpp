@@ -130,8 +130,6 @@ void LocationBlock::setMethods(const std::string &value) {
     setMethods(methods);
 }
 
-//
-
 // getters
 const std::string &LocationBlock::getPath() const {
     return path;

@@ -17,14 +17,12 @@ public:
     Config();
     ~Config();
 
-    void reportError(const ParseException &ex) const;
-
     static int getTypePath(const std::string &path);
     static std::string getContent(const std::string &path);
-    static bool isFileExistAndReadable(const std::string &path, const std::string &index);
-
     const std::string &getFile() const;
     const std::vector<ServerBlock> &getServers() const;
+
+    static bool isFileExistAndReadable(const std::string &path, const std::string &index);
 
     std::vector<std::string> SplitAndCutLocations(std::string &config) const;
     LocationBlock CreateLocation(std::string &locationTxt) const;
@@ -35,6 +33,4 @@ public:
     static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
     ServerBlock createServer(std::string &serverTxt) const;
     void createCluster(const std::string &config_file);
-
-    void print() const;
 };

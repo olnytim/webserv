@@ -24,7 +24,6 @@ int main(int ac, char **av){
                     conf.createCluster(av[1]);
                     break;
             }
-            blockPrinter::print(conf);
             servers.setupServers(conf.getServers());
             servers.runServers();
         }

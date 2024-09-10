@@ -1,5 +1,5 @@
-#ifndef SERVERBLOCK2_HPP
-#define SERVERBLOCK2_HPP
+#ifndef SERVERBLOCK_HPP
+#define SERVERBLOCK_HPP
 
 #include "../Headers.hpp"
 #include "LocationBlock.hpp"
@@ -62,4 +62,4 @@ public:
     std::vector<LocationBlock>::iterator   getLocationKey(std::string key);
 };
 
-#endif //SERVERBLOCK2_HPP
+#endif // SERVERBLOCK_HPP
