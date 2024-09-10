@@ -1,4 +1,5 @@
-#include "../../includes/parsing/cluster.hpp"
+#include "../../includes/parsing/Config.hpp"
+#include "../../includes/parsing/blockPrinter.hpp"
 
 Config::Config() {
     printf("ConfigFile was created\n");
@@ -97,14 +98,6 @@ size_t findEndingBracket(const std::string &str, size_t start_bracket_pos) {
     }
 }
 
-// здесь нужен хороший парсинг всего конфига, чтобы разделить его на сервера.
-// разделение на сервера начинается с 'server {' и заканчивается '}'
-// сейчас код не корректно работает, так как не учитывает вложенные блоки
-// и заканчивает парсить сервера на первой встреченной закрывающей скобке
-// нужно сделать так, чтобы парсер учитывал вложенные блоки и заканчивал парсить
-// сервер на закрывающей скобке, которая соответствует открывающей
-// при отсутствии закрывающей скобки нужно выкидывать исключение
-// этот метод - полный костыль
 void Config::splitServers(const std::string &content) {
     size_t current_pos = 0;
     size_t end_pos = 0;
@@ -112,13 +105,12 @@ void Config::splitServers(const std::string &content) {
         current_pos = content.find("server {", current_pos);
         if (current_pos == std::string::npos)
             break;
-        end_pos = findEndingBracket(content, current_pos + 7);
+        end_pos = parsingUtils::findEndingBracket(content, current_pos + 7);
         if (end_pos == std::string::npos)
-            reportError(ParseException("Server or location block is not closed"));
-        server_config.push_back(content.substr(current_pos, end_pos - current_pos + 1));
+            errorHandler::reportError(ParseException("Server or location block is not closed"));
+        server_config.push_back(content.substr(current_pos + 8, end_pos - current_pos - 8)); // 8 - length of "server {"
         current_pos = end_pos + 1;
     }
-    amount_of_servers = server_config.size();
 }
 
 std::vector<std::string> Config::splitParams(const std::string &content, const std::string &delim) {
@@ -196,79 +188,25 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
     return locationBlocks;
 }
 
-// этот метод - полный костыль
-// нужно будет переделать, чтобы он правильно парсил параметры сервера
-void Config::createServer(std::string &config, ServerBlock &server) const {
-    std::vector<std::string> params;
-    std::vector<std::string> error_codes;
-    bool loca_flag = false;
-    bool size_flag = false;
-    bool index_flag = false;
-    server.setLocations(ParseConfigLocations(config));
-    params = splitParams(config, std::string(" \n\t;"));
-    if (params.size() < 3)
-        reportError(ParseException("Server block is empty"));
-    for (size_t i = 0; i < params.size(); ++i) {
-        if (params[i] == "listen" && (i + 1) < params.size() && !loca_flag) {
-            if (server.getPort()) {
-                reportError(ParseException("Port is already set"));
-            }
-            server.setPort(params[++i]);
-        }
-        else if (params[i] == "host" && (i + 1) < params.size() && !loca_flag) {
-            if (server.getHost())
-                reportError(ParseException("Host is already set"));
-            server.setHost(params[++i]);
-        }
-        else if (params[i] == "root" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getRoot().empty())
-                reportError(ParseException("Root is already set"));
-            server.setRoot(params[++i]);
-        }
-        else if (params[i] == "server_name" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getServerName().empty())
-                reportError(ParseException("Server name is already set"));
-            server.setServerName(params[++i]);
-        }
-        else if (params[i] == "index" && (i + 1) < params.size() && !loca_flag) {
-            if (!server.getIndex().empty())
-                reportError(ParseException("Index is already set"));
-            server.setIndex(params[++i]);
-        }
-        else if (params[i] == "client_max_body_size" && (i + 1) < params.size() && !loca_flag) {
-            if (size_flag)
-                reportError(ParseException("Client max body size is already set"));
-            server.setClientMaxBodySize(params[i + 1]);
-            size_flag = true;
-        }
-        else if (params[i] == "autoindex" && (i + 1) < params.size() && !loca_flag) {
-            if (index_flag)
-                reportError(ParseException("Autoindex is already set"));
-            server.setAutoindex(params[++i]);
-            index_flag = true;
-        }
-        else if (params[i] == "error_page" && (i + 1) < params.size() && !loca_flag) {
-            ; // тут прописать логику для создания вектора error_pages
-        }
-        else if (params[i] == "location" && (i + 1) < params.size()) {
-            ; // тут прописать логику для создания поля location
-            loca_flag = true;
-        }
-//        else if (params[i] != "}" && params[i] != "{") {
-//            if (loca_flag)
-//                reportError(ParseException("Location block is not closed or param after location"));
-//            reportError(ParseException("'" + params[i] + "' invalid parameter"));
-//        }
+ServerBlock Config::createServer(std::string &serverTxt) const {
+    ServerBlock server;
+    server.setLocations(ParseConfigLocations(serverTxt));
+    std::vector<std::string> params = parsingUtils::splitParams(serverTxt, std::string(";"));
+    for (size_t i = 0; i < params.size(); i++) {
+        params[i] = parsingUtils::trimWhitespace(params[i]);
+        std::string key = params[i].substr(0, params[i].find(' '));
+        std::string value = params[i].substr(params[i].find(' ') + 1);
+        server.getKeymap().callFunction(key, value, server);
     }
     if (server.getRoot().empty())
-        server.setRoot("/;");
+        server.setRoot("/");
     if (server.getHost() == 0)
-        server.setHost("localhost;");
+        server.setHost("localhost");
     if (server.getIndex().empty())
-        server.setIndex("index.html;");
-    // check if index file exists and readable
-    // check if location is not duplicated
-    // check if errorpages are reachable and readable
+        server.setIndex("index.html");
+//    printf("Server was created\n");
+//    blockPrinter::print(server);
+    return server;
 }
 
 void Config::createCluster(const std::string &config_file) {
@@ -285,14 +223,10 @@ void Config::createCluster(const std::string &config_file) {
     // парсинг конфига
     parseConfig(content);
     splitServers(content);
-    for (size_t i = 0; i < server_config.size(); ++i) {
-        printf("Server %lu: '%s'\n", i, server_config[i].c_str());
-    }
 
     // создание серверов и готово кластера
-    for (size_t i = 0; i < amount_of_servers; ++i) {
-        ServerBlock server;
-        createServer(server_config[i], server);
+    for (size_t i = 0; i < server_config.size(); ++i) {
+        ServerBlock server = createServer(server_config[i]);
         servers.push_back(server);
     }
     printf("Cluster was created\n");

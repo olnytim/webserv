@@ -1,127 +1,178 @@
 #include "../../includes/parsing/LocationBlock.hpp"
-#include "../../includes/parsing/exceptions.hpp"
+#include "../../includes/parsing/parsingUtils.hpp"
 
-LocationBlock::LocationBlock(){
-	keywordsMap["return"] = &LocationBlock::setRedirect_map;
-	keywordsMap["root"] = &LocationBlock::setRoot;
-	keywordsMap["methods"] = &LocationBlock::setMethods;
-	keywordsMap["index"] = &LocationBlock::setIndex;
-	keywordsMap["autoindex"] = &LocationBlock::setAutoindex;
-	keywordsMap["client_body_temp_path"] = &LocationBlock::setClient_body_temp_path;
-	keywordsMap["client_max_body_size"] = &LocationBlock::setClient_max_body_size;
-	keywordsMap["cgi_pass"] = &LocationBlock::setCgi_pass;
-
-//	keywordsMap["limit_except"] = &LocationBlock::setAllowed_methods;
+// constructor, destructor, copy constructor, assignment operator
+LocationBlock::LocationBlock() {
+    printf("LocationBlock was created\n");
+    path = "";
+    root = "";
+    index = "";
+    return_sign = "";
+    alias = "";
+    autoindex = false;
+    client_max_body_size = MAX_CONTENT_LENGTH;
+    methods = std::vector<std::string>(5, "0");
+    keymap = LocationBlockKeymap();
 }
 
-void LocationBlock::reportError(const ParseException &ex) {
-	throw (ex);
+LocationBlock::LocationBlock(const LocationBlock &other) {
+    path = other.path;
+    root = other.root;
+    index = other.index;
+    return_sign = other.return_sign;
+    alias = other.alias;
+    cgi_path = other.cgi_path;
+    cgi_ext = other.cgi_ext;
+    methods = other.methods;
+    autoindex = other.autoindex;
+    client_max_body_size = other.client_max_body_size;
+    keymap = other.getKeymap();
 }
 
-void LocationBlock::callFunction(const std::string &key, const std::string &str){
-	typedef void (LocationBlock::*MemberFuncType)(const std::string&);
-	MemberFuncType func = keywordsMap[key];
-	if (!func || str.size() == 0){
-		reportError(locationParseException("Invalid keyword or content for keyword in Location Block"));
-	}
-	(this->*func)(str);
+LocationBlock &LocationBlock::operator=(const LocationBlock &other) {
+    if (this != &other) {
+        path = other.path;
+        root = other.root;
+        index = other.index;
+        return_sign = other.return_sign;
+        alias = other.alias;
+        cgi_path = other.cgi_path;
+        cgi_ext = other.cgi_ext;
+        methods = other.methods;
+        autoindex = other.autoindex;
+        client_max_body_size = other.client_max_body_size;
+        keymap = other.getKeymap();
+    }
+    return (*this);
 }
 
-void LocationBlock::setAutoindex(const std::string &line){
-	if (line == "on"){
-		autoindex = true;
-	} else if (line == "off"){
-		autoindex = false;
-	} else{
-		reportError(locationParseException("Invalid Autoindex value in Location Block"));
-	}
+LocationBlock::~LocationBlock() {
 }
-	
-void LocationBlock::setRedirect_map(const std::string &line){
-	short status_code;
-	std::string status_code_txt;
-	std::string link_to_redirect;
-	std::stringstream ss(line);
+//
 
-	getline(ss, status_code_txt, ' ');
-	getline(ss, link_to_redirect, ' ');
-	ss.str(std::string());
-	ss << status_code_txt;
-	if (!(ss >> status_code) || link_to_redirect.size() == 0){
-		reportError(locationParseException("Invalid Return value in Location Block"));
-	}
-	redirect_map[status_code] = link_to_redirect;
+// setters
+void LocationBlock::setPath(const std::string &value) {
+    path = value;
 }
 
-void LocationBlock::setRoot(const std::string &line){
-	root = line;
+void LocationBlock::setRoot(const std::string &value) {
+    root = value;
 }
 
-void LocationBlock::setMethods(const std::string &line){
-	std::stringstream ss(line);
-	std::string meth;
-
-	while (getline(ss, meth, ' ')){
-		methods.push_back(meth);
-	}
+void LocationBlock::setIndex(const std::string &value) {
+    index = value;
 }
 
-void LocationBlock::setCgi_pass(const std::string &line){
-	cgi_pass = line;
+void LocationBlock::setReturn(const std::string &value) {
+    return_sign = value;
 }
 
-void LocationBlock::setIndex(const std::string &line){
-	index = line;
+void LocationBlock::setAlias(const std::string &value) {
+    alias = value;
 }
 
-void LocationBlock::setRoute_to_be_saved(const std::string &line){
-	(void)line;
+void LocationBlock::setCgiPath(const std::vector<std::string> &value) {
+    cgi_path = value;
 }
 
-void LocationBlock::setClient_body_temp_path(const std::string &line){
-	client_body_temp_path = line;
+void LocationBlock::setCgiPath(const std::string &value) {
+    std::vector<std::string> paths = parsingUtils::splitParams(value, " ");
+    setCgiPath(paths);
 }
 
-void LocationBlock::setClient_max_body_size(const std::string &line){
-	std::istringstream iss(line);
-	
-	if (!(iss >> client_max_body_size)){
-		reportError(locationParseException("Invalid Client_max_body_size value in Location Block"));
-	}
+void LocationBlock::setCgiExt(const std::vector<std::string> &value) {
+    cgi_ext = value;
 }
 
-const std::string &LocationBlock::getRoot() const{
-    return (root);
+void LocationBlock::setCgiExt(const std::string &value) {
+    std::vector<std::string> exits = parsingUtils::splitParams(value, " ");
+    setCgiExt(exits);
 }
 
-const std::string &LocationBlock::getIndex() const{
-    return (index);
+void LocationBlock::setAutoindex(const std::string &value) {
+    if (value == "on" || value == "off")
+        autoindex = value == "on";
+    errorHandler::reportError(ParseException("'" + value + "' invalid autoindex"));
 }
 
-const std::string &LocationBlock::getRoute_to_be_saved() const{
-    return (route_to_be_saved);
+void LocationBlock::setClientMaxBodySize(const std::string &value) {
+    unsigned long   size = 0;
+    if (value == "0") {
+        client_max_body_size = 0;
+        return;
+    }
+    std::istringstream(value) >> size;
+    if (size == 0)
+        errorHandler::reportError(ParseException("'" + value + "' invalid client_max_body_size"));
+    client_max_body_size = size;
 }
 
-const std::string &LocationBlock::getClient_body_temp_path() const{
-    return (client_body_temp_path);
+void LocationBlock::setMethods(const std::vector<std::string> &value) {
+    methods = std::vector<std::string>(5, "0");
+    for (size_t i = 0; i < value.size(); i++) {
+        if (value[i] == "GET")
+            methods[0] = "1";
+        else if (value[i] == "POST")
+            methods[1] = "1";
+        else if (value[i] == "DELETE")
+            methods[2] = "1";
+        else if (value[i] == "PUT")
+            methods[3] = "1";
+        else if (value[i] == "HEAD")
+            methods[4] = "1";
+        else
+            errorHandler::reportError(ParseException("'" + methods[i] + "' invalid method"));
+    }
 }
 
-const std::string &LocationBlock::getCgi_pass() const{
-    return (cgi_pass);
+void LocationBlock::setMethods(const std::string &value) {
+    std::vector<std::string> methods = parsingUtils::splitParams(value, " ");
+    setMethods(methods);
 }
 
-const std::vector<std::string> &LocationBlock::getMethods() const{
-    return (methods);
+//
+
+// getters
+const std::string &LocationBlock::getPath() const {
+    return path;
 }
 
-const std::map<short, std::string> &LocationBlock::getRedirect_map() const{
-    return (redirect_map);
+const std::string &LocationBlock::getRoot() const {
+    return root;
 }
 
-unsigned int LocationBlock::getClient_max_body_size() const{
-    return (client_max_body_size);
+const std::string &LocationBlock::getIndex() const {
+    return index;
 }
 
-bool LocationBlock::getAutoindex() const{
-    return (autoindex);
+const std::string &LocationBlock::getReturn() const {
+    return return_sign;
+}
+
+const std::string &LocationBlock::getAlias() const {
+    return alias;
+}
+
+const std::vector<std::string> &LocationBlock::getCgiPath() const {
+    return cgi_path;
+}
+
+const std::vector<std::string> &LocationBlock::getCgiExt() const {
+    return cgi_ext;
+}
+
+const std::vector<std::string> &LocationBlock::getMethods() const {
+    return methods;
+}
+
+const LocationBlockKeymap & LocationBlock::getKeymap() const {
+    return keymap;
+}
+
+const bool &LocationBlock::getAutoindex() const {
+    return autoindex;
+}
+
+const unsigned long &LocationBlock::getClientMaxBodySize() const {
+    return client_max_body_size;
 }

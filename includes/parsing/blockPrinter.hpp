@@ -1,7 +1,7 @@
 #ifndef BLOCKPRINTER_HPP
 #define BLOCKPRINTER_HPP
 
-#include "cluster.hpp"
+#include "Config.hpp"
 
 class blockPrinter {
 public:

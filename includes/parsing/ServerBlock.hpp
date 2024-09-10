@@ -1,40 +1,65 @@
-#pragma once
+#ifndef SERVERBLOCK2_HPP
+#define SERVERBLOCK2_HPP
 
+#include "../Headers.hpp"
 #include "LocationBlock.hpp"
+#include "errorHandler.hpp"
+#include "ServerBlockKeymap.hpp"
+#include "parsingUtils.hpp"
 
 class ServerBlock {
 private:
-	typedef void(ServerBlock::*func)(const std::string&);
-	std::map<const std::string, func> keywords;
-	std::map<unsigned short, std::string> error_pages;
-	
-	std::vector<std::string> server_names;
-	std::vector<LocationBlock> locations;
-	std::vector<std::string> locationsTxt;
-	std::string listen;
-	
-	unsigned int client_max_body_size;
-	unsigned short port;
+    int                         port;
+    int                         listen_fd;
+    in_addr_t                   host;
+    std::string                 server_name;
+    std::string                 root;
+    std::string                 index;
+    unsigned long               client_max_body_size;
+    bool                        autoindex;
+    std::map<int, std::string>  error_pages;
+    std::vector<LocationBlock>  locations;
+    struct sockaddr_in          server_address;
+    ServerBlockKeymap           keymap;
 public:
-	ServerBlock();
+    // constructor, destructor, copy constructor, assignment operator
+    ServerBlock();
+    ~ServerBlock();
 
-	void callFunction(const std::string &key, std::string str);
+    ServerBlock(const ServerBlock &other);
+    ServerBlock &operator=(const ServerBlock &other);
 
-	void setServerName(const std::string &line);
-	void addErrorPage(const std::string &line);
-	void setClientMaxBodySize(const std::string &line);
-	void setListen(const std::string &line);
-	void setPort(const std::string &line);
-	void addLocationTxt(std::string str);
-	void parseLocations();
-	void addLocation(const LocationBlock &loc);
-	void reportError(const ParseException &ex) const;
-    std::string getListen() const;
-    unsigned short getPort() const;
-    unsigned int getClientMaxBodySize() const;
+    // methods
+    bool isValidHost(const std::string &host) const;
+    void setupServer();
 
-	const std::vector<std::string> &getServerNames() const;
-	const std::vector<LocationBlock> &getLocations() const;
-	const std::map<unsigned short, std::string> getErrorPage() const;
-	const std::vector<std::string> &getLocationsTxt() const;
+    // setters
+    void setPort(const std::string &value);
+    void setFd(const std::string &value);
+    void setFd(int value);
+    void setHost(const std::string &value);
+    void setServerName(const std::string &value);
+    void setRoot(const std::string &value);
+    void setIndex(const std::string &value);
+    void setClientMaxBodySize(const std::string &value);
+    void setAutoindex(const std::string &value);
+    void setErrorPages(const std::string &value);
+    void setLocations(const std::vector<LocationBlock> & locaVector);
+
+    // getters
+    ServerBlockKeymap   getKeymap() const;
+    const int           &getPort() const;
+    const int           &getFd() const;
+    const in_addr_t     &getHost() const;
+    const std::string   &getServerName() const;
+    const std::string   &getRoot() const;
+    const std::string   &getIndex() const;
+    const unsigned long &getClientMaxBodySize() const;
+    const bool          &getAutoindex() const;
+    const std::map<int, std::string>    &getErrorPages() const;
+    const std::vector<LocationBlock>    &getLocations() const;
+    const struct sockaddr_in            &getServerAddress() const;
+    std::vector<LocationBlock>::iterator   getLocationKey(std::string key);
 };
+
+#endif //SERVERBLOCK2_HPP

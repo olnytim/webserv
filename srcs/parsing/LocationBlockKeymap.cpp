@@ -1,6 +1,6 @@
 #include "../../includes/parsing/LocationBlockKeymap.hpp"
 #include "../../includes/parsing/exceptions.hpp"
-#include "../../includes/parsing/LocationBlock2.hpp"
+#include "../../includes/parsing/LocationBlock.hpp"
 
 LocationBlockKeymap::LocationBlockKeymap(){
     keymap["root"] = &LocationBlock::setRoot;

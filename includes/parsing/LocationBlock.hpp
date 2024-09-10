@@ -1,55 +1,56 @@
 #pragma once
 
-//#include <iostream>
-//#include <map>
-//#include <vector>
-//#include <sstream>
-#include "exceptions.hpp"
 #include "../Headers.hpp"
+#include "LocationBlockKeymap.hpp"
+#include "errorHandler.hpp"
 
-class LocationBlock{
+class LocationBlock {
+private:
+    std::string path;
+    std::string root;
+    std::string index;
+    std::string return_sign;
+    std::string alias;
+    std::vector <std::string> cgi_path;
+    std::vector <std::string> cgi_ext;
+    std::vector <std::string> methods;
+    bool autoindex;
+    unsigned long client_max_body_size;
+
+    LocationBlockKeymap keymap;
 public:
-	LocationBlock();
+    // constructor, destructor, copy constructor, assignment operator
+    LocationBlock();
+    ~LocationBlock();
+    LocationBlock(const LocationBlock &other);
+    LocationBlock &operator=(const LocationBlock &other);
 
-	static void reportError(const ParseException &ex) ;
+    // setters
+    void setPath(const std::string &value);
+    void setRoot(const std::string &value);
+    void setIndex(const std::string &value);
+    void setReturn(const std::string &value);
+    void setAlias(const std::string &value);
+    void setCgiPath(const std::vector<std::string> &value);
+    void setCgiPath(const std::string &value);
+    void setCgiExt(const std::vector<std::string> &value);
+    void setCgiExt(const std::string &value);
+    void setMethods(const std::vector<std::string> &value);
+    void setMethods(const std::string &value);
+    void setAutoindex(const std::string &value);
+    void setClientMaxBodySize(const std::string &value);
 
-	void callFunction(const std::string &key, const std::string &str);
-	void setRedirect_map(const std::string& line);
-	void setRoot(const std::string& line);
-	void setMethods(const std::string& line);
-	void setIndex(const std::string& line);
-	void setAutoindex(const std::string& line);
-	static void setRoute_to_be_saved(const std::string& line);
-	void setClient_body_temp_path(const std::string& line);
-	void setClient_max_body_size(const std::string& line);
-	void setCgi_pass(const std::string& line);
-
+    // getters
+    const std::string &getPath() const;
     const std::string &getRoot() const;
     const std::string &getIndex() const;
-    const std::string &getRoute_to_be_saved() const;
-    const std::string &getClient_body_temp_path() const;
-    const std::string &getCgi_pass() const;
+    const std::string &getReturn() const;
+    const std::string &getAlias() const;
+    const std::vector<std::string> &getCgiPath() const;
+    const std::vector<std::string> &getCgiExt() const;
     const std::vector<std::string> &getMethods() const;
-    const std::map<short, std::string> &getRedirect_map() const;
-    unsigned int getClient_max_body_size() const;
-    bool getAutoindex() const;
+    const LocationBlockKeymap &getKeymap() const;
+    const bool &getAutoindex() const;
+    const unsigned long &getClientMaxBodySize() const;
 
-//	void setAllowed_methods(const std::string& line);
-private:
-	typedef void(LocationBlock::*func)(const std::string&);
-	std::map<std::string, func> keywordsMap;
-	std::map<short, std::string> redirect_map;
-
-	std::vector<std::string> methods;
-
-	std::string root;
-	std::string index;
-	std::string route_to_be_saved;
-	std::string client_body_temp_path;
-	std::string cgi_pass;
-
-	unsigned int client_max_body_size;
-	bool autoindex;
-
-//	std::vector<std::string> allowed_methods; //not sure if i have to implement this one :D
 };

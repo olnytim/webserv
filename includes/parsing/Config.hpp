@@ -2,7 +2,7 @@
 
 #include "../Headers.hpp"
 #include "exceptions.hpp"
-#include "ServerBlock2.hpp"
+#include "ServerBlock.hpp"
 #include "parsingUtils.hpp"
 
 class Config {
@@ -33,7 +33,7 @@ public:
     static void parseConfig(std::string &content);
     void splitServers(const std::string &content);
     static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
-    void createServer(std::string &config, ServerBlock &server) const;
+    ServerBlock createServer(std::string &serverTxt) const;
     void createCluster(const std::string &config_file);
 
     void print() const;

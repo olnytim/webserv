@@ -1,7 +1,7 @@
 //#include "../includes/parsing/config.hpp"
 //#include "../includes/sockets/WebServer.hpp"
 
-#include "../includes/parsing/cluster.hpp"
+#include "../includes/parsing/Config.hpp"
 #include "../includes/sockets/web.hpp"
 #include "../includes/parsing/blockPrinter.hpp"
 
@@ -24,7 +24,6 @@ int main(int ac, char **av){
                     conf.createCluster(av[1]);
                     break;
             }
-//            conf.print();
             blockPrinter::print(conf);
             servers.setupServers(conf.getServers());
             servers.runServers();
