@@ -4,10 +4,10 @@
 #include "exceptions.hpp"
 
 class errorHandler {
-    public:
-        static void reportError(const ParseException &ex) {
-            throw ex;
-        }
+public:
+    static void reportError(const ParseException &ex) {
+        throw ex;
+    }
 };
 
 

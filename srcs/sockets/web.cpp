@@ -197,10 +197,10 @@ void WebServer::runServers() {
                 readRequest(i, clients_map[i]);
 //                printf("Read request\n");
             }
-//            else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
-//                printf("Send response\n");
-//                sendResponse(i, clients_map[i]);
-//            }
+            else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
+                printf("Send response\n");
+                sendResponse(i, clients_map[i]);
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-
 #include "../../includes/parsing/ServerBlockKeymap.hpp"
 #include "../../includes/parsing/ServerBlock.hpp"
 
@@ -12,8 +11,7 @@ void ServerBlockKeymap::callFunction(const std::string &key, const std::string &
 }
 
 ServerBlockKeymap::ServerBlockKeymap() {
-    keymap["port"] = &ServerBlock::setPort;
-    keymap["listen"] = &ServerBlock::setFd;
+    keymap["listen"] = &ServerBlock::setPort;
     keymap["host"] = &ServerBlock::setHost;
     keymap["server_name"] = &ServerBlock::setServerName;
     keymap["root"] = &ServerBlock::setRoot;
