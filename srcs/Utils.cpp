@@ -92,3 +92,10 @@ std::string statusCodeString(short statusCode) {
             return "Unknown";
     }
 }
+
+template <typename T>
+std::string convertToString(T value) {
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
