@@ -9,7 +9,7 @@ class Config {
 private:
     std::vector<ServerBlock>    servers;
     std::vector<std::string>    server_config;
-    size_t                      amount_of_servers;
+//    size_t                      amount_of_servers;
 
     std::string                 conf_file;
 

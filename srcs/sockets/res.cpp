@@ -10,7 +10,6 @@ Response::Response() {
     location = "";
     code = 0;
     res = nullptr;
-    res = NULL;
     auto_index = false;
 }
 
@@ -23,7 +22,6 @@ Response::Response(Request &other) {
     location = "";
     code = 0;
     res = nullptr;
-    res = NULL;
     auto_index = false;
 }
 
@@ -32,10 +30,10 @@ Response::~Response() {
 
 bool Response::reqError() {
     // check if error code is set
-   if (request.error_code) {
-       code = request.error_code;
-       return true;
-   }
+//    if (request.error_code) {
+//        code = request.error_code;
+//        return true;
+//    }q
     return false;
 }
 
@@ -55,7 +53,6 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
 }
 
 bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
-    (void) code;
     std::vector<std::string> methods = location.getMethods();
 
     // Определяем строковое представление метода
@@ -100,6 +97,7 @@ bool isDirectory(std::string &file) {
 
 bool fileExists(std::string &file) {
     struct stat st;
+    printf("stat: %d\n", stat(file.c_str(), &st));
     if (stat(file.c_str(), &st) == 0)
         return true;
     return false;
@@ -172,14 +170,18 @@ bool Response::handleTarget() {
     else {
         file = combinePaths(server.getRoot(), request.path, "");
         if (isDirectory(file)) {
+            printf("File length: %lu\n", file.length());
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
                 return true;
             }
-            file += server.getIndex();
+            file += server.getIndex(); // why does getIndex return nothing?
+            file += "index.html";
+            printf("File: %s\n", file.c_str());
             if (!fileExists(file)) {
                 code = 403;
+                printf("File not found\n");
                 return true;
             }
             if (isDirectory(file)) {
@@ -253,6 +255,13 @@ void Response::buildErrorBody() {
 void Response::createResponse() {
     if (buildBody() || reqError())
         buildErrorBody();
+    std::string fileHtml = "www/index.html";
+    std::ifstream f(fileHtml.c_str());
+    std::stringstream buffer;
+    if (f.good())
+        buffer << f.rdbuf();
+    else
+        buffer << "<h1>404 not found</h1>";
     printf("Body: %s\n", body.data());
     /* Set State */
     response.append("HTTP/1.1 " + std::to_string(code) + " ");
@@ -266,7 +275,8 @@ void Response::createResponse() {
         response.append("text/html\r\n");
 
     /* Set Length */
-    response.append("Content-Length: " + std::to_string(response.length()) + "\r\n");
+//    response.append("Content-Length: " + std::to_string(response.length()) + "\r\n");
+    response.append("Content-Length: " + std::to_string(buffer.str().length()) + "\r\n");
 
     /* Set Connection */
     if (request.headers["Connection"] == "keep-alive")
@@ -275,18 +285,21 @@ void Response::createResponse() {
         response.append("Connection: close\r\n");
 
     /* Set Server */
-    response.append("Server: " + request.headers["User-Agent"] + "\r\n");
-
-    /* Set Location */
-    if (location.length())
-        response.append("Location: " + location + "\r\n");
+//    response.append("Server: " + request.headers["User-Agent"] + "\r\n");
+//
+//    /* Set Location */
+//    if (!location.empty())
+//        response.append("Location: " + location + "\r\n");
 
     /* Set Date */
-    char date[100];
-    time_t now = time(0);
-    strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
-    response.append("Date: " + std::string(date) + "\r\n");
+//    char date[100];
+//    time_t now = time(0);
+//    strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
+//    response.append("Date: " + std::string(date) + "\r\n");
 
     /* Set Body */
     response.append("\r\n");
+
+    response.append(buffer.str());
+    printf("Response: %s\n", response.c_str());
 }
