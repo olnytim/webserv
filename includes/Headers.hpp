@@ -43,5 +43,5 @@
 // Utils
 
 //int ft_stoi(const std::string &str);
-std::string statusCodeString(short statusCode);
-unsigned int fromHexToDec(const std::string &nb);
+// std::string statusCodeString(short statusCode);
+// unsigned int fromHexToDec(const std::string &nb);

@@ -55,7 +55,7 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
 
 bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
     std::vector<std::string> methods = location.getMethods();
-
+    (void) code;
     // Определяем строковое представление метода
     std::string method_str;
     switch (method) {
@@ -68,10 +68,10 @@ bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, shor
     }
 
     // Проверяем, содержится ли метод в списке разрешённых
-    if (std::find(methods.begin(), methods.end(), method_str) == methods.end()) {
-        code = 405;  // Метод не разрешён
-        return true;
-    }
+    // if (std::find(methods.begin(), methods.end(), method_str) == methods.end()) {
+    //     code = 405;  // Метод не разрешён
+    //     return true;
+    // }
 
     return false;  // Метод разрешён
 }
@@ -269,7 +269,7 @@ void Response::createResponse() {
     std::stringstream ss;
     ss << code;
     response.append("HTTP/1.1 " + ss.str() + " ");
-    response.append(statusCodeString(code) + "\r\n");
+    // response.append(statusCodeString(code) + "\r\n");
 
     /* Set Type */
     response.append("Content-Type: ");
