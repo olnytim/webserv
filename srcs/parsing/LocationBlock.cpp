@@ -90,8 +90,10 @@ void LocationBlock::setCgiExt(const std::string &value) {
 }
 
 void LocationBlock::setAutoindex(const std::string &value) {
-    if (value == "on" || value == "off")
+    if (value == "on" || value == "off") {
         autoindex = value == "on";
+        return;
+    }
     errorHandler::reportError(ParseException("'" + value + "' invalid autoindex"));
 }
 
