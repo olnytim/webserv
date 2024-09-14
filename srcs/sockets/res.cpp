@@ -37,7 +37,7 @@ bool Response::reqError() {
 //    if (request.error_code) {
 //        code = request.error_code;
 //        return true;
-//    }q
+//    }
     return false;
 }
 
@@ -130,7 +130,8 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
 bool Response::handleTarget() {
     std::string key;
     LocationMatch(request.path, server.getLocations(), key);
-    if (key.length() > 0) {
+    printf("Key: %s\n", key.c_str());
+    if (!key.empty()) {
         LocationBlock loca = *server.getLocationKey(key);
         if (isAllowedMethod(request.method, loca, code))
             return true;
@@ -202,7 +203,6 @@ bool Response::handleTarget() {
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
-    printf("FFFFFIIIIILLLLLEEEEEE: %s\n", file.c_str());
     if (temp.fail()) {
         code = 404;
         return false;
@@ -218,11 +218,8 @@ bool Response::buildBody() {
         code = 413;
         return true;
     }
-    printf("Body too large                         hahahaha\n");
-    if (handleTarget()) {
-        printf("Target not found\n\n");
+    if (handleTarget())
         return true;
-    }
     if (code)
         return false;
     printf("Request method: %d\n", request.method);
