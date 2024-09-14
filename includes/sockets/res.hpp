@@ -41,6 +41,8 @@ public:
 
     bool buildBody();
 
+    std::string getErrorPage();
+    void setDefaultErrorPages();
     void buildErrorBody();
     void createResponse();
 };
