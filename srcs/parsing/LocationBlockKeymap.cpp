@@ -18,8 +18,10 @@ void LocationBlockKeymap::callFunction(std::string key, const std::string &value
 {
     typedef void (LocationBlock::*MemberFuncType)(const std::string&);
     MemberFuncType func = keymap.find(key)->second;
-    if (key.size() == 0 || value.size() == 0 || !func){
+    printf("Here\n\n");
+    if (key.empty() || value.empty() || keymap.find(key) == keymap.end()){
         errorHandler::reportError(locationParseException("Invalid keyword or content for keyword in Location Block"));
     }
+    printf("Here\n\n");
     (instance.*func)(value);
 }
