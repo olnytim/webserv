@@ -135,6 +135,8 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
         params[i] = parsingUtils::trimWhitespace(params[i]);
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
+        key = parsingUtils::trimWhitespace(key);
+        value = parsingUtils::trimWhitespace(value);
         location.getKeymap().callFunction(key, value, location);
     }
     return location;
@@ -157,6 +159,8 @@ ServerBlock Config::createServer(std::string &serverTxt) const {
         params[i] = parsingUtils::trimWhitespace(params[i]);
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
+        key = parsingUtils::trimWhitespace(key);
+        value = parsingUtils::trimWhitespace(value);
         server.getKeymap().callFunction(key, value, server);
     }
     if (server.getRoot().empty())
