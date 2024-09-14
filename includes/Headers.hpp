@@ -45,3 +45,10 @@
 //int ft_stoi(const std::string &str);
 std::string statusCodeString(short statusCode);
 unsigned int fromHexToDec(const std::string &nb);
+
+template <typename T>
+std::string to_string(const T &value) {
+    std::ostringstream os;
+    os << value;
+    return os.str();
+}

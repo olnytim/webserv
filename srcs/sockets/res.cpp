@@ -1,5 +1,7 @@
 #include "../../includes/sockets/res.hpp"
 
+int buildHtmlIndex(std::string &dir_name, std::vector<uint8_t> &body, size_t &body_len);
+
 Mime Response::mime;
 
 Response::Response() {
@@ -198,6 +200,7 @@ bool Response::handleTarget() {
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
+    printf("FFFFFIIIIILLLLLEEEEEE: %s\n", file.c_str());
     if (temp.fail()) {
         code = 404;
         return false;
@@ -213,10 +216,14 @@ bool Response::buildBody() {
         code = 413;
         return true;
     }
-    if (handleTarget())
+    printf("Body too large                         hahahaha\n");
+    if (handleTarget()) {
+        printf("Target not found\n\n");
         return true;
+    }
     if (code)
         return false;
+    printf("Request method: %d\n", request.method);
     if (request.method == GET || request.method == HEAD) {
         if (!readFile())
             return true;
@@ -248,20 +255,56 @@ bool Response::buildBody() {
     return false;
 }
 
+std::string Response::getErrorPage() {
+    return ("<html>\r\n<head><title>" + to_string(code) + " " +
+            statusCodeString(code) + " </title></head>\r\n" + "<body>\r\n" +
+            "<center>\r\n<h1>" + to_string(code) + " " + statusCodeString(code) +
+            "</h1>\r\n</center>\r\n" + "</body>\r\n</html>\r\n");
+}
+
+void Response::setDefaultErrorPages() {
+    response_body = getErrorPage();
+    printf("Error page: %s\n", response_body.c_str());
+}
+
 void Response::buildErrorBody() {
-    ;
+    if (!server.getErrorPages().count(code) ||
+        !server.getErrorPages().at(code).empty() ||
+        request.method == DELETE || request.method == POST)
+        setDefaultErrorPages();
+    else {
+        if (code >= 400 && code < 500) {
+            location = server.getErrorPages().at(code);
+            if (location[0] != '/')
+                location.insert(location.begin(), '/');
+            code = 302;
+        }
+        file = server.getRoot() + server.getErrorPages().at(code);
+        short old_code = code;
+        if (!readFile()) {
+            code = old_code;
+            setDefaultErrorPages();
+        }
+    }
 }
 
 void Response::createResponse() {
+    printf("\n***********Creating                        response*************\n\n");
     if (buildBody() || reqError())
         buildErrorBody();
-    std::string fileHtml = "www/index.html";
-    std::ifstream f(fileHtml.c_str());
-    std::stringstream buffer;
-    if (f.good())
-        buffer << f.rdbuf();
-    else
-        buffer << "<h1>404 not found</h1>";
+//    if (cgi) after cgi parsing
+//        return ;
+    if (auto_index) {
+        std::cout << "Auto index\n";
+        if (buildHtmlIndex(file, body, body_length)) {
+            code = 500;
+            buildErrorBody();
+            return ;
+        }
+        else
+            code = 200;
+        response_body.insert(response_body.begin(), body.begin(), body.end());
+    }
     printf("Body: %s\n", body.data());
     /* Set State */
     response.append("HTTP/1.1 " + std::to_string(code) + " ");
@@ -275,8 +318,7 @@ void Response::createResponse() {
         response.append("text/html\r\n");
 
     /* Set Length */
-//    response.append("Content-Length: " + std::to_string(response.length()) + "\r\n");
-    response.append("Content-Length: " + std::to_string(buffer.str().length()) + "\r\n");
+    response.append("Content-Length: " + std::to_string(response_body.length()) + "\r\n");
 
     /* Set Connection */
     if (request.headers["Connection"] == "keep-alive")
@@ -285,21 +327,22 @@ void Response::createResponse() {
         response.append("Connection: close\r\n");
 
     /* Set Server */
-//    response.append("Server: " + request.headers["User-Agent"] + "\r\n");
+    response.append("Server: " + request.headers["User-Agent"] + "\r\n");
 //
 //    /* Set Location */
-//    if (!location.empty())
-//        response.append("Location: " + location + "\r\n");
+    if (!location.empty())
+        response.append("Location: " + location + "\r\n");
 
     /* Set Date */
-//    char date[100];
-//    time_t now = time(0);
-//    strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
-//    response.append("Date: " + std::string(date) + "\r\n");
+    char date[100];
+    time_t now = time(0);
+    strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
+    response.append("Date: " + std::string(date) + "\r\n");
 
     /* Set Body */
     response.append("\r\n");
 
-    response.append(buffer.str());
+    if (request.method != HEAD && (request.method == GET || code != 200))
+        response.append(response_body);
     printf("Response: %s\n", response.c_str());
 }
