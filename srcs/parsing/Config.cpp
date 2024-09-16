@@ -131,15 +131,15 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     path = parsingUtils::trimWhitespace(path);
     location.setPath(path);
     locationTxt = locationTxt.substr(locationTxt.find('{') + 1);
+    locationTxt = parsingUtils::trimWhitespace(locationTxt);
     std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
+
     for (size_t i = 0; i < params.size(); i++) {
         params[i] = parsingUtils::trimWhitespace(params[i]);
-        std::cout << "params[i]: [" << params[i] << "]" << std::endl;
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
         key = parsingUtils::trimWhitespace(key);
         value = parsingUtils::trimWhitespace(value);
-        printf("key: %s, value: %s\n", key.c_str(), value.c_str());
         location.getKeymap().callFunction(key, value, location);
     }
     return location;
@@ -158,6 +158,7 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
 ServerBlock Config::createServer(std::string &serverTxt) const {
     ServerBlock server;
     server.setLocations(ParseConfigLocations(serverTxt));
+    serverTxt = parsingUtils::trimWhitespace(serverTxt);
     std::vector<std::string> params = parsingUtils::splitParams(serverTxt, std::string(";"));
     for (size_t i = 0; i < params.size(); i++) {
         params[i] = parsingUtils::trimWhitespace(params[i]);
