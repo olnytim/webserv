@@ -205,10 +205,11 @@ const struct sockaddr_in &ServerBlock::getServerAddress() const {
     return server_address;
 }
 
-std::vector<LocationBlock>::iterator ServerBlock::getLocationKey(std::string key)
+const std::vector<LocationBlock>::iterator ServerBlock::getLocationKey(std::string key)
 {
     std::vector<LocationBlock>::iterator it;
     for (it = this->locations.begin(); it != this->locations.end(); it++) {
+        printf("it->getPath() = %s\n", it->getPath().c_str());
         if (it->getPath() == key)
             return it;
     }

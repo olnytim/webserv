@@ -11,7 +11,6 @@ Response::Response() {
     response_body = "";
     location = "";
     code = 0;
-    // res = nullptr;
     res = NULL;
     auto_index = false;
 }
@@ -24,7 +23,6 @@ Response::Response(Request &other) {
     response_body = "";
     location = "";
     code = 0;
-    // res = nullptr;
     res = NULL;
     auto_index = false;
 }
@@ -42,18 +40,29 @@ bool Response::reqError() {
 }
 
 void Response::LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key) {
-    size_t temp = 0;
+    size_t biggest_match = 0;
 
-    for (std::vector<LocationBlock>::iterator it = locations.begin(); it != locations.end(); ++it) {
-        if (path.find(it->getPath()) == 0) {
-            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
-                if (it->getPath().length() > temp) {
-                    temp = it->getPath().length();
+    printf("hello there\n");
+    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it)
+    {
+        printf("Location path: %s\n", it->getPath().c_str());
+        printf("Request path: %s\n", path.c_str());
+        printf("path.find(it->getPath()): %lu\n", path.find("/"));
+//            if(path.find(it->getPath()) == 0)
+        if(path.find("/") == 0)
+        {
+            if( it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/')
+            {
+                if(it->getPath().length() > biggest_match)
+                {
+                    biggest_match = it->getPath().length();
                     key = it->getPath();
                 }
             }
         }
     }
+    key = "/";  // default location
+    printf("Location key: %s\n", key.c_str());
 }
 
 bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
@@ -71,10 +80,17 @@ bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, shor
     }
 
     // Проверяем, содержится ли метод в списке разрешённых
-    // if (std::find(methods.begin(), methods.end(), method_str) == methods.end()) {
-    //     code = 405;  // Метод не разрешён
-    //     return true;
-    // }
+    bool found = false;
+    for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
+        if (*it == method_str) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        code = 405;  // Метод не разрешён
+        return true;
+    }
 
     return false;  // Метод разрешён
 }
@@ -129,6 +145,7 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
 
 bool Response::handleTarget() {
     std::string key;
+    printf("server locations size: %lu\n", server.getLocations().size());
     LocationMatch(request.path, server.getLocations(), key);
     printf("Key: %s\n", key.c_str());
     if (!key.empty()) {
@@ -288,6 +305,8 @@ void Response::buildErrorBody() {
 }
 
 void Response::createResponse() {
+    printf("server locations size: %lu\n", server.getLocations().size());
+    printf("server contains something? %d\n", server.getLocations().empty());
     printf("\n***********Creating                        response*************\n\n");
     if (buildBody() || reqError())
         buildErrorBody();
@@ -306,7 +325,7 @@ void Response::createResponse() {
     }
     printf("Body: %s\n", body.data());
     /* Set State */
-    // response.append("HTTP/1.1 " + std::to_string(code) + " ");
+    response.append("HTTP/1.1 " + to_string(code) + " ");
     response.append(statusCodeString(code) + "\r\n");
 
     /* Set Type */
@@ -317,7 +336,7 @@ void Response::createResponse() {
         response.append("text/html\r\n");
 
     /* Set Length */
-    // response.append("Content-Length: " + std::to_string(response_body.length()) + "\r\n");
+    response.append("Content-Length: " + to_string(response_body.length()) + "\r\n");
 
     /* Set Connection */
     if (request.headers["Connection"] == "keep-alive")
@@ -327,7 +346,7 @@ void Response::createResponse() {
 
     /* Set Server */
     response.append("Server: " + request.headers["User-Agent"] + "\r\n");
-//
+
 //    /* Set Location */
     if (!location.empty())
         response.append("Location: " + location + "\r\n");

@@ -72,7 +72,7 @@ void WebServer::closeConnection(const int fd) {  // not sure if this condition i
 void WebServer::acceptNewConnection(ServerBlock &server) {
     struct sockaddr_in addr;
     unsigned long addr_len = sizeof(addr);
-    Client client;
+    Client client(server);
     int new_fd = accept(server.getFd(), (struct sockaddr *)&addr, reinterpret_cast<socklen_t *>(&addr_len));
     if (new_fd == -1) {
         printf("Accept error\n");
@@ -93,23 +93,18 @@ void WebServer::acceptNewConnection(ServerBlock &server) {
     if (clients_map.count(new_fd) != 0)
         clients_map.erase(new_fd);
     clients_map.insert(std::pair<int, Client>(new_fd, client));
+    printf("clients_map size: %lu\n", clients_map.size());
 }
 
 void WebServer::assignServer(Client &client) {
     for (std::vector<ServerBlock>::iterator it = servers.begin(); it != servers.end(); ++it) {
-//        printf("Server: %u:%d\n", it->getHost(), it->getPort());
-//        printf("Client: %u:%d\n", client.server.getHost(), client.server.getPort());
-//        printf("Server name: %s\n", it->getServerName().c_str());
-//        printf("Client name: %s\n", client.server.getServerName().c_str());
         if (client.server.getHost() == it->getHost() &&
             client.server.getPort() == it->getPort() &&
             client.server.getServerName() == it->getServerName()) {
             client.server = *it;
-            printf("Server found\n");
             return;
         }
     }
-    printf("Server not found\n");
 }
 
 void WebServer::readRequest(const int &fd, Client &client) {
@@ -182,23 +177,12 @@ void WebServer::runServers() {
         }
         for (int i = 0; i <= biggest_fd; ++i) {
             if (FD_ISSET(i, &recv_copy) && servers_map.count(i)) {
-//                printf("Servers map count: %lu\n", servers_map.size());
-//                printf("Servers map fd: %d\n", servers_map.find(i)->first);
-//                printf("Servers map server fd: %d\n", servers_map.find(i)->second.getFd());
-//                printf("Servers map server host: %u\n", servers_map.find(i)->second.getHost());
                 acceptNewConnection(servers_map.find(i)->second);
-//                printf("New connection\n");
             }
             else if (FD_ISSET(i, &recv_copy) && clients_map.count(i) > 0) {
-//                printf("Clients map count: %lu\n", clients_map.size());
-//                printf("Clients map fd: %d\n", clients_map.find(i)->first);
-//                printf("Clients map client fd: %d\n", clients_map.find(i)->second.client_fd);
-//                printf("Clients map client server host: %u\n", clients_map.find(i)->second.server.getHost());
                 readRequest(i, clients_map[i]);
-//                printf("Read request\n");
             }
             else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
-                printf("Send response\n");
                 sendResponse(i, clients_map[i]);
             }
         }

@@ -128,6 +128,7 @@ std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const
 LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     LocationBlock location;
     std::string path = locationTxt.substr(0, locationTxt.find('{'));
+    printf("**************************path: '%s'\n", path.c_str());
     location.setPath(path);
     locationTxt = locationTxt.substr(locationTxt.find('{') + 1);
     std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
@@ -148,6 +149,7 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
     for (size_t i = 0; i < locationsTxt.size(); i++) {
         locationBlocks.push_back(CreateLocation(locationsTxt[i]));
     }
+    printf("number of locations: %lu\n", locationBlocks.size());
     return locationBlocks;
 }
 

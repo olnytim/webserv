@@ -7,8 +7,9 @@ Client::Client() {
 Client::~Client() {}
 
 Client::Client(ServerBlock &server) {
+    printf("Client was created\n");
     client_fd = -1;
-    this->server = server;
+    response.server = server;
 }
 
 Client::Client(const Client &other) {
