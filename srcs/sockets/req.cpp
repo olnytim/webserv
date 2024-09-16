@@ -12,14 +12,12 @@ void Request::reqParse(const char* data, size_t size) {
     std::istringstream stream(std::string(data, size));
     std::string line;
 
-    // Parse request line
     if (std::getline(stream, line)) {
         std::istringstream lineStream(line);
         std::string methodString;
         lineStream >> methodString >> path >> version;
 
         method = stringToHttpMethod(methodString);
-        printf("Method: %s\n", methodString.c_str());
         if (method == NONE) {
             std::cerr << "Invalid request method\n";
             return;
