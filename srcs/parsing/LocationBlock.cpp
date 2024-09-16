@@ -111,24 +111,28 @@ void LocationBlock::setClientMaxBodySize(const std::string &value) {
 
 void LocationBlock::setMethods(const std::vector<std::string> &value) {
     methods = std::vector<std::string>(5, "0");
-    for (size_t i = 0; i < value.size(); i++) {
+    for (size_t i = 0; i < value.size(); ++i) {
         if (value[i] == "GET")
-            methods[0] = "1";
+            methods[0] = "GET";
         else if (value[i] == "POST")
-            methods[1] = "1";
+            methods[1] = "POST";
         else if (value[i] == "DELETE")
-            methods[2] = "1";
+            methods[2] = "DELETE";
         else if (value[i] == "PUT")
-            methods[3] = "1";
+            methods[3] = "PUT";
         else if (value[i] == "HEAD")
-            methods[4] = "1";
+            methods[4] = "HEAD";
         else
             errorHandler::reportError(ParseException("'" + methods[i] + "' invalid method"));
     }
 }
 
 void LocationBlock::setMethods(const std::string &value) {
+    printf("value: %s\n", value.c_str());
     std::vector<std::string> methods = parsingUtils::splitParams(value, " ");
+    for (size_t i = 0; i < methods.size(); i++) {
+        printf("methods[%lu]: %s\n", i, methods[i].c_str());
+    }
     setMethods(methods);
 }
 

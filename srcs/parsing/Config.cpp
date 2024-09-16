@@ -139,6 +139,8 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
         key = parsingUtils::trimWhitespace(key);
         value = parsingUtils::trimWhitespace(value);
         location.getKeymap().callFunction(key, value, location);
+        printf("key: %s, value: %s\n", key.c_str(), value.c_str());
+        printf("key: %s, value: 1:%s 2:%s 3:%s\n", key.c_str(), location.getMethods()[0].c_str(), location.getMethods()[1].c_str() ,location.getMethods()[2].c_str());
     }
     return location;
 }
