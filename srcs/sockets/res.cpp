@@ -134,6 +134,8 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
     return (res);
 }
 
+
+
 bool Response::handleTarget() {
     std::string key;
     LocationMatch(request.path, server.getLocations(), key);
@@ -145,18 +147,28 @@ bool Response::handleTarget() {
             code = 413;
             return true;
         }
-        if (checkReturn(loca, code, location))
+        if (checkReturn(loca, code, location)) {
             return true;
+        }
+
+        if (!loca.getAlias().empty())
+            file = combinePaths(loca.getAlias(), request.path.substr(loca.getPath().length()), "");
+        else
+            file = combinePaths(server.getRoot(), request.path, "");
         if (isDirectory(file)) {
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
                 return true;
             }
-            if (!loca.getIndex().empty())
+            if (!loca.getIndex().empty()) {
                 file += loca.getIndex();
-            else
+                printf("File: '%s'\n", file.c_str());
+            }
+            else {
                 file += server.getIndex();
+                printf("File: '%s'\n", file.c_str());
+            }
             if (!fileExists(file)) {
                 if (loca.getAutoindex()) {
                     auto_index = true;
@@ -204,6 +216,7 @@ bool Response::handleTarget() {
             }
         }
     }
+    printf("                                       h i                            \n");
     return false;
 }
 
@@ -214,6 +227,7 @@ bool Response::readFile() {
     printf("File is directory: %d\n", isDirectory(file));
     printf("File is open: %d\n", temp.is_open());
     if (temp.fail()) {
+        printf("******************i broke here***********************\n");
         code = 404;
         return false;
     }
