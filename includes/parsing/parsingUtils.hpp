@@ -44,13 +44,14 @@ public:
     static std::vector<std::string> splitParams(const std::string &content, const std::string &delim) {
         std::vector<std::string>	str;
         std::string::size_type		start, end;
-
         start = end = 0;
         while (start != std::string::npos)
         {
             end = content.find_first_of(delim, start);
-            if (end == std::string::npos)
+            if (end == std::string::npos) {
+                str.push_back(content.substr(start));
                 break;
+            }
             std::string tmp = content.substr(start, end - start);
             str.push_back(tmp);
             start = content.find_first_not_of(delim, end);
