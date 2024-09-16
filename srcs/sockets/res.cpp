@@ -209,6 +209,10 @@ bool Response::handleTarget() {
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
+    printf("File: %s\n", file.c_str());
+    printf("File exists: %d\n", fileExists(file));
+    printf("File is directory: %d\n", isDirectory(file));
+    printf("File is open: %d\n", temp.is_open());
     if (temp.fail()) {
         code = 404;
         return false;
