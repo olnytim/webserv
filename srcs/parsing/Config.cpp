@@ -134,13 +134,13 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
     for (size_t i = 0; i < params.size(); i++) {
         params[i] = parsingUtils::trimWhitespace(params[i]);
+        std::cout << "params[i]: [" << params[i] << "]" << std::endl;
         std::string key = params[i].substr(0, params[i].find(' '));
         std::string value = params[i].substr(params[i].find(' ') + 1);
         key = parsingUtils::trimWhitespace(key);
         value = parsingUtils::trimWhitespace(value);
-        location.getKeymap().callFunction(key, value, location);
         printf("key: %s, value: %s\n", key.c_str(), value.c_str());
-        printf("key: %s, value: 1:%s 2:%s 3:%s\n", key.c_str(), location.getMethods()[0].c_str(), location.getMethods()[1].c_str() ,location.getMethods()[2].c_str());
+        location.getKeymap().callFunction(key, value, location);
     }
     return location;
 }
