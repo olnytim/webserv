@@ -49,13 +49,14 @@ public:
         {
             end = content.find_first_of(delim, start);
             if (end == std::string::npos) {
-                std::string tmp = content.substr(start);
-                if (tmp.empty())
-                    str.push_back(tmp);
+                std::string tmp1 = content.substr(start);
+                if (!tmp1.empty() || tmp1.length() > 0)
+                    str.push_back(tmp1);
                 break;
             }
             std::string tmp = content.substr(start, end - start);
-            str.push_back(tmp);
+            if (!tmp.empty() || tmp.length() > 0)
+                str.push_back(tmp);
             start = content.find_first_not_of(delim, end);
         }
         return (str);
