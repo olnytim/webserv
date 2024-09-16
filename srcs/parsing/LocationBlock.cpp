@@ -131,7 +131,7 @@ void LocationBlock::setMethods(const std::string &value) {
     printf("value: %s\n", value.c_str());
     std::vector<std::string> methods = parsingUtils::splitParams(value, " ");
     for (size_t i = 0; i < methods.size(); i++) {
-        printf("methods[%lu]: %s\n", i, methods[i].c_str());
+        printf("methods[%lu]: [%s]\n", i, methods[i].c_str());
     }
     setMethods(methods);
 }

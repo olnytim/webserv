@@ -49,7 +49,9 @@ public:
         {
             end = content.find_first_of(delim, start);
             if (end == std::string::npos) {
-                str.push_back(content.substr(start));
+                std::string tmp = content.substr(start);
+                if (tmp.empty())
+                    str.push_back(tmp);
                 break;
             }
             std::string tmp = content.substr(start, end - start);
