@@ -40,16 +40,39 @@ bool Response::reqError() {
 }
 
 void Response::LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key) {
+//    size_t biggest_match = 0;
+//
+//    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+//        if (path.find(it->getPath()) == 0) {
+//            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
+//                if (it->getPath().length() > biggest_match) {
+//                    biggest_match = it->getPath().length();
+//                    key = it->getPath();
+//                }
+//            }
+//        }
+//    }
+
     size_t biggest_match = 0;
 
-    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
-        if (path.find(it->getPath()) == 0) {
-            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
-                if (it->getPath().length() > biggest_match) {
-                    biggest_match = it->getPath().length();
-                    key = it->getPath();
-                }
-            }
+    for (std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        const std::string& locationPath = it->getPath();
+        size_t locationPathLength = locationPath.length();
+
+        // Check if `path` starts with `locationPath`
+        if (path.find(locationPath) != 0) {
+            continue; // Skip to the next iteration if `locationPath` is not a prefix of `path`
+        }
+
+        // Ensure `locationPath` is a complete match or followed by '/'
+        bool isCompleteMatch = (locationPath == "/") ||
+                               (path.length() == locationPathLength) ||
+                               (path[locationPathLength] == '/');
+
+        // Update the biggest match if this is the longest valid match
+        if (isCompleteMatch && locationPathLength > biggest_match) {
+            biggest_match = locationPathLength;
+            key = locationPath;
         }
     }
 }
@@ -69,7 +92,6 @@ bool Response::isAllowedMethod(LocationBlock &location) {
     }
     printf("Method: '%s'\n", method_str.c_str());
 
-    // Проверяем, содержится ли метод в списке разрешённых
     bool found = false;
     for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
         printf("*it: '%s'\n", it->c_str());
@@ -79,11 +101,11 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         }
     }
     if (!found) {
-        code = 405;  // Метод не разрешён
+        code = 405;
         return true;
     }
 
-    return false;  // Метод разрешён
+    return false;
 }
 
 bool checkReturn(LocationBlock &loca, short &code, std::string &location) {
@@ -133,8 +155,6 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
     res = p1 + p2 + p3;
     return (res);
 }
-
-
 
 bool Response::handleTarget() {
     std::string key;
@@ -246,7 +266,6 @@ bool Response::buildBody() {
         return true;
     if (code)
         return false;
-    printf("Request method: %d\n", request.method);
     if (request.method == GET || request.method == HEAD) {
         if (!readFile())
             return true;
@@ -369,5 +388,6 @@ void Response::createResponse() {
 
     if (request.method != HEAD && (request.method == GET || code != 200))
         response.append(response_body);
-    printf("Response: %s\n", response.c_str());
+//    printf("Response: %s\n", response.c_str());
+    printf("-----------------------------------------------------------------\n");
 }
