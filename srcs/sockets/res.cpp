@@ -42,46 +42,37 @@ bool Response::reqError() {
 void Response::LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key) {
     size_t biggest_match = 0;
 
-    printf("hello there\n");
-    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it)
-    {
-        printf("Location path: %s\n", it->getPath().c_str());
-        printf("Request path: %s\n", path.c_str());
-        printf("path.find(it->getPath()): %lu\n", path.find("/"));
-//            if(path.find(it->getPath()) == 0)
-        if(path.find("/") == 0)
-        {
-            if( it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/')
-            {
-                if(it->getPath().length() > biggest_match)
-                {
+    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        if (path.find(it->getPath()) == 0) {
+            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
+                if (it->getPath().length() > biggest_match) {
                     biggest_match = it->getPath().length();
                     key = it->getPath();
                 }
             }
         }
     }
-    key = "/";  // default location
-    printf("Location key: %s\n", key.c_str());
 }
 
-bool Response::isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code) {
+bool Response::isAllowedMethod(LocationBlock &location) {
     std::vector<std::string> methods = location.getMethods();
-    (void)code;
     // Определяем строковое представление метода
     std::string method_str;
-    switch (method) {
-        case GET: method_str = "GET"; break;
-        case POST: method_str = "POST"; break;
-        case DELETE: method_str = "DELETE"; break;
-        case PUT: method_str = "PUT"; break;
-        case HEAD: method_str = "HEAD"; break;
+    printf("is allowedMethod Method: %d\n", request.method);
+    switch (request.method) {
+        case 1: method_str = "GET"; break;
+        case 2: method_str = "POST"; break;
+        case 3: method_str = "DELETE"; break;
+        case 4: method_str = "PUT"; break;
+        case 5: method_str = "HEAD"; break;
         default: method_str = ""; break;
     }
+    printf("Method: '%s'\n", method_str.c_str());
 
     // Проверяем, содержится ли метод в списке разрешённых
     bool found = false;
     for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
+        printf("*it: '%s'\n", it->c_str());
         if (*it == method_str) {
             found = true;
             break;
@@ -145,12 +136,10 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
 
 bool Response::handleTarget() {
     std::string key;
-    printf("server locations size: %lu\n", server.getLocations().size());
     LocationMatch(request.path, server.getLocations(), key);
-    printf("Key: %s\n", key.c_str());
     if (!key.empty()) {
         LocationBlock loca = *server.getLocationKey(key);
-        if (isAllowedMethod(request.method, loca, code))
+        if (isAllowedMethod(loca))
             return true;
         if (request.body.length() > loca.getClientMaxBodySize()) {
             code = 413;

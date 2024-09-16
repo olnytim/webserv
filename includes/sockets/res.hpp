@@ -35,7 +35,7 @@ public:
     static bool reqError();
 
     static void LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key);
-    static bool isAllowedMethod(HttpMethod &method, LocationBlock &location, short &code);
+    bool isAllowedMethod(LocationBlock &location);
     bool handleTarget();
     bool readFile();
 

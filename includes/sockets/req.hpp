@@ -100,12 +100,12 @@
 
 enum HttpMethod
 {
-    GET,
-    POST,
-    DELETE,
-    PUT,
-    HEAD,
-    NONE
+    GET = 1,
+    POST = 2,
+    DELETE = 3,
+    PUT = 4,
+    HEAD = 5,
+    NONE = 6
 };
 
 class Request {

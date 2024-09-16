@@ -19,6 +19,7 @@ void Request::reqParse(const char* data, size_t size) {
         lineStream >> methodString >> path >> version;
 
         method = stringToHttpMethod(methodString);
+        printf("Method: %s\n", methodString.c_str());
         if (method == NONE) {
             std::cerr << "Invalid request method\n";
             return;

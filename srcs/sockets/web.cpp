@@ -128,6 +128,7 @@ void WebServer::readRequest(const int &fd, Client &client) {
     }
     assignServer(client);
     client.response.request = client.request;
+    printf("enum method: %d\n", client.request.method);
     client.response.createResponse();
     FD_SET(fd, &write_fd);
     if (fd == biggest_fd)

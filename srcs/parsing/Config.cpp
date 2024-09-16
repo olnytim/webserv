@@ -128,7 +128,7 @@ std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const
 LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     LocationBlock location;
     std::string path = locationTxt.substr(0, locationTxt.find('{'));
-    printf("**************************path: '%s'\n", path.c_str());
+    path = parsingUtils::trimWhitespace(path);
     location.setPath(path);
     locationTxt = locationTxt.substr(locationTxt.find('{') + 1);
     std::vector<std::string> params = parsingUtils::splitParams(locationTxt, ";");
