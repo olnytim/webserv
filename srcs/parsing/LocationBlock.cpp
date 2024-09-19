@@ -3,7 +3,6 @@
 
 // constructor, destructor, copy constructor, assignment operator
 LocationBlock::LocationBlock() {
-    printf("LocationBlock was created\n");
     path = "";
     root = "";
     index = "";

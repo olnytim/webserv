@@ -93,7 +93,6 @@ void WebServer::acceptNewConnection(ServerBlock &server) {
     if (clients_map.count(new_fd) != 0)
         clients_map.erase(new_fd);
     clients_map.insert(std::pair<int, Client>(new_fd, client));
-    printf("clients_map size: %lu\n", clients_map.size());
 }
 
 void WebServer::assignServer(Client &client) {
@@ -128,7 +127,6 @@ void WebServer::readRequest(const int &fd, Client &client) {
     }
     assignServer(client);
     client.response.request = client.request;
-    printf("enum method: %d\n", client.request.method);
     client.response.createResponse();
     FD_SET(fd, &write_fd);
     if (fd == biggest_fd)
@@ -139,25 +137,35 @@ void WebServer::readRequest(const int &fd, Client &client) {
 }
 
 void WebServer::sendResponse(const int &fd, Client &client) {
+    std::string msg = client.response.response;
     int bytes_sent;
-    bytes_sent = send(fd, client.response.response.c_str(), client.response.response.length(), 0);
-    printf("\n\nResponse: %s\n\n", client.response.response.c_str());
+    if (msg.length() >= MESSAGE_BUFFER)
+        bytes_sent = send(fd, msg.c_str(), MESSAGE_BUFFER, 0);
+    else
+        bytes_sent = send(fd, msg.c_str(), msg.length(), 0);
     if (bytes_sent == -1) {
         printf("Send error\n");
         closeConnection(fd);
         return;
     }
-    else if (bytes_sent == 0) {
-        printf("Connection closed\n");
-        closeConnection(fd);
-        return;
+    else if (bytes_sent == 0 || (size_t)bytes_sent == msg.length()) {
+        if (!client.response.cgi) {
+            closeConnection(fd);
+            printf("Connection closed\n");
+        }
+        else {
+            FD_CLR(fd, &write_fd);
+            if (fd == biggest_fd)
+                --biggest_fd;
+            FD_SET(fd, &recv_fd);
+            if (fd > biggest_fd)
+                biggest_fd = fd;
+            client.response.clear();
+            client.request.clear();
+        }
     }
-    else {
-        FD_CLR(fd, &write_fd);
-        if (fd == biggest_fd)
-            --biggest_fd;
-        closeConnection(fd);
-    }
+    else
+        client.response.response = client.response.response.substr(bytes_sent);
 }
 
 void WebServer::runServers() {

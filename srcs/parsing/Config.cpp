@@ -1,13 +1,9 @@
 #include "../../includes/parsing/Config.hpp"
 #include "../../includes/parsing/blockPrinter.hpp"
 
-Config::Config() {
-    printf("ConfigFile was created\n");
-}
+Config::Config() {}
 
-Config::~Config() {
-}
-
+Config::~Config() {}
 
 // opening config file
 int Config::getTypePath(const std::string &path) {
@@ -155,7 +151,6 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
     for (size_t i = 0; i < locationsTxt.size(); i++) {
         locationBlocks.push_back(CreateLocation(locationsTxt[i]));
     }
-    printf("number of locations: %lu\n", locationBlocks.size());
     return locationBlocks;
 }
 
@@ -201,5 +196,4 @@ void Config::createCluster(const std::string &config_file) {
         ServerBlock server = createServer(server_config[i]);
         servers.push_back(server);
     }
-    printf("Cluster was created\n");
 }

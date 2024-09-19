@@ -37,10 +37,8 @@ void Request::reqParse(const char* data, size_t size) {
     while (std::getline(stream, line) && line != "\r") {
         std::string key, value;
         std::istringstream headerStream(line);
-        if (std::getline(headerStream, key, ':') && std::getline(headerStream, value)) {
+        if (std::getline(headerStream, key, ':') && std::getline(headerStream, value))
             headers[key] = value;
-            printf("Header: %s: %s\n", key.c_str(), value.c_str());
-        }
     }
 
     // Parse body (if any)
@@ -49,4 +47,12 @@ void Request::reqParse(const char* data, size_t size) {
         std::istreambuf_iterator<char> end;
         body.assign(begin, end);
     }
+}
+
+void Request::clear() {
+    method = NONE;
+    path.clear();
+    version.clear();
+    headers.clear();
+    body.clear();
 }
