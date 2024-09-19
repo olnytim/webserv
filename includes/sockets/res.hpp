@@ -24,13 +24,11 @@ public:
     std::string response_body;
     std::string location;
     short code;
-    char *res;
     bool auto_index;
 
-//    int cgi;
-//    Cgi cgi;
+    int cgi;
 //    int cgi_fd[2];
-//    size_t cgi_response_length;
+//    CgiRes cgi_res;
 
     static bool reqError();
 
@@ -45,4 +43,5 @@ public:
     void setDefaultErrorPages();
     void buildErrorBody();
     void createResponse();
+    void clear();
 };

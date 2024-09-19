@@ -11,7 +11,6 @@ Response::Response() {
     response_body = "";
     location = "";
     code = 0;
-    res = NULL;
     auto_index = false;
 }
 
@@ -23,11 +22,19 @@ Response::Response(Request &other) {
     response_body = "";
     location = "";
     code = 0;
-    res = NULL;
     auto_index = false;
 }
 
-Response::~Response() {
+Response::~Response() {}
+
+void Response::clear() {
+    response = "";
+    file = "";
+    body_length = 0;
+    response_body = "";
+    location = "";
+    code = 0;
+    auto_index = false;
 }
 
 bool Response::reqError() {
@@ -40,25 +47,46 @@ bool Response::reqError() {
 }
 
 void Response::LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key) {
+//    size_t biggest_match = 0;
+//
+//    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+//        if (path.find(it->getPath()) == 0) {
+//            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
+//                if (it->getPath().length() > biggest_match) {
+//                    biggest_match = it->getPath().length();
+//                    key = it->getPath();
+//                }
+//            }
+//        }
+//    }
+
     size_t biggest_match = 0;
 
-    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
-        if (path.find(it->getPath()) == 0) {
-            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
-                if (it->getPath().length() > biggest_match) {
-                    biggest_match = it->getPath().length();
-                    key = it->getPath();
-                }
-            }
+    for (std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+        const std::string& locationPath = it->getPath();
+        size_t locationPathLength = locationPath.length();
+
+        // Check if `path` starts with `locationPath`
+        if (path.find(locationPath) != 0) {
+            continue; // Skip to the next iteration if `locationPath` is not a prefix of `path`
+        }
+
+        // Ensure `locationPath` is a complete match or followed by '/'
+        bool isCompleteMatch = (locationPath == "/") ||
+                               (path.length() == locationPathLength) ||
+                               (path[locationPathLength] == '/');
+
+        // Update the biggest match if this is the longest valid match
+        if (isCompleteMatch && locationPathLength > biggest_match) {
+            biggest_match = locationPathLength;
+            key = locationPath;
         }
     }
 }
 
 bool Response::isAllowedMethod(LocationBlock &location) {
     std::vector<std::string> methods = location.getMethods();
-    // Определяем строковое представление метода
     std::string method_str;
-    printf("is allowedMethod Method: %d\n", request.method);
     switch (request.method) {
         case 1: method_str = "GET"; break;
         case 2: method_str = "POST"; break;
@@ -67,23 +95,18 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         case 5: method_str = "HEAD"; break;
         default: method_str = ""; break;
     }
-    printf("Method: '%s'\n", method_str.c_str());
-
-    // Проверяем, содержится ли метод в списке разрешённых
     bool found = false;
     for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
-        printf("*it: '%s'\n", it->c_str());
         if (*it == method_str) {
             found = true;
             break;
         }
     }
     if (!found) {
-        code = 405;  // Метод не разрешён
+        code = 405;
         return true;
     }
-
-    return false;  // Метод разрешён
+    return false;
 }
 
 bool checkReturn(LocationBlock &loca, short &code, std::string &location) {
@@ -108,7 +131,6 @@ bool isDirectory(std::string &file) {
 
 bool fileExists(std::string &file) {
     struct stat st;
-    printf("stat: %d\n", stat(file.c_str(), &st));
     if (stat(file.c_str(), &st) == 0)
         return true;
     return false;
@@ -133,8 +155,6 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
     res = p1 + p2 + p3;
     return (res);
 }
-
-
 
 bool Response::handleTarget() {
     std::string key;
@@ -161,14 +181,10 @@ bool Response::handleTarget() {
                 location = request.path + "/";
                 return true;
             }
-            if (!loca.getIndex().empty()) {
+            if (!loca.getIndex().empty())
                 file += loca.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            }
-            else {
+            else
                 file += server.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            }
             if (!fileExists(file)) {
                 if (loca.getAutoindex()) {
                     auto_index = true;
@@ -193,7 +209,6 @@ bool Response::handleTarget() {
     else {
         file = combinePaths(server.getRoot(), request.path, "");
         if (isDirectory(file)) {
-            printf("File length: %lu\n", file.length());
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
@@ -201,10 +216,8 @@ bool Response::handleTarget() {
             }
             file += server.getIndex(); // why does getIndex return nothing?
             file += "index.html";
-            printf("File: %s\n", file.c_str());
             if (!fileExists(file)) {
                 code = 403;
-                printf("File not found\n");
                 return true;
             }
             if (isDirectory(file)) {
@@ -216,18 +229,12 @@ bool Response::handleTarget() {
             }
         }
     }
-    printf("                                       h i                            \n");
     return false;
 }
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
-    printf("File: %s\n", file.c_str());
-    printf("File exists: %d\n", fileExists(file));
-    printf("File is directory: %d\n", isDirectory(file));
-    printf("File is open: %d\n", temp.is_open());
     if (temp.fail()) {
-        printf("******************i broke here***********************\n");
         code = 404;
         return false;
     }
@@ -246,7 +253,6 @@ bool Response::buildBody() {
         return true;
     if (code)
         return false;
-    printf("Request method: %d\n", request.method);
     if (request.method == GET || request.method == HEAD) {
         if (!readFile())
             return true;
@@ -312,9 +318,6 @@ void Response::buildErrorBody() {
 }
 
 void Response::createResponse() {
-    printf("server locations size: %lu\n", server.getLocations().size());
-    printf("server contains something? %d\n", server.getLocations().empty());
-    printf("\n***********Creating                        response*************\n\n");
     if (buildBody() || reqError())
         buildErrorBody();
 //    if (cgi) after cgi parsing
@@ -330,7 +333,6 @@ void Response::createResponse() {
             code = 200;
         response_body.insert(response_body.begin(), body.begin(), body.end());
     }
-    printf("Body: %s\n", body.data());
     /* Set State */
     response.append("HTTP/1.1 " + to_string(code) + " ");
     response.append(statusCodeString(code) + "\r\n");
@@ -369,5 +371,5 @@ void Response::createResponse() {
 
     if (request.method != HEAD && (request.method == GET || code != 200))
         response.append(response_body);
-    printf("Response: %s\n", response.c_str());
+//    printf("Response: %s\n", response.c_str());
 }
