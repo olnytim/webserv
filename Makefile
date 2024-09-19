@@ -14,7 +14,7 @@ PARSING_SRC = $(addprefix $(PARSING_PATH)/, Config.cpp ServerBlock.cpp ServerBlo
 SOCKETS_PATH = sockets
 SOCKETS_HEADER = $(PREF_HEADER)/$(SOCKETS_PATH)
 SOCKETS_SRC = #$(addprefix $(SOCKETS_PATH)/, WebServer.cpp SocketListener.cpp DataStorage.cpp)
-SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, web.cpp cli.cpp req.cpp res.cpp)
+SOCKETS_SRC = $(addprefix $(SOCKETS_PATH)/, web.cpp cli.cpp req.cpp res.cpp CGI.cpp)
 #
 REQUEST_PATH = request
 REQUEST_HEADER = #$(PREF_HEADER)/$(REQUEST_PATH)

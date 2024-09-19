@@ -251,6 +251,8 @@ bool Response::buildBody() {
     }
     if (handleTarget())
         return true;
+//    if (cgi || auto_index)
+//        return false;
     if (code)
         return false;
     if (request.method == GET || request.method == HEAD) {
@@ -284,7 +286,7 @@ bool Response::buildBody() {
     return false;
 }
 
-std::string Response::getErrorPage() {
+std::string Response::getErrorPage() const {
     return ("<html>\r\n<head><title>" + to_string(code) + " " +
             statusCodeString(code) + " </title></head>\r\n" + "<body>\r\n" +
             "<center>\r\n<h1>" + to_string(code) + " " + statusCodeString(code) +
@@ -320,7 +322,7 @@ void Response::buildErrorBody() {
 void Response::createResponse() {
     if (buildBody() || reqError())
         buildErrorBody();
-//    if (cgi) after cgi parsing
+//    if (cgi)
 //        return ;
     if (auto_index) {
         std::cout << "Auto index\n";

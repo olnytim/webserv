@@ -1,5 +1,7 @@
 #include "../../includes/sockets/req.hpp"
 
+Request::Request() : method(NONE) {}
+
 HttpMethod Request::stringToHttpMethod(const std::string& methodStr) {
     if (methodStr == "GET") return GET;
     if (methodStr == "POST") return POST;
