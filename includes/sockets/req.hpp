@@ -120,4 +120,5 @@ public:
 
     static HttpMethod stringToHttpMethod(const std::string& methodStr);
     void reqParse(const char* data, size_t size);
+    void clear();
 };

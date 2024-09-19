@@ -11,7 +11,6 @@ Response::Response() {
     response_body = "";
     location = "";
     code = 0;
-    res = NULL;
     auto_index = false;
 }
 
@@ -23,11 +22,19 @@ Response::Response(Request &other) {
     response_body = "";
     location = "";
     code = 0;
-    res = NULL;
     auto_index = false;
 }
 
-Response::~Response() {
+Response::~Response() {}
+
+void Response::clear() {
+    response = "";
+    file = "";
+    body_length = 0;
+    response_body = "";
+    location = "";
+    code = 0;
+    auto_index = false;
 }
 
 bool Response::reqError() {
@@ -79,9 +86,7 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
 
 bool Response::isAllowedMethod(LocationBlock &location) {
     std::vector<std::string> methods = location.getMethods();
-    // Определяем строковое представление метода
     std::string method_str;
-    printf("is allowedMethod Method: %d\n", request.method);
     switch (request.method) {
         case 1: method_str = "GET"; break;
         case 2: method_str = "POST"; break;
@@ -90,11 +95,8 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         case 5: method_str = "HEAD"; break;
         default: method_str = ""; break;
     }
-    printf("Method: '%s'\n", method_str.c_str());
-
     bool found = false;
     for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
-        printf("*it: '%s'\n", it->c_str());
         if (*it == method_str) {
             found = true;
             break;
@@ -104,7 +106,6 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         code = 405;
         return true;
     }
-
     return false;
 }
 
@@ -130,7 +131,6 @@ bool isDirectory(std::string &file) {
 
 bool fileExists(std::string &file) {
     struct stat st;
-    printf("stat: %d\n", stat(file.c_str(), &st));
     if (stat(file.c_str(), &st) == 0)
         return true;
     return false;
@@ -181,14 +181,10 @@ bool Response::handleTarget() {
                 location = request.path + "/";
                 return true;
             }
-            if (!loca.getIndex().empty()) {
+            if (!loca.getIndex().empty())
                 file += loca.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            }
-            else {
+            else
                 file += server.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            }
             if (!fileExists(file)) {
                 if (loca.getAutoindex()) {
                     auto_index = true;
@@ -213,7 +209,6 @@ bool Response::handleTarget() {
     else {
         file = combinePaths(server.getRoot(), request.path, "");
         if (isDirectory(file)) {
-            printf("File length: %lu\n", file.length());
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
@@ -221,10 +216,8 @@ bool Response::handleTarget() {
             }
             file += server.getIndex(); // why does getIndex return nothing?
             file += "index.html";
-            printf("File: %s\n", file.c_str());
             if (!fileExists(file)) {
                 code = 403;
-                printf("File not found\n");
                 return true;
             }
             if (isDirectory(file)) {
@@ -236,18 +229,12 @@ bool Response::handleTarget() {
             }
         }
     }
-    printf("                                       h i                            \n");
     return false;
 }
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
-    printf("File: %s\n", file.c_str());
-    printf("File exists: %d\n", fileExists(file));
-    printf("File is directory: %d\n", isDirectory(file));
-    printf("File is open: %d\n", temp.is_open());
     if (temp.fail()) {
-        printf("******************i broke here***********************\n");
         code = 404;
         return false;
     }
@@ -331,9 +318,6 @@ void Response::buildErrorBody() {
 }
 
 void Response::createResponse() {
-    printf("server locations size: %lu\n", server.getLocations().size());
-    printf("server contains something? %d\n", server.getLocations().empty());
-    printf("\n***********Creating                        response*************\n\n");
     if (buildBody() || reqError())
         buildErrorBody();
 //    if (cgi) after cgi parsing
@@ -349,7 +333,6 @@ void Response::createResponse() {
             code = 200;
         response_body.insert(response_body.begin(), body.begin(), body.end());
     }
-    printf("Body: %s\n", body.data());
     /* Set State */
     response.append("HTTP/1.1 " + to_string(code) + " ");
     response.append(statusCodeString(code) + "\r\n");
@@ -389,5 +372,4 @@ void Response::createResponse() {
     if (request.method != HEAD && (request.method == GET || code != 200))
         response.append(response_body);
 //    printf("Response: %s\n", response.c_str());
-    printf("-----------------------------------------------------------------\n");
 }
