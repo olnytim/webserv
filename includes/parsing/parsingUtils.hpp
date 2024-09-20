@@ -62,6 +62,14 @@ public:
         return (str);
     }
 
+    static size_t SkipWhitespaces(const std::string &str, size_t pos) {
+        while (pos < str.length() && (str[pos] == ' ' || str[pos] == '\t'))
+            pos++;
+        if (pos == str.length())
+            return std::string::npos;
+        return pos;
+    }
+
     static std::string trimWhitespace(std::string &str) {
         size_t start = str.find_first_not_of(" \t\n\r\f\v");
         if (start == std::string::npos)

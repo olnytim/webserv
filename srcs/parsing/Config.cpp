@@ -1,6 +1,7 @@
 #include "../../includes/parsing/Config.hpp"
 #include "../../includes/parsing/blockPrinter.hpp"
 
+
 Config::Config() {}
 
 Config::~Config() {}
@@ -68,39 +69,26 @@ void Config::parseConfig(std::string &content) {
 }
 
 void Config::splitServers(std::string &content) {
-    size_t current_pos = 0;
+    size_t opening_bracket_pos = 0;
     size_t end_pos = 0;
+    size_t server_pos = 0;
+
     while (end_pos != content.length() - 1) {
-        current_pos = content.find("server {");
-        if (current_pos == std::string::npos)
+        server_pos = content.find("server");
+        if (server_pos == std::string::npos)
             break;
-        end_pos = parsingUtils::findEndingBracket(content, current_pos + 7);
+        opening_bracket_pos = parsingUtils::SkipWhitespaces(content, server_pos + 6);
+        if (opening_bracket_pos == std::string::npos || content[opening_bracket_pos] != '{')
+            errorHandler::reportError(ParseException("Server block is not opened or has invalid format"));
+        end_pos = parsingUtils::findEndingBracket(content, opening_bracket_pos + 1);
         if (end_pos == std::string::npos)
             errorHandler::reportError(ParseException("Server or location block is not closed"));
-        server_config.push_back(content.substr(current_pos + 8, end_pos - current_pos - 8)); // 8 - length of "server {"
-        content = content.substr(0, current_pos) + content.substr(end_pos + 1);
-        current_pos = end_pos + 1;
+        server_config.push_back(content.substr(opening_bracket_pos + 1, end_pos - opening_bracket_pos - 1));
+        content = content.substr(0, server_pos) + content.substr(end_pos + 1);
     }
     content = parsingUtils::trimWhitespace(content);
     if (!content.empty() || server_config.empty())
         errorHandler::reportError(ParseException("Invalid server block"));
-}
-
-std::vector<std::string> Config::splitParams(const std::string &content, const std::string &delim) {
-    std::vector<std::string>	str;
-    std::string::size_type		start, end;
-
-    start = end = 0;
-    while (start != std::string::npos)
-    {
-        end = content.find_first_of(delim, start);
-        if (end == std::string::npos)
-            break;
-        std::string tmp = content.substr(start, end - start);
-        str.push_back(tmp);
-        start = content.find_first_not_of(delim, end);
-    }
-    return (str);
 }
 
 std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const{
@@ -196,4 +184,5 @@ void Config::createCluster(const std::string &config_file) {
         ServerBlock server = createServer(server_config[i]);
         servers.push_back(server);
     }
+    parsingValidator::validateServers(servers);
 }

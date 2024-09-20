@@ -4,6 +4,7 @@
 #include "exceptions.hpp"
 #include "ServerBlock.hpp"
 #include "parsingUtils.hpp"
+#include "parsingValidator.hpp"
 
 class Config {
 private:
@@ -30,7 +31,6 @@ public:
 
     static void parseConfig(std::string &content);
     void splitServers(std::string &content);
-    static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
     ServerBlock createServer(std::string &serverTxt) const;
     void createCluster(const std::string &config_file);
 };
