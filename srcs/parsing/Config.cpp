@@ -1,13 +1,9 @@
 #include "../../includes/parsing/Config.hpp"
 #include "../../includes/parsing/blockPrinter.hpp"
 
-Config::Config() {
-    printf("ConfigFile was created\n");
-}
+Config::Config() {}
 
-Config::~Config() {
-}
-
+Config::~Config() {}
 
 // opening config file
 int Config::getTypePath(const std::string &path) {
@@ -71,19 +67,23 @@ void Config::parseConfig(std::string &content) {
     content = content.substr(start_pos, end_pos - start_pos + 1);
 }
 
-void Config::splitServers(const std::string &content) {
+void Config::splitServers(std::string &content) {
     size_t current_pos = 0;
     size_t end_pos = 0;
     while (end_pos != content.length() - 1) {
-        current_pos = content.find("server {", current_pos);
+        current_pos = content.find("server {");
         if (current_pos == std::string::npos)
             break;
         end_pos = parsingUtils::findEndingBracket(content, current_pos + 7);
         if (end_pos == std::string::npos)
             errorHandler::reportError(ParseException("Server or location block is not closed"));
         server_config.push_back(content.substr(current_pos + 8, end_pos - current_pos - 8)); // 8 - length of "server {"
+        content = content.substr(0, current_pos) + content.substr(end_pos + 1);
         current_pos = end_pos + 1;
     }
+    content = parsingUtils::trimWhitespace(content);
+    if (!content.empty() || server_config.empty())
+        errorHandler::reportError(ParseException("Invalid server block"));
 }
 
 std::vector<std::string> Config::splitParams(const std::string &content, const std::string &delim) {
@@ -151,7 +151,6 @@ std::vector<LocationBlock> Config::ParseConfigLocations(std::string &config) con
     for (size_t i = 0; i < locationsTxt.size(); i++) {
         locationBlocks.push_back(CreateLocation(locationsTxt[i]));
     }
-    printf("number of locations: %lu\n", locationBlocks.size());
     return locationBlocks;
 }
 
@@ -197,5 +196,4 @@ void Config::createCluster(const std::string &config_file) {
         ServerBlock server = createServer(server_config[i]);
         servers.push_back(server);
     }
-    printf("Cluster was created\n");
 }

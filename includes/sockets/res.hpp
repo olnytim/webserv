@@ -4,6 +4,7 @@
 #include "../../includes/sockets/req.hpp"
 #include "../../includes/parsing/ServerBlock.hpp"
 #include "../../includes/Mime.hpp"
+#include "../../includes/sockets/CGI.hpp"
 //#include "../../includes/sockets/web.hpp"
 
 
@@ -24,15 +25,13 @@ public:
     std::string response_body;
     std::string location;
     short code;
-    char *res;
     bool auto_index;
 
-//    int cgi;
-//    Cgi cgi;
-//    int cgi_fd[2];
-//    size_t cgi_response_length;
+    int cgi;
+    int cgi_fd[2];
+    CGI cgi_resp;
 
-    static bool reqError();
+    bool reqError();
 
     static void LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key);
     bool isAllowedMethod(LocationBlock &location);
@@ -41,8 +40,9 @@ public:
 
     bool buildBody();
 
-    std::string getErrorPage();
+    std::string getErrorPage() const;
     void setDefaultErrorPages();
     void buildErrorBody();
     void createResponse();
+    void clear();
 };

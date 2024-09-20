@@ -7,7 +7,6 @@ Client::Client() {
 Client::~Client() {}
 
 Client::Client(ServerBlock &server) {
-    printf("Client was created\n");
     client_fd = -1;
     response.server = server;
 }

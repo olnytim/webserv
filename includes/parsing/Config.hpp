@@ -29,7 +29,7 @@ public:
     std::vector<LocationBlock> ParseConfigLocations(std::string &config) const;
 
     static void parseConfig(std::string &content);
-    void splitServers(const std::string &content);
+    void splitServers(std::string &content);
     static std::vector<std::string> splitParams(const std::string &content, const std::string &delim);
     ServerBlock createServer(std::string &serverTxt) const;
     void createCluster(const std::string &config_file);

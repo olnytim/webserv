@@ -27,7 +27,12 @@ public:
     void closeConnection(int fd);
 
     void assignServer(Client &client);
+    static void handleReqBody(Client &client);
     void readRequest(const int &fd, Client &client);
+
+    void sendCGIBody(Client &client, CGI &cgi);
+    void readCGIResponse(Client &client, CGI &cgi);
+
     void sendResponse(const int &fd, Client &client);
     void runServers();
 };
