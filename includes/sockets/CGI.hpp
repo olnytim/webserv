@@ -2,6 +2,7 @@
 
 #include "../Headers.hpp"
 #include "../parsing/LocationBlock.hpp"
+#include "../sockets/req.hpp"
 
 class Request;
 
@@ -18,7 +19,6 @@ public:
     int pipe_out[2];
 
     CGI();
-    CGI(std::string path);
     CGI(const CGI &other);
     CGI &operator=(const CGI &rhs);
     ~CGI();
@@ -28,7 +28,7 @@ public:
 
     void execute(short &error_code);
 
-    int findStart(const std::string path, const std::string delim);
+    static int findStart(const std::string &path, const std::string &delim);
     std::string decode(std::string &path);
 
     void clear();

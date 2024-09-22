@@ -2,7 +2,7 @@
 
 #include "../Headers.hpp"
 #include "../../includes/sockets/req.hpp"
-#include "../../includes/parsing/ServerBlock.hpp"
+#include "../../includes/parsing/Config.hpp"
 #include "../../includes/Mime.hpp"
 #include "../../includes/sockets/CGI.hpp"
 //#include "../../includes/sockets/web.hpp"
@@ -34,7 +34,9 @@ public:
     bool reqError();
 
     static void LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key);
-    bool isAllowedMethod(LocationBlock &location);
+    bool isAllowedMethod(LocationBlock &location_temp, HttpMethod &method, short &code_temp);
+
+    bool handleCGI(std::string &key);
     bool handleTarget();
     bool readFile();
 

@@ -84,10 +84,10 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
     }
 }
 
-bool Response::isAllowedMethod(LocationBlock &location) {
-    std::vector<std::string> methods = location.getMethods();
+bool Response::isAllowedMethod(LocationBlock &location_temp, HttpMethod &method, short &code_temp) {
+    std::vector<std::string> methods = location_temp.getMethods();
     std::string method_str;
-    switch (request.method) {
+    switch (method) {
         case 1: method_str = "GET"; break;
         case 2: method_str = "POST"; break;
         case 3: method_str = "DELETE"; break;
@@ -103,7 +103,7 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         }
     }
     if (!found) {
-        code = 405;
+        code_temp = 405;
         return true;
     }
     return false;
@@ -163,8 +163,49 @@ static std::string combinePaths(std::string p1, std::string p2, std::string p3)
     return res;
 }
 
+bool Response::handleCGI(std::string &key) {
+    std::string path = request.path;
+    size_t len;
 
-
+    if (path[0] && path[0] == '/')
+        path.erase(0, 1);
+    if (path == "cgi")
+        path += "/" + server.getLocationKey(key)->getIndex();
+    else if (path == "cgi/")
+        path.append(server.getLocationKey(key)->getIndex());
+    len = path.find('.');
+    if (len == std::string::npos) {
+        code = 501;
+        return true;
+    }
+    std::string ext = path.substr(len);
+    if (ext != ".py" && ext != ".sh") {
+        code = 501;
+        return true;
+    }
+    printf("Path: '%s'\n", path.c_str());
+    if (Config::getTypePath(path) != 1) {
+        printf("************ hello there ************\n");
+        code = 404;
+        return true;
+    }
+    if (access(path.c_str(), X_OK) == -1 || access(path.c_str(), R_OK) == -1) {
+        code = 403;
+        return true;
+    }
+    if (isAllowedMethod(*server.getLocationKey(key), request.method, code))
+        return true;
+    cgi_resp.clear();
+    cgi_resp.path = path;
+    cgi = 1;
+    if (pipe(cgi_fd) == -1) {
+        code = 500;
+        return true;
+    }
+    cgi_resp.initEnv(request, server.getLocationKey(key));
+//    cgi_resp.execute(code);
+    return false;
+}
 
 bool Response::handleTarget() {
     std::string key;
@@ -172,8 +213,7 @@ bool Response::handleTarget() {
 
     if (!key.empty()) {
         LocationBlock loca = *server.getLocationKey(key);
-
-        if (isAllowedMethod(loca)) {
+        if (isAllowedMethod(loca, request.method, code))
             return true;
         }
 
@@ -185,8 +225,13 @@ bool Response::handleTarget() {
         if (checkReturn(loca, code, location)) {
             return true;
         }
-
-        if (!loca.getAlias().empty()) {
+        if (loca.getPath().find("cgi") != std::string::npos) {
+            return (handleCGI(key));
+        }
+//        printf("File: %s\n", file.c_str());
+//        printf("Root: %s\n", server.getRoot().c_str());
+//        printf("Path: %s\n", request.path.c_str());
+        if (!loca.getAlias().empty())
             file = combinePaths(loca.getAlias(), request.path.substr(loca.getPath().length()), "");
         } else {
             file = combinePaths(server.getRoot(), request.path, "");
@@ -295,6 +340,7 @@ bool Response::buildBody() {
 //        return false;
     if (code)
         return false;
+
     if (request.method == GET || request.method == HEAD) {
         if (!readFile())
             return true;
@@ -306,6 +352,7 @@ bool Response::buildBody() {
         }
         std::ofstream temp(file.c_str(), std::ios::binary);
         if (temp.fail()) {
+
             code = 404;
             return true;
         }
@@ -335,7 +382,6 @@ std::string Response::getErrorPage() const {
 
 void Response::setDefaultErrorPages() {
     response_body = getErrorPage();
-    printf("Error page: %s\n", response_body.c_str());
 }
 
 void Response::buildErrorBody() {

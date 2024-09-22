@@ -19,6 +19,7 @@ private:
 
     LocationBlockKeymap keymap;
 public:
+    std::map<std::string, std::string> ext_path;
     // constructor, destructor, copy constructor, assignment operator
     LocationBlock();
     ~LocationBlock();
