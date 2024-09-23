@@ -10,7 +10,7 @@ HttpMethod Request::stringToHttpMethod(const std::string& methodStr) {
     return NONE;
 }
 
-void Request::reqParse(const char* data, size_t size) {
+bool Request::reqParse(const char* data, size_t size) {
     std::istringstream stream(std::string(data, size));
     std::string line;
 
@@ -22,17 +22,17 @@ void Request::reqParse(const char* data, size_t size) {
         method = stringToHttpMethod(methodString);
         if (method == NONE) {
             std::cerr << "Invalid request method\n";
-            return;
+            return false;
         }
 
         if (path.empty() || version.empty()) {
             std::cerr << "Invalid request line\n";
-            return;
+            return false;
         }
     }
     else {
         std::cerr << "Invalid request data\n";
-        return;
+        return false;
     }
 
     // Parse headers
@@ -49,6 +49,7 @@ void Request::reqParse(const char* data, size_t size) {
         std::istreambuf_iterator<char> end;
         body.assign(begin, end);
     }
+    return true;
 }
 
 void Request::clear() {

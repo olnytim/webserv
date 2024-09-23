@@ -156,11 +156,6 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     location.ext_path = MapExtPath(location.getCgiPath(), location.getCgiExt());
     std::vector<std::string> cgi_path = location.getCgiPath();
     std::vector<std::string> cgi_ext = location.getCgiExt();
-
-//    for (std::map<std::string, std::string>::iterator it = location.ext_path.begin(); it != location.ext_path.end(); it++) {
-//        std::cout << it->first << " => " << it->second << std::endl;
-//    }
-
     return location;
 }
 
@@ -190,8 +185,8 @@ ServerBlock Config::createServer(std::string &serverTxt) const {
         server.setRoot("/");
     if (server.getHost() == 0)
         server.setHost("localhost");
-    if (server.getIndex().empty())
-        server.setIndex("index.html");
+//    if (server.getIndex().empty())
+//        server.setIndex("index.html");
     return server;
 }
 

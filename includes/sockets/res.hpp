@@ -43,6 +43,7 @@ public:
     bool buildBody();
 
     std::string getErrorPage() const;
+    std::string readErrorPage(const std::string &filename);
     void setDefaultErrorPages();
     void buildErrorBody();
     void createResponse();
