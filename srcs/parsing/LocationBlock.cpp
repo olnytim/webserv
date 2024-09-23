@@ -25,6 +25,7 @@ LocationBlock::LocationBlock(const LocationBlock &other) {
     methods = other.methods;
     autoindex = other.autoindex;
     client_max_body_size = other.client_max_body_size;
+    ext_path = other.ext_path;
     keymap = other.getKeymap();
 }
 

@@ -115,7 +115,6 @@ void WebServer::handleReqBody(Client &client) {
         std::stringstream ss;
         ss << file.rdbuf();
         tmp = ss.str();
-        printf("^^^^^^^^^^^^^^^^^^^^^^^ tmp: %s\n", tmp.c_str());
         client.request.body = tmp;
     }
 }
@@ -144,11 +143,11 @@ void WebServer::readRequest(const int &fd, Client &client) {
         FD_SET(client.response.cgi_resp.pipe_in[1], &write_fd);
         if (client.response.cgi_resp.pipe_in[1] > biggest_fd)
             biggest_fd = client.response.cgi_resp.pipe_in[1];
-        FD_SET(client.response.cgi_resp.pipe_out[0], &write_fd);
+        FD_SET(client.response.cgi_resp.pipe_out[0], &recv_fd);
         if (client.response.cgi_resp.pipe_out[0] > biggest_fd)
             biggest_fd = client.response.cgi_resp.pipe_out[0];
     }
-    FD_SET(fd, &write_fd);
+    FD_CLR(fd, &recv_fd);
     if (fd == biggest_fd)
         --biggest_fd;
     FD_SET(fd, &write_fd);
@@ -187,27 +186,26 @@ void WebServer::sendCGIBody(Client &client, CGI &cgi) {
 void WebServer::readCGIResponse(Client &client, CGI &cgi) {
     char buf[MESSAGE_BUFFER * 2];
     int bytes_read;
-//    int status;
-//    waitpid(cgi.pid, &status, 0);
     bytes_read = read(cgi.pipe_out[0], buf, sizeof(buf));
-    printf("bytes_read: %d\n", bytes_read);
     if (bytes_read == -1) {
         FD_CLR(cgi.pipe_out[0], &recv_fd);
         if (cgi.pipe_out[0] == biggest_fd)
             --biggest_fd;
-        close(cgi.pipe_out[0]);
         close(cgi.pipe_in[0]);
+        close(cgi.pipe_out[0]);
         client.response.cgi = 2;
-        client.response.code = 500; // (maybe need to make few more changes here)
+        client.response.code = 500;
     }
     else if (bytes_read == 0) {
         FD_CLR(cgi.pipe_out[0], &recv_fd);
         if (cgi.pipe_out[0] == biggest_fd)
             --biggest_fd;
-        close(cgi.pipe_out[0]);
         close(cgi.pipe_in[0]);
+        close(cgi.pipe_out[0]);
         int status;
         waitpid(cgi.pid, &status, 0);
+        if (WEXITSTATUS(status) != 0)
+            client.response.code = 502; // (maybe need to make few more changes here)
         client.response.cgi = 2;
         if (client.response.response.find("HTTP/1.1") == std::string::npos)
             client.response.response.insert(0, "HTTP/1.1 200 OK\r\n");
@@ -232,10 +230,8 @@ void WebServer::sendResponse(const int &fd, Client &client) {
         return;
     }
     else if (bytes_sent == 0 || (size_t)bytes_sent == msg.length()) {
-        if (client.response.cgi) {
+        if (client.response.cgi)
             closeConnection(fd);
-            printf("Connection closed\n");
-        }
         else {
             FD_CLR(fd, &write_fd);
             if (fd == biggest_fd)
@@ -272,17 +268,12 @@ void WebServer::runServers() {
                 readRequest(i, clients_map[i]);
             else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
                 int cgi_state = clients_map[i].response.cgi;
-                if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_in[1], &write_copy)) {
+                if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_in[1], &write_copy))
                     sendCGIBody(clients_map[i], clients_map[i].response.cgi_resp);
-                    printf("cgi_resp1: %s\n", clients_map[i].response.cgi_resp.path.c_str());
-                }
-                else if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_out[0], &write_copy)) {
+                else if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_out[0], &recv_copy))
                     readCGIResponse(clients_map[i], clients_map[i].response.cgi_resp);
-                    printf("cgi_resp2: %s\n", clients_map[i].response.cgi_resp.path.c_str());
-                }
-                else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_copy)) {
+                else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_copy))
                     sendResponse(i, clients_map[i]);
-                }
             }
         }
     }
