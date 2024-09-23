@@ -2,6 +2,7 @@
 
 #include "../Headers.hpp"
 #include "../parsing/LocationBlock.hpp"
+#include "../sockets/req.hpp"
 
 class Request;
 
@@ -18,18 +19,19 @@ public:
     int pipe_out[2];
 
     CGI();
-    CGI(std::string path);
     CGI(const CGI &other);
     CGI &operator=(const CGI &rhs);
     ~CGI();
 
+    static int findStart(const std::string &path, const std::string &delim);
+    std::string getPathInfo(std::string &path, std::vector<std::string> extensions);
+
     void initEnv(Request &req, std::vector<LocationBlock>::iterator it_loc);
-    void initEnvCGI(Request &req, std::vector<LocationBlock>::iterator it_loc);
+//    void initEnvCGI(Request &req, std::vector<LocationBlock>::iterator it_loc);
 
     void execute(short &error_code);
 
-    int findStart(const std::string path, const std::string delim);
-    std::string decode(std::string &path);
+//    std::string decode(std::string &path);
 
     void clear();
 };

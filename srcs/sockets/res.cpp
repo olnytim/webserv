@@ -12,6 +12,8 @@ Response::Response() {
     location = "";
     code = 0;
     auto_index = false;
+    cgi = 0;
+    cgi_resp = CGI();
 }
 
 Response::Response(Request &other) {
@@ -23,6 +25,8 @@ Response::Response(Request &other) {
     location = "";
     code = 0;
     auto_index = false;
+    cgi = 0;
+    cgi_resp = CGI();
 }
 
 Response::~Response() {}
@@ -84,10 +88,10 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
     }
 }
 
-bool Response::isAllowedMethod(LocationBlock &location) {
-    std::vector<std::string> methods = location.getMethods();
+bool Response::isAllowedMethod(LocationBlock &location_temp, HttpMethod &method, short &code_temp) {
+    std::vector<std::string> methods = location_temp.getMethods();
     std::string method_str;
-    switch (request.method) {
+    switch (method) {
         case 1: method_str = "GET"; break;
         case 2: method_str = "POST"; break;
         case 3: method_str = "DELETE"; break;
@@ -103,7 +107,7 @@ bool Response::isAllowedMethod(LocationBlock &location) {
         }
     }
     if (!found) {
-        code = 405;
+        code_temp = 405;
         return true;
     }
     return false;
@@ -131,7 +135,6 @@ bool isDirectory(std::string &file) {
 
 bool fileExists(std::string &file) {
     struct stat st;
-    printf("stat: %d\n", stat(file.c_str(), &st));
     if (stat(file.c_str(), &st) == 0)
         return true;
     return false;
@@ -140,73 +143,101 @@ bool fileExists(std::string &file) {
 static std::string combinePaths(std::string p1, std::string p2, std::string p3)
 {
     std::string res;
-    int len1;
-    int len2;
+    int         len1;
+    int         len2;
 
     len1 = p1.length();
     len2 = p2.length();
-
-    if (!p1.empty() && p1[len1 - 1] == '/' && (!p2.empty() && p2[0] == '/')) {
+    if (p1[len1 - 1] == '/' && (!p2.empty() && p2[0] == '/') )
         p2.erase(0, 1);
-    }
-    if (!p1.empty() && p1[len1 - 1] != '/' && (!p2.empty() && p2[0] != '/')) {
-        p1 += "/";
-    }
-    if (!p2.empty() && p2[len2 - 1] == '/' && (!p3.empty() && p3[0] == '/')) {
+    if (p1[len1 - 1] != '/' && (!p2.empty() && p2[0] != '/'))
+        p1.insert(p1.end(), '/');
+    if (p2[len2 - 1] == '/' && (!p3.empty() && p3[0] == '/') )
         p3.erase(0, 1);
-    }
-    if (!p2.empty() && p2[len2 - 1] != '/' && (!p3.empty() && p3[0] != '/')) {
-        p2 += "/";
-    }
-
+    if (p2[len2 - 1] != '/' && (!p3.empty() && p3[0] != '/'))
+        p2.insert(p1.end(), '/');
     res = p1 + p2 + p3;
-    return res;
+    return (res);
 }
 
+bool Response::handleCGI(std::string &key) {
+    std::string path = request.path;
+    size_t len;
 
-
+    if (path[0] && path[0] == '/')
+        path.erase(0, 1);
+    if (path == "cgi")
+        path += "/" + server.getLocationKey(key)->getIndex();
+    else if (path == "cgi/")
+        path.append(server.getLocationKey(key)->getIndex());
+    len = path.find('.');
+    if (len == std::string::npos) {
+        code = 501;
+        return true;
+    }
+    std::string ext = path.substr(len);
+    if (ext != ".py" && ext != ".sh") {
+        code = 501;
+        return true;
+    }
+    printf("Path: '%s'\n", path.c_str());
+    if (Config::getTypePath(path) != 1) {
+        printf("************ hello there ************\n");
+        code = 404;
+        return true;
+    }
+    if (access(path.c_str(), X_OK) == -1 || access(path.c_str(), R_OK) == -1) {
+        code = 403;
+        return true;
+    }
+    if (isAllowedMethod(*server.getLocationKey(key), request.method, code))
+        return true;
+    cgi_resp.clear();
+    cgi_resp.path = path;
+    cgi = 1;
+    if (pipe(cgi_fd) == -1) {
+        code = 500;
+        return true;
+    }
+    printf("pipe(cgi_fd) success %d\n", pipe(cgi_fd));
+    printf("CGI code: %d\n", code);
+    cgi_resp.initEnv(request, server.getLocationKey(key));
+    cgi_resp.execute(code);
+    printf("CGI code: %d\n", code);
+    return false;
+}
 
 bool Response::handleTarget() {
     std::string key;
     LocationMatch(request.path, server.getLocations(), key);
-
     if (!key.empty()) {
         LocationBlock loca = *server.getLocationKey(key);
-
-        if (isAllowedMethod(loca)) {
+        if (isAllowedMethod(loca, request.method, code))
             return true;
-        }
-
         if (request.body.length() > loca.getClientMaxBodySize()) {
             code = 413;
             return true;
         }
-
         if (checkReturn(loca, code, location)) {
             return true;
         }
-
-        if (!loca.getAlias().empty()) {
-            file = combinePaths(loca.getAlias(), request.path.substr(loca.getPath().length()), "");
-        } else {
-            file = combinePaths(server.getRoot(), request.path, "");
+        if (loca.getPath().find("cgi") != std::string::npos) {
+            return (handleCGI(key));
         }
-
+        if (!loca.getAlias().empty())
+            file = combinePaths(loca.getAlias(), request.path.substr(loca.getPath().length()), "");
+        else
+            file = combinePaths(server.getRoot(), request.path, "");
         if (isDirectory(file)) {
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
                 return true;
             }
-
-            if (!loca.getIndex().empty()) {
+            if (!loca.getIndex().empty())
                 file += loca.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            } else {
+            else
                 file += server.getIndex();
-                printf("File: '%s'\n", file.c_str());
-            }
-
             if (!fileExists(file)) {
                 if (loca.getAutoindex()) {
                     auto_index = true;
@@ -216,61 +247,43 @@ bool Response::handleTarget() {
                 code = 404;
                 return true;
             }
-
             if (isDirectory(file)) {
                 code = 301;
-                if (!loca.getIndex().empty()) {
+                if (!loca.getIndex().empty())
                     location = combinePaths(request.path, loca.getIndex(), "");
-                } else {
+                else
                     location = combinePaths(request.path, server.getIndex(), "");
-                }
-
-                if (location[location.length() - 1] != '/') {
+                if (location[location.length() - 1] != '/')
                     location += "/";
-                }
-
                 return true;
             }
         }
-    } else {
+    }
+    else {
         file = combinePaths(server.getRoot(), request.path, "");
-
         if (isDirectory(file)) {
-            printf("File length: %lu\n", file.length());
-
             if (file[file.length() - 1] != '/') {
                 code = 301;
                 location = request.path + "/";
                 return true;
             }
-
-            file += server.getIndex();
+            file += server.getIndex(); // why does getIndex return nothing?
             file += "index.html";
-            printf("File: %s\n", file.c_str());
-
             if (!fileExists(file)) {
                 code = 403;
-                printf("File not found\n");
                 return true;
             }
-
             if (isDirectory(file)) {
                 code = 301;
                 location = combinePaths(request.path, server.getIndex(), "");
-
-                if (location[location.length() - 1] != '/') {
+                if (location[location.length() - 1] != '/')
                     location += "/";
-                }
-
                 return true;
             }
         }
     }
-
-    printf("                                       h i                            \n");
     return false;
 }
-
 
 bool Response::readFile() {
     std::ifstream temp(file.c_str());
@@ -291,10 +304,11 @@ bool Response::buildBody() {
     }
     if (handleTarget())
         return true;
-//    if (cgi || auto_index)
-//        return false;
+    if (cgi || auto_index)
+        return false;
     if (code)
         return false;
+
     if (request.method == GET || request.method == HEAD) {
         if (!readFile())
             return true;
@@ -306,6 +320,7 @@ bool Response::buildBody() {
         }
         std::ofstream temp(file.c_str(), std::ios::binary);
         if (temp.fail()) {
+
             code = 404;
             return true;
         }
@@ -335,7 +350,6 @@ std::string Response::getErrorPage() const {
 
 void Response::setDefaultErrorPages() {
     response_body = getErrorPage();
-    printf("Error page: %s\n", response_body.c_str());
 }
 
 void Response::buildErrorBody() {
@@ -362,8 +376,8 @@ void Response::buildErrorBody() {
 void Response::createResponse() {
     if (buildBody() || reqError())
         buildErrorBody();
-//    if (cgi)
-//        return ;
+    if (cgi)
+        return ;
     if (auto_index) {
         std::cout << "Auto index\n";
         if (buildHtmlIndex(file, body, body_length)) {
