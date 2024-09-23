@@ -57,10 +57,17 @@ void WebServer::initSets() {
 }
 
 void WebServer::closeConnection(const int fd) {  // not sure if this condition is correct
+    if (FD_ISSET(fd, &write_fd)) {
+        FD_CLR(fd, &write_fd);
+        if (fd == biggest_fd)
+            --biggest_fd;
+    }
+    if (FD_ISSET(fd, &recv_fd)) {
+        FD_CLR(fd, &recv_fd);
+        if (fd == biggest_fd)
+            --biggest_fd;
+    }
     close(fd);
-    FD_CLR(fd, &recv_fd);
-    if (fd == biggest_fd)
-        --biggest_fd;
     clients_map.erase(fd);
 }
 
@@ -104,10 +111,11 @@ void WebServer::assignServer(Client &client) {
 void WebServer::handleReqBody(Client &client) {
     if (client.request.body.empty()) {
         std::string tmp;
-        std::fstream file(client.response.cgi_resp.path.c_str());
+        std::fstream file;(client.response.cgi_resp.path.c_str());
         std::stringstream ss;
         ss << file.rdbuf();
         tmp = ss.str();
+        printf("^^^^^^^^^^^^^^^^^^^^^^^ tmp: %s\n", tmp.c_str());
         client.request.body = tmp;
     }
 }
@@ -131,15 +139,15 @@ void WebServer::readRequest(const int &fd, Client &client) {
     assignServer(client);
     client.response.request = client.request;
     client.response.createResponse();
-//    if (client.response.cgi) {
-//        handleReqBody(client);
-//        FD_SET(client.response.cgi_resp.pipe_in[1], &write_fd);
-//        if (client.response.cgi_resp.pipe_in[1] > biggest_fd)
-//            biggest_fd = client.response.cgi_resp.pipe_in[1];
-//        FD_SET(client.response.cgi_resp.pipe_out[0], &write_fd);
-//        if (client.response.cgi_resp.pipe_out[0] > biggest_fd)
-//            biggest_fd = client.response.cgi_resp.pipe_out[0];
-//    }
+    if (client.response.cgi) {
+        handleReqBody(client);
+        FD_SET(client.response.cgi_resp.pipe_in[1], &write_fd);
+        if (client.response.cgi_resp.pipe_in[1] > biggest_fd)
+            biggest_fd = client.response.cgi_resp.pipe_in[1];
+        FD_SET(client.response.cgi_resp.pipe_out[0], &write_fd);
+        if (client.response.cgi_resp.pipe_out[0] > biggest_fd)
+            biggest_fd = client.response.cgi_resp.pipe_out[0];
+    }
     FD_SET(fd, &write_fd);
     if (fd == biggest_fd)
         --biggest_fd;
@@ -177,9 +185,12 @@ void WebServer::sendCGIBody(Client &client, CGI &cgi) {
 }
 
 void WebServer::readCGIResponse(Client &client, CGI &cgi) {
-    char buf[MESSAGE_BUFFER];
+    char buf[MESSAGE_BUFFER * 2];
     int bytes_read;
-    bytes_read = recv(cgi.pipe_out[0], buf, sizeof(buf), 0);
+//    int status;
+//    waitpid(cgi.pid, &status, 0);
+    bytes_read = read(cgi.pipe_out[0], buf, sizeof(buf));
+    printf("bytes_read: %d\n", bytes_read);
     if (bytes_read == -1) {
         FD_CLR(cgi.pipe_out[0], &recv_fd);
         if (cgi.pipe_out[0] == biggest_fd)
@@ -221,11 +232,11 @@ void WebServer::sendResponse(const int &fd, Client &client) {
         return;
     }
     else if (bytes_sent == 0 || (size_t)bytes_sent == msg.length()) {
-//        if (!client.response.cgi) {
-//            closeConnection(fd);
-//            printf("Connection closed\n");
-//        }
-//        else {
+        if (client.response.cgi) {
+            closeConnection(fd);
+            printf("Connection closed\n");
+        }
+        else {
             FD_CLR(fd, &write_fd);
             if (fd == biggest_fd)
                 --biggest_fd;
@@ -234,7 +245,7 @@ void WebServer::sendResponse(const int &fd, Client &client) {
                 biggest_fd = fd;
             client.response.clear();
             client.request.clear();
-//        }
+        }
     }
     else
         client.response.response = client.response.response.substr(bytes_sent);
@@ -252,24 +263,26 @@ void WebServer::runServers() {
         time.tv_usec = 0;
         recv_copy = recv_fd;
         write_copy = write_fd;
-        if (select(biggest_fd + 1, &recv_copy, &write_copy, NULL, &time) < 0) {
-            printf("Select error\n");
-            exit(1);
-        }
+        if (select(biggest_fd + 1, &recv_copy, &write_copy, NULL, &time) < 0)
+            continue;
         for (int i = 0; i <= biggest_fd; ++i) {
             if (FD_ISSET(i, &recv_copy) && servers_map.count(i))
                 acceptNewConnection(servers_map.find(i)->second);
             else if (FD_ISSET(i, &recv_copy) && clients_map.count(i) > 0)
                 readRequest(i, clients_map[i]);
             else if (FD_ISSET(i, &write_copy) && clients_map.count(i) > 0) {
-//                int cgi_state = clients_map[i].response.cgi;
-//                int cgi_state = 0;
-//                if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_in[1], &write_copy))
-//                    sendCGIBody(clients_map[i], clients_map[i].response.cgi_resp);
-//                else if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_out[0], &write_copy))
-//                    readCGIResponse(clients_map[i], clients_map[i].response.cgi_resp);
-//                else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_copy))
+                int cgi_state = clients_map[i].response.cgi;
+                if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_in[1], &write_copy)) {
+                    sendCGIBody(clients_map[i], clients_map[i].response.cgi_resp);
+                    printf("cgi_resp1: %s\n", clients_map[i].response.cgi_resp.path.c_str());
+                }
+                else if (cgi_state == 1 && FD_ISSET(clients_map[i].response.cgi_resp.pipe_out[0], &write_copy)) {
+                    readCGIResponse(clients_map[i], clients_map[i].response.cgi_resp);
+                    printf("cgi_resp2: %s\n", clients_map[i].response.cgi_resp.path.c_str());
+                }
+                else if ((cgi_state == 0 || cgi_state == 2) && FD_ISSET(i, &write_copy)) {
                     sendResponse(i, clients_map[i]);
+                }
             }
         }
     }
