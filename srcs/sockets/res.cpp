@@ -119,14 +119,10 @@ bool isDirectory(std::string &file) {
 }
 
 bool fileExists(std::string &file) {
-//    struct stat st;
-//    if (stat(file.c_str(), &st) == 0)
-//        return true;
-//    return false;
-
-    std::ifstream temp(file.c_str());
-    printf("temp.good(): %d\n", temp.good());
-    return (temp.good());
+    struct stat st;
+    if (stat(file.c_str(), &st) == 0)
+        return true;
+    return false;
 }
 
 static std::string combinePaths(std::string p1, std::string p2, std::string p3)
@@ -331,8 +327,21 @@ std::string Response::getErrorPage() const {
             "</h1>\r\n</center>\r\n" + "</body>\r\n</html>\r\n");
 }
 
+std::string Response::readErrorPage(const std::string &filename) {
+    std::fstream file(filename.c_str());
+    std::stringstream ss;
+    ss << file.rdbuf();
+    return ss.str();
+}
+
 void Response::setDefaultErrorPages() {
-    response_body = getErrorPage();
+    const std::map<int, std::string> &error_pages = server.getErrorPages();
+    const std::map<int, std::string>::const_iterator &it = error_pages.find(code);
+
+    if (it != error_pages.end() && !it->second.empty())
+        response_body = readErrorPage(server.getRoot() + it->second);
+    else
+        response_body = getErrorPage();
 }
 
 void Response::buildErrorBody() {
@@ -341,7 +350,7 @@ void Response::buildErrorBody() {
         request.method == DELETE || request.method == POST)
         setDefaultErrorPages();
     else {
-        if (code >= 400 && code < 500) {
+        if (code >= 400 && code < 599) {
             location = server.getErrorPages().at(code);
             if (location[0] != '/')
                 location.insert(location.begin(), '/');
