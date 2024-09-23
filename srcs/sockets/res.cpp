@@ -51,28 +51,13 @@ bool Response::reqError() {
 }
 
 void Response::LocationMatch(const std::string& path, std::vector<LocationBlock> locations, std::string &key) {
-//    size_t biggest_match = 0;
-//
-//    for(std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
-//        if (path.find(it->getPath()) == 0) {
-//            if (it->getPath() == "/" || path.length() == it->getPath().length() || path[it->getPath().length()] == '/') {
-//                if (it->getPath().length() > biggest_match) {
-//                    biggest_match = it->getPath().length();
-//                    key = it->getPath();
-//                }
-//            }
-//        }
-//    }
-
     size_t biggest_match = 0;
 
     for (std::vector<LocationBlock>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
         const std::string& locationPath = it->getPath();
         size_t locationPathLength = locationPath.length();
-
-        // Check if `path` starts with `locationPath`
         if (path.find(locationPath) != 0) {
-            continue; // Skip to the next iteration if `locationPath` is not a prefix of `path`
+            continue;
         }
 
         // Ensure `locationPath` is a complete match or followed by '/'
@@ -134,10 +119,14 @@ bool isDirectory(std::string &file) {
 }
 
 bool fileExists(std::string &file) {
-    struct stat st;
-    if (stat(file.c_str(), &st) == 0)
-        return true;
-    return false;
+//    struct stat st;
+//    if (stat(file.c_str(), &st) == 0)
+//        return true;
+//    return false;
+
+    std::ifstream temp(file.c_str());
+    printf("temp.good(): %d\n", temp.good());
+    return (temp.good());
 }
 
 static std::string combinePaths(std::string p1, std::string p2, std::string p3)
@@ -233,7 +222,7 @@ bool Response::handleTarget() {
                 file += loca.getIndex();
             else
                 file += server.getIndex();
-            if (!fileExists(file)) {
+            if (fileExists(file)) {
                 if (loca.getAutoindex()) {
                     auto_index = true;
                     file.erase(file.find_last_of('/') + 1);
@@ -262,8 +251,7 @@ bool Response::handleTarget() {
                 location = request.path + "/";
                 return true;
             }
-            file += server.getIndex(); // why does getIndex return nothing?
-            file += "index.html";
+            file += server.getIndex();
             if (!fileExists(file)) {
                 code = 403;
                 return true;
