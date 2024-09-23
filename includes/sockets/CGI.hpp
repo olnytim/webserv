@@ -23,13 +23,15 @@ public:
     CGI &operator=(const CGI &rhs);
     ~CGI();
 
+    static int findStart(const std::string &path, const std::string &delim);
+    std::string getPathInfo(std::string &path, std::vector<std::string> extensions);
+
     void initEnv(Request &req, std::vector<LocationBlock>::iterator it_loc);
-    void initEnvCGI(Request &req, std::vector<LocationBlock>::iterator it_loc);
+//    void initEnvCGI(Request &req, std::vector<LocationBlock>::iterator it_loc);
 
     void execute(short &error_code);
 
-    static int findStart(const std::string &path, const std::string &delim);
-    std::string decode(std::string &path);
+//    std::string decode(std::string &path);
 
     void clear();
 };

@@ -12,6 +12,8 @@ Response::Response() {
     location = "";
     code = 0;
     auto_index = false;
+    cgi = 0;
+    cgi_resp = CGI();
 }
 
 Response::Response(Request &other) {
@@ -23,6 +25,8 @@ Response::Response(Request &other) {
     location = "";
     code = 0;
     auto_index = false;
+    cgi = 0;
+    cgi_resp = CGI();
 }
 
 Response::~Response() {}
@@ -195,8 +199,11 @@ bool Response::handleCGI(std::string &key) {
         code = 500;
         return true;
     }
+    printf("pipe(cgi_fd) success %d\n", pipe(cgi_fd));
+    printf("CGI code: %d\n", code);
     cgi_resp.initEnv(request, server.getLocationKey(key));
-//    cgi_resp.execute(code);
+    cgi_resp.execute(code);
+    printf("CGI code: %d\n", code);
     return false;
 }
 
@@ -297,8 +304,8 @@ bool Response::buildBody() {
     }
     if (handleTarget())
         return true;
-//    if (cgi || auto_index)
-//        return false;
+    if (cgi || auto_index)
+        return false;
     if (code)
         return false;
 
@@ -369,8 +376,8 @@ void Response::buildErrorBody() {
 void Response::createResponse() {
     if (buildBody() || reqError())
         buildErrorBody();
-//    if (cgi)
-//        return ;
+    if (cgi)
+        return ;
     if (auto_index) {
         std::cout << "Auto index\n";
         if (buildHtmlIndex(file, body, body_length)) {
