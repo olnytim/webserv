@@ -32,3 +32,9 @@ class serverParseException : public ParseException {
 public:
 	serverParseException(const std::string &message) : ParseException(message){}
 };
+
+class ValidationException : public ParseException {
+public:
+	ValidationException(const std::string &message) : ParseException(message){}
+};
+

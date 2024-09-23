@@ -10,7 +10,7 @@ ServerBlock::ServerBlock() {
     client_max_body_size = MAX_CONTENT_LENGTH;
     autoindex = false;
  	keymap = ServerBlockKeymap();
-    // error_pages;
+    error_pages = std::map<int, std::string>();
 }
 
 ServerBlock::~ServerBlock() {
