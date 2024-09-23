@@ -74,17 +74,12 @@ std::string CGI::getPathInfo(std::string &path, std::vector<std::string> extensi
 
 void CGI::initEnv(Request &req, const std::vector<LocationBlock>::iterator it_loc) {
     std::string ext = path.substr(path.find('.'));
-//    std::map<std::string, std::string>::iterator it_path = it_loc->ext_path.find(ext);
-//    if (it_path == it_loc->ext_path.end()) {
-//        std::cerr << "Error: extension not found" << std::endl;
-//        return;
-//    }
-//    std::string ext_path = it_loc->ext_path[ext];
-    std::string ext_path = "/usr/bin/python3";
-
-    std::vector<std::string> extensions;
-    extensions.push_back(".py");
-    extensions.push_back(".sh");
+    std::map<std::string, std::string>::iterator it_path = it_loc->ext_path.find(ext);
+    if (it_path == it_loc->ext_path.end()) {
+        std::cerr << "Error: extension not found" << std::endl;
+        return;
+    }
+    std::string ext_path = it_loc->ext_path[ext];
     this->env["AUTH_TYPE"] = "Basic";
     this->env["CONTENT_LENGTH"] = req.headers["Content-Length"];
     this->env["CONTENT_TYPE"] = req.headers["Content-Type"];
@@ -92,7 +87,7 @@ void CGI::initEnv(Request &req, const std::vector<LocationBlock>::iterator it_lo
     int pos = findStart(this->path, "cgi/");
     this->env["SCRIPT_NAME"] = this->path;
     this->env["SCRIPT_FILENAME"] = ((pos < 0 || (size_t)(pos + 4) > this->path.length()) ? "" : this->path.substr(pos + 4, this->path.length()));
-    this->env["PATH_INFO"] = getPathInfo(req.path, extensions);
+    this->env["PATH_INFO"] = getPathInfo(req.path, it_loc->getCgiExt());
     this->env["REMOTE_ADDR"] = req.headers["Host"];
     pos = findStart(req.headers["Host"], ":");
     this->env["SERVER_NAME"] = (pos > 0 ? req.headers["Host"].substr(0, pos) : "");
@@ -113,16 +108,10 @@ void CGI::initEnv(Request &req, const std::vector<LocationBlock>::iterator it_lo
     }
     this->av = (char **)malloc(sizeof(char *) * 3);
     this->av[0] = strdup(ext_path.c_str());
-    printf("av[0]: %s\n", this->av[0]);
     this->av[1] = strdup(this->path.c_str());
-    printf("av[1]: %s\n", this->av[1]);
     this->av[2] = NULL;
 }
 
-//void CGI::initEnvCGI(Request &req, const std::vector<LocationBlock>::iterator it_loc) {
-//
-//}
-//
 void CGI::execute(short &error_code) {
     if (this->av[0] == NULL || this->av[1] == NULL) {
         error_code = 500;
@@ -140,7 +129,6 @@ void CGI::execute(short &error_code) {
     }
     this->pid = fork();
     if (this->pid == 0) {
-        printf("hello from child\n");
         dup2(pipe_in[0], STDIN_FILENO);
         dup2(pipe_out[1], STDOUT_FILENO);
         close(pipe_in[0]);
@@ -148,19 +136,13 @@ void CGI::execute(short &error_code) {
         close(pipe_out[0]);
         close(pipe_out[1]);
         this->exit_status = execve(this->av[0], this->av, this->ch_env);
-        printf("exit_status: %d\n", this->exit_status);
         exit(this->exit_status);
     }
     else if (this->pid > 0) {}
     else
         error_code = 500;
 }
-//
-//
-//std::string CGI::decode(std::string &path) {
-//
-//}
-//
+
 void CGI::clear() {
     this->pid = -1;
     this->exit_status = 0;

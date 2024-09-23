@@ -157,9 +157,9 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     std::vector<std::string> cgi_path = location.getCgiPath();
     std::vector<std::string> cgi_ext = location.getCgiExt();
 
-    for (std::map<std::string, std::string>::iterator it = location.ext_path.begin(); it != location.ext_path.end(); it++) {
-        std::cout << it->first << " => " << it->second << std::endl;
-    }
+//    for (std::map<std::string, std::string>::iterator it = location.ext_path.begin(); it != location.ext_path.end(); it++) {
+//        std::cout << it->first << " => " << it->second << std::endl;
+//    }
 
     return location;
 }

@@ -180,9 +180,7 @@ bool Response::handleCGI(std::string &key) {
         code = 501;
         return true;
     }
-    printf("Path: '%s'\n", path.c_str());
     if (Config::getTypePath(path) != 1) {
-        printf("************ hello there ************\n");
         code = 404;
         return true;
     }
@@ -199,11 +197,8 @@ bool Response::handleCGI(std::string &key) {
         code = 500;
         return true;
     }
-    printf("pipe(cgi_fd) success %d\n", pipe(cgi_fd));
-    printf("CGI code: %d\n", code);
     cgi_resp.initEnv(request, server.getLocationKey(key));
     cgi_resp.execute(code);
-    printf("CGI code: %d\n", code);
     return false;
 }
 
@@ -427,5 +422,4 @@ void Response::createResponse() {
 
     if (request.method != HEAD && (request.method == GET || code != 200))
         response.append(response_body);
-//    printf("Response: %s\n", response.c_str());
 }
