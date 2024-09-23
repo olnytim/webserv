@@ -26,6 +26,10 @@ public:
     static bool isFileExistAndReadable(const std::string &path, const std::string &index);
 
     std::vector<std::string> SplitAndCutLocations(std::string &config) const;
+
+    std::map<std::string, std::string> MapExtPath(const std::vector<std::string> &cgi_path,
+                                                  const std::vector<std::string> &cgi_ext) const;
+
     LocationBlock CreateLocation(std::string &locationTxt) const;
     std::vector<LocationBlock> ParseConfigLocations(std::string &config) const;
 

@@ -113,6 +113,29 @@ std::vector<std::string> Config::SplitAndCutLocations(std::string &config) const
     return locations;
 }
 
+std::map<std::string, std::string> Config::MapExtPath(const std::vector<std::string> &cgi_path, const std::vector<std::string> &cgi_ext) const {
+    std::map<std::string, std::string> ext_paths;
+    std::map<std::string, std::string> valid_ext_paths;
+
+    if (cgi_path.size() == 0 && cgi_ext.size() == 0)
+        return ext_paths;
+
+    valid_ext_paths[".py"] = "/usr/bin/python3";
+    valid_ext_paths[".sh"] = "/bin/bash";
+
+    if (cgi_path.size() != cgi_ext.size())
+        errorHandler::reportError(ParseException("Cgi path and cgi ext size mismatch"));
+    for (size_t i = 0; i < cgi_ext.size(); i++) {
+        if (valid_ext_paths.find(cgi_ext[i]) == valid_ext_paths.end())
+            errorHandler::reportError(ParseException("Invalid cgi extension"));
+        else if (std::find(cgi_path.begin(), cgi_path.end(), valid_ext_paths[cgi_ext[i]]) == cgi_path.end())
+            errorHandler::reportError(ParseException("Invalid cgi path"));
+        else
+            ext_paths[cgi_ext[i]] = valid_ext_paths[cgi_ext[i]];
+    }
+    return ext_paths;
+}
+
 LocationBlock Config::CreateLocation(std::string &locationTxt) const {
     LocationBlock location;
     std::string path = locationTxt.substr(0, locationTxt.find('{'));
@@ -130,6 +153,14 @@ LocationBlock Config::CreateLocation(std::string &locationTxt) const {
         value = parsingUtils::trimWhitespace(value);
         location.getKeymap().callFunction(key, value, location);
     }
+    location.ext_path = MapExtPath(location.getCgiPath(), location.getCgiExt());
+    std::vector<std::string> cgi_path = location.getCgiPath();
+    std::vector<std::string> cgi_ext = location.getCgiExt();
+
+    for (std::map<std::string, std::string>::iterator it = location.ext_path.begin(); it != location.ext_path.end(); it++) {
+        std::cout << it->first << " => " << it->second << std::endl;
+    }
+
     return location;
 }
 
