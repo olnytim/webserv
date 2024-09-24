@@ -371,7 +371,6 @@ void Response::createResponse() {
     if (cgi)
         return ;
     if (auto_index) {
-        std::cout << "Auto index\n";
         if (buildHtmlIndex(file, body, body_length)) {
             code = 500;
             buildErrorBody();
