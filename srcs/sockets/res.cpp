@@ -75,8 +75,6 @@ bool Response::isAllowedMethod(LocationBlock &location_temp, HttpMethod &method,
         case 1: method_str = "GET"; break;
         case 2: method_str = "POST"; break;
         case 3: method_str = "DELETE"; break;
-        case 4: method_str = "PUT"; break;
-        case 5: method_str = "HEAD"; break;
         default: method_str = ""; break;
     }
     bool found = false;
@@ -283,18 +281,13 @@ bool Response::buildBody() {
     if (code)
         return false;
 
-    if (request.method == GET || request.method == HEAD) {
+    if (request.method == GET) {
         if (!readFile())
             return true;
     }
-    else if (request.method == POST || request.method == PUT) {
-        if (fileExists(file) && request.method == PUT) {
-            code = 204;
-            return false;
-        }
+    else if (request.method == POST) {
         std::ofstream temp(file.c_str(), std::ios::binary);
         if (temp.fail()) {
-
             code = 404;
             return true;
         }
@@ -395,6 +388,6 @@ void Response::createResponse() {
     strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
     response.append("Date: " + std::string(date) + "\r\n");
     response.append("\r\n");
-    if (request.method != HEAD && (request.method == GET || code != 200))
+    if (request.method == GET || code != 200)
         response.append(response_body);
 }

@@ -7,7 +7,6 @@ Request::Request() : method(NONE) {
 HttpMethod Request::stringToHttpMethod(const std::string& methodStr) {
     if (methodStr == "GET") return GET;
     if (methodStr == "POST") return POST;
-    if (methodStr == "PUT") return PUT;
     if (methodStr == "DELETE") return DELETE;
     return NONE;
 }
@@ -23,14 +22,17 @@ bool Request::reqParse(const char* data, size_t size) {
 
         method = stringToHttpMethod(methodString);
         if (method == NONE) {
+            error_code = 405;
             return false;
         }
 
         if (path.empty() || version.empty()) {
+            error_code = 400;
             return false;
         }
     }
     else {
+        error_code = 400;
         return false;
     }
     while (std::getline(stream, line) && line != "\r") {

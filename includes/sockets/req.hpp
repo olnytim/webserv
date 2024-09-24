@@ -7,9 +7,7 @@ enum HttpMethod
     GET = 1,
     POST = 2,
     DELETE = 3,
-    PUT = 4,
-    HEAD = 5,
-    NONE = 6
+    NONE = 4
 };
 
 class Request {

@@ -225,7 +225,6 @@ void WebServer::sendResponse(const int &fd, Client &client) {
     else
         bytes_sent = send(fd, msg.c_str(), msg.length(), 0);
     if (bytes_sent == -1) {
-        printf("Send error\n");
         closeConnection(fd);
         return;
     }
