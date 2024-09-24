@@ -376,6 +376,8 @@ void Response::createResponse() {
     else
         response.append("text/html\r\n");
     response.append("Content-Length: " + to_string(response_body.length()) + "\r\n");
+    if (request.headers.find("Cookie") != request.headers.end())
+        response.append("Set-Cookie: " + request.headers["Cookie"] + "\r\n");
     if (request.headers["Connection"] == "keep-alive")
         response.append("Connection: " + request.headers["Connection"] + "\r\n");
     else
