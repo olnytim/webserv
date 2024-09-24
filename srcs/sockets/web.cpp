@@ -170,7 +170,7 @@ void WebServer::sendCGIBody(Client &client, CGI &cgi) {
             --biggest_fd;
         close(cgi.pipe_in[1]);
         close(cgi.pipe_out[1]);
-        client.response.code = 500; // (maybe need to make few more changes here)
+        client.response.code = 500; // (maybe need to make few more changes here);
     }
     else if (bytes_sent == 0 || (size_t) bytes_sent == msg.length()) {
         FD_CLR(cgi.pipe_in[1], &write_fd);

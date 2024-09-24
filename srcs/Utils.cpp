@@ -1,13 +1,5 @@
 #include "../includes/Headers.hpp"
 
-unsigned int fromHexToDec(const std::string &nb) {
-    unsigned int x;
-    std::stringstream ss;
-    ss << nb;
-    ss >> std::hex >> x;
-    return x;
-}
-
 std::string statusCodeString(short statusCode) {
     switch (statusCode) {
         case 100:
