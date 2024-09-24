@@ -161,9 +161,9 @@ void WebServer::sendCGIBody(Client &client, CGI &cgi) {
     if (msg.length() == 0)
         bytes_sent = 0;
     else if (msg.length() >= MESSAGE_BUFFER)
-        bytes_sent = send(cgi.pipe_in[1], msg.c_str(), MESSAGE_BUFFER, 0);
+        bytes_sent = write(cgi.pipe_in[1], msg.c_str(), MESSAGE_BUFFER);
     else
-        bytes_sent = send(cgi.pipe_in[1], msg.c_str(), msg.length(), 0);
+        bytes_sent = write(cgi.pipe_in[1], msg.c_str(), msg.length());
     if (bytes_sent < 0) {
         FD_CLR(cgi.pipe_in[1], &write_fd);
         if (cgi.pipe_in[1] == biggest_fd)
