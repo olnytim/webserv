@@ -42,11 +42,10 @@ void Response::clear() {
 }
 
 bool Response::reqError() {
-    // check if error code is set
-//    if (request.error_code) {
-//        code = request.error_code;
-//        return true;
-//    }
+    if (request.error_code) {
+        code = request.error_code;
+        return true;
+    }
     return false;
 }
 
@@ -59,13 +58,9 @@ void Response::LocationMatch(const std::string& path, std::vector<LocationBlock>
         if (path.find(locationPath) != 0) {
             continue;
         }
-
-        // Ensure `locationPath` is a complete match or followed by '/'
         bool isCompleteMatch = (locationPath == "/") ||
                                (path.length() == locationPathLength) ||
                                (path[locationPathLength] == '/');
-
-        // Update the biggest match if this is the longest valid match
         if (isCompleteMatch && locationPathLength > biggest_match) {
             biggest_match = locationPathLength;
             key = locationPath;
@@ -366,7 +361,7 @@ void Response::buildErrorBody() {
 }
 
 void Response::createResponse() {
-    if (buildBody() || reqError())
+    if (reqError() || buildBody())
         buildErrorBody();
     if (cgi)
         return ;
@@ -380,42 +375,26 @@ void Response::createResponse() {
             code = 200;
         response_body.insert(response_body.begin(), body.begin(), body.end());
     }
-    /* Set State */
     response.append("HTTP/1.1 " + to_string(code) + " ");
     response.append(statusCodeString(code) + "\r\n");
-
-    /* Set Type */
     response.append("Content-Type: ");
     if (file.find('.') != std::string::npos)
         response.append(mime.mime_types[file.substr(file.find_last_of('.'))] + "\r\n");
     else
         response.append("text/html\r\n");
-
-    /* Set Length */
     response.append("Content-Length: " + to_string(response_body.length()) + "\r\n");
-
-    /* Set Connection */
     if (request.headers["Connection"] == "keep-alive")
         response.append("Connection: " + request.headers["Connection"] + "\r\n");
     else
         response.append("Connection: close\r\n");
-
-    /* Set Server */
     response.append("Server: " + request.headers["User-Agent"] + "\r\n");
-
-//    /* Set Location */
     if (!location.empty())
         response.append("Location: " + location + "\r\n");
-
-    /* Set Date */
     char date[100];
     time_t now = time(0);
     strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT", gmtime(&now));
     response.append("Date: " + std::string(date) + "\r\n");
-
-    /* Set Body */
     response.append("\r\n");
-
     if (request.method != HEAD && (request.method == GET || code != 200))
         response.append(response_body);
 }
